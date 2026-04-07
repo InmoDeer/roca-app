@@ -38,7 +38,6 @@ function buildOutputs(p) {
   const baseUrl = typeof import.meta !== "undefined" && import.meta.env?.DEV
     ? "http://localhost:5173"
     : window.location.origin;
-  // CAMBIO IMPORTANTE: ahora el enlace de galería usa ?gallery= en lugar de ?id=
   const galleryUrl = `${baseUrl}?gallery=${p.id}`;
   const media = [
     fotos.length > 0 ? `📸 Ver fotos (${fotos.length}): ${galleryUrl}` : "",
@@ -346,7 +345,8 @@ export default function ROCAApp() {
   const [selected, setSelected] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editTarget, setEdit] = useState(null);
-  const [openMenu, setOpenMenu] = useState(null);
+  const [openMenu, setOpenMenu] = useState(null);        // para el menú de tres puntos (editar/eliminar)
+  const [openEstadoMenu, setOpenEstadoMenu] = useState(null); // para el menú de cambio de estado (círculo)
   const [filters, setFilters] = useState({ q: "", operacion: "", tipo: "", estado: "" });
   const [isAdmin, setIsAdmin] = useState(false);
   const [loginPassword, setLoginPassword] = useState("");
@@ -361,7 +361,6 @@ export default function ROCAApp() {
       const prop = properties.find(p => p.id === id);
       if (prop) setSelected(prop);
     }
-    // Verificar si estamos en modo galería
     const galleryId = params.get("gallery");
     if (galleryId && properties.length) {
       const prop = properties.find(p => p.id === galleryId);
@@ -405,10 +404,10 @@ export default function ROCAApp() {
     await supabase.from("propiedades").update({ estado }).eq("id", id);
     setProps(ps => ps.map(p => p.id === id ? { ...p, estado } : p));
     if (selected?.id === id) setSelected(s => ({ ...s, estado }));
+    setOpenEstadoMenu(null);
   };
 
   const checkPassword = (pass) => {
-    // Cambia "tucontraseña" por la que desees
     if (pass === "roca2025") {
       setIsAdmin(true);
       localStorage.setItem("roca_admin", "true");
@@ -434,7 +433,6 @@ export default function ROCAApp() {
       <>
         <Gallery fotos={out.fotos} onClose={() => {
           setGalleryProperty(null);
-          // Limpiar el parámetro gallery de la URL sin recargar
           const url = new URL(window.location);
           url.searchParams.delete("gallery");
           window.history.replaceState({}, "", url);
@@ -443,7 +441,7 @@ export default function ROCAApp() {
     );
   }
 
-  // Pantalla de bloqueo para no administradores que intentan acceder a la raíz
+  // Pantalla de bloqueo para no administradores
   if (!isAdmin && !window.location.search.includes("id=") && !window.location.search.includes("gallery=")) {
     return (
       <div style={S.app}>
@@ -465,7 +463,7 @@ export default function ROCAApp() {
     );
   }
 
-  // Vista de detalle de propiedad (con o sin admin)
+  // Vista de detalle de propiedad
   if (selected) {
     const current = properties.find(p => p.id === selected.id) || selected;
     return (
@@ -483,9 +481,9 @@ export default function ROCAApp() {
     );
   }
 
-  // Panel de administración (solo visible para admin)
+  // Panel de administración (lista)
   return (
-    <div style={S.app} onClick={() => setOpenMenu(null)}>
+    <div style={S.app} onClick={() => { setOpenMenu(null); setOpenEstadoMenu(null); }}>
       <div style={S.topBar}>
         <div style={S.logo}>🪨 ROCA</div>
         <button onClick={() => { setEdit(null); setShowForm(true); }} style={S.newBtn}>+ Nuevo</button>
@@ -524,22 +522,32 @@ export default function ROCAApp() {
                   <div style={S.cardPrice}>{out.precio}</div>
                 </div>
                 <div style={S.cardRight} onClick={e => e.stopPropagation()}>
-                  <span style={{ ...S.estadoBadge, backgroundColor: ec.bg, color: ec.text }}>
-                    <span style={{ width: 7, height: 7, borderRadius: "50%", background: ec.dot, display: "inline-block", marginRight: 5 }} />
-                    {p.estado}
-                  </span>
-                  <button style={S.menuDot} onClick={e => { e.stopPropagation(); setOpenMenu(openMenu === p.id ? null : p.id); }}>⋮</button>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
+                    {/* Círculo de estado */}
+                    <div
+                      style={{ width: 24, height: 24, borderRadius: '50%', backgroundColor: ec.dot, cursor: 'pointer' }}
+                      onClick={(e) => { e.stopPropagation(); setOpenEstadoMenu(openEstadoMenu === p.id ? null : p.id); }}
+                    />
+                    {/* Botón de tres puntos */}
+                    <button style={S.menuDot} onClick={e => { e.stopPropagation(); setOpenMenu(openMenu === p.id ? null : p.id); }}>⋮</button>
+                  </div>
                 </div>
               </div>
-              {openMenu === p.id && (
-                <div style={S.dropdown} onClick={e => e.stopPropagation()}>
+              {/* Menú desplegable para cambio de estado (al hacer clic en el círculo) */}
+              {openEstadoMenu === p.id && (
+                <div style={{ ...S.dropdown, right: 12, top: 30 }} onClick={e => e.stopPropagation()}>
                   {ESTADOS.map(s => (
-                    <button key={s} style={S.dropItem} onClick={() => { changeEstado(p.id, s); setOpenMenu(null); }}>
+                    <button key={s} style={S.dropItem} onClick={() => { changeEstado(p.id, s); setOpenEstadoMenu(null); }}>
                       <span style={{ color: EC[s]?.dot }}>●</span> {s}
                     </button>
                   ))}
-                  <div style={S.dropDivider} />
+                </div>
+              )}
+              {/* Menú desplegable para editar/eliminar (tres puntos) */}
+              {openMenu === p.id && (
+                <div style={{ ...S.dropdown, right: 12, top: 70 }} onClick={e => e.stopPropagation()}>
                   <button style={S.dropItem} onClick={() => { setEdit(p); setShowForm(true); setOpenMenu(null); }}>✏️ Editar</button>
+                  <div style={S.dropDivider} />
                   <button style={{ ...S.dropItem, color: "#ef4444" }} onClick={() => { if (confirm("¿Eliminar este inmueble?")) deleteProperty(p.id); }}>🗑 Eliminar</button>
                 </div>
               )}
@@ -559,9 +567,9 @@ const S = {
   logo:           { fontSize: 22, fontWeight: 800, color: "#fff", letterSpacing: -0.5 },
   newBtn:         { background: "#e8ff4f", color: "#1a1a1a", border: "none", borderRadius: 8, padding: "8px 16px", fontWeight: 700, fontSize: 14, cursor: "pointer" },
   searchWrap:     { padding: "12px 16px 0" },
-  searchInput:    { width: "100%", padding: "10px 14px", borderRadius: 10, border: "1.5px solid #e0e0d8", fontSize: 15, background: "#fff", outline: "none", boxSizing: "border-box" },
+  searchInput:    { width: "100%", padding: "10px 14px", borderRadius: 10, border: "1.5px solid #e0e0d8", fontSize: 15, background: "#fff", outline: "none", boxSizing: "border-box", color: "#1a1a1a" },
   filterRow:      { display: "flex", gap: 8, padding: "10px 16px", overflowX: "auto" },
-  filterSelect:   { padding: "6px 10px", borderRadius: 8, border: "1.5px solid #e0e0d8", fontSize: 13, background: "#fff", flexShrink: 0, cursor: "pointer", outline: "none" },
+  filterSelect:   { padding: "6px 10px", borderRadius: 8, border: "1.5px solid #e0e0d8", fontSize: 13, background: "#fff", flexShrink: 0, cursor: "pointer", outline: "none", color: "#1a1a1a" },
   count:          { padding: "4px 16px 8px", fontSize: 12, color: "#888", fontWeight: 600 },
   list:           { padding: "0 16px 80px", display: "flex", flexDirection: "column", gap: 10 },
   card:           { background: "#fff", borderRadius: 14, boxShadow: "0 1px 4px rgba(0,0,0,.06)", cursor: "pointer", border: "1.5px solid #eee", position: "relative" },
@@ -574,7 +582,7 @@ const S = {
   cardPrice:      { fontSize: 14, fontWeight: 700, color: "#1a1a1a" },
   estadoBadge:    { fontSize: 11, fontWeight: 700, borderRadius: 20, padding: "3px 9px", display: "flex", alignItems: "center", whiteSpace: "nowrap" },
   menuDot:        { background: "none", border: "none", fontSize: 22, cursor: "pointer", color: "#888", lineHeight: 1, padding: "0 2px" },
-  dropdown:       { position: "absolute", right: 12, top: 44, background: "#fff", borderRadius: 12, boxShadow: "0 4px 24px rgba(0,0,0,.13)", zIndex: 50, minWidth: 180, overflow: "hidden", border: "1px solid #eee" },
+  dropdown:       { position: "absolute", right: 12, background: "#fff", borderRadius: 12, boxShadow: "0 4px 24px rgba(0,0,0,.13)", zIndex: 50, minWidth: 180, overflow: "hidden", border: "1px solid #eee" },
   dropItem:       { display: "block", width: "100%", textAlign: "left", padding: "11px 16px", background: "none", border: "none", fontSize: 14, cursor: "pointer", color: "#1a1a1a" },
   dropDivider:    { height: 1, background: "#f0f0ec", margin: "2px 0" },
   empty:          { textAlign: "center", color: "#aaa", padding: "40px 0", fontSize: 15 },
@@ -621,7 +629,7 @@ const S = {
   section:        { fontWeight: 800, fontSize: 12, color: "#888", textTransform: "uppercase", letterSpacing: 0.8, margin: "18px 0 10px", paddingBottom: 6, borderBottom: "1px solid #f0f0ec" },
   field:          { marginBottom: 12 },
   label:          { display: "block", fontSize: 13, fontWeight: 600, color: "#555", marginBottom: 5 },
-  input:          { width: "100%", padding: "10px 12px", borderRadius: 9, border: "1.5px solid #e0e0d8", fontSize: 15, boxSizing: "border-box", outline: "none", background: "#fafaf8" },
+  input:          { width: "100%", padding: "10px 12px", borderRadius: 9, border: "1.5px solid #e0e0d8", fontSize: 15, boxSizing: "border-box", outline: "none", background: "#fafaf8", color: "#1a1a1a" },
   row2:           { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 },
   checkGrid:      { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 12 },
   checkRow:       { display: "flex", alignItems: "center", fontSize: 14, cursor: "pointer", padding: "8px 0" },
