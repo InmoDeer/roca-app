@@ -38,9 +38,10 @@ function buildOutputs(p) {
   const baseUrl = typeof import.meta !== "undefined" && import.meta.env?.DEV
     ? "http://localhost:5173"
     : window.location.origin;
-  const propiedadUrl = `${baseUrl}?id=${p.id}`;
+  // CAMBIO IMPORTANTE: ahora el enlace de galería usa ?gallery= en lugar de ?id=
+  const galleryUrl = `${baseUrl}?gallery=${p.id}`;
   const media = [
-    fotos.length > 0 ? `📸 Ver fotos (${fotos.length}): ${propiedadUrl}` : "",
+    fotos.length > 0 ? `📸 Ver fotos (${fotos.length}): ${galleryUrl}` : "",
     p.video_url ? `🎥 Video: ${p.video_url}` : "",
     p.tour360_url ? `🌐 Recorrido 360: ${p.tour360_url}` : "",
   ].filter(Boolean).join("\n");
@@ -59,7 +60,10 @@ function buildOutputs(p) {
     caracteristicasCompletas, p.frase_destacada ? `\n✨ ${p.frase_destacada}` : "",
     "", media, "", ubicacion, "", "👉 Disponible para visitas", "", "¿En qué fecha te gustaría visitar?",
   ].join("\n").replace(/\n{3,}/g, "\n\n").trim();
-  const multimedia = [fotos.length > 0 ? `📸 Galería completa: ${propiedadUrl}` : "", p.tour360_url ? `🌐 Recorrido 360: ${p.tour360_url}` : ""].filter(Boolean).join("\n");
+  const multimedia = [
+    fotos.length > 0 ? `📸 Galería completa: ${galleryUrl}` : "",
+    p.tour360_url ? `🌐 Recorrido 360: ${p.tour360_url}` : ""
+  ].filter(Boolean).join("\n");
   return { precio, mant, caracteristicasCompletas, media, ubicacion, mensajeCorto, mensajeLargo, multimedia, fotos, mapsLink };
 }
 
@@ -264,7 +268,7 @@ function PropertyForm({ initial, onSave, onClose }) {
   );
 }
 
-function PropertyDetail({ p, onBack, onEdit, onEstado }) {
+function PropertyDetail({ p, onBack, onEdit, onEstado, isAdmin }) {
   const out = buildOutputs(p);
   const ec = EC[p.estado] || EC.Disponible;
   const [tab, setTab] = useState("corto");
@@ -273,7 +277,7 @@ function PropertyDetail({ p, onBack, onEdit, onEstado }) {
     <div style={S.detail}>
       <div style={S.detailHeader}>
         <button onClick={onBack} style={S.backBtn}>← Volver</button>
-        <button onClick={onEdit} style={S.editBtn}>✏️ Editar</button>
+        {isAdmin && <button onClick={onEdit} style={S.editBtn}>✏️ Editar</button>}
       </div>
       {out.fotos.length > 0 && (
         <div style={S.heroWrap} onClick={() => setGallery(true)}>
@@ -287,10 +291,17 @@ function PropertyDetail({ p, onBack, onEdit, onEstado }) {
             <div style={S.detailName}>{p.nombre}</div>
             <div style={S.detailSub}>{p.tipo} · {p.distrito}</div>
           </div>
-          <select value={p.estado} onChange={e => onEstado(p.id, e.target.value)}
-            style={{ ...S.estadoBadge, backgroundColor: ec.bg, color: ec.text, border: `1px solid ${ec.dot}`, cursor: "pointer" }}>
-            {ESTADOS.map(s => <option key={s}>{s}</option>)}
-          </select>
+          {isAdmin ? (
+            <select value={p.estado} onChange={e => onEstado(p.id, e.target.value)}
+              style={{ ...S.estadoBadge, backgroundColor: ec.bg, color: ec.text, border: `1px solid ${ec.dot}`, cursor: "pointer" }}>
+              {ESTADOS.map(s => <option key={s}>{s}</option>)}
+            </select>
+          ) : (
+            <span style={{ ...S.estadoBadge, backgroundColor: ec.bg, color: ec.text }}>
+              <span style={{ width: 7, height: 7, borderRadius: "50%", background: ec.dot, display: "inline-block", marginRight: 5 }} />
+              {p.estado}
+            </span>
+          )}
         </div>
         <div style={S.precioBlock}>{out.precio}</div>
         {p.mantenimiento ? <div style={S.mantBlock}>🧾 Mantenimiento: S/ {p.mantenimiento} mensuales</div> : null}
@@ -337,6 +348,9 @@ export default function ROCAApp() {
   const [editTarget, setEdit] = useState(null);
   const [openMenu, setOpenMenu] = useState(null);
   const [filters, setFilters] = useState({ q: "", operacion: "", tipo: "", estado: "" });
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [loginPassword, setLoginPassword] = useState("");
+  const [galleryProperty, setGalleryProperty] = useState(null);
 
   useEffect(() => { fetchProps(); }, []);
 
@@ -347,7 +361,18 @@ export default function ROCAApp() {
       const prop = properties.find(p => p.id === id);
       if (prop) setSelected(prop);
     }
+    // Verificar si estamos en modo galería
+    const galleryId = params.get("gallery");
+    if (galleryId && properties.length) {
+      const prop = properties.find(p => p.id === galleryId);
+      if (prop) setGalleryProperty(prop);
+    }
   }, [properties]);
+
+  useEffect(() => {
+    const admin = localStorage.getItem("roca_admin");
+    if (admin === "true") setIsAdmin(true);
+  }, []);
 
   const fetchProps = async () => {
     setLoading(true);
@@ -382,6 +407,17 @@ export default function ROCAApp() {
     if (selected?.id === id) setSelected(s => ({ ...s, estado }));
   };
 
+  const checkPassword = (pass) => {
+    // Cambia "tucontraseña" por la que desees
+    if (pass === "roca2025") {
+      setIsAdmin(true);
+      localStorage.setItem("roca_admin", "true");
+      setLoginPassword("");
+    } else {
+      alert("Contraseña incorrecta");
+    }
+  };
+
   const filtered = useMemo(() => properties.filter(p => {
     const q = filters.q.toLowerCase();
     if (q && !p.nombre?.toLowerCase().includes(q) && !p.distrito?.toLowerCase().includes(q)) return false;
@@ -391,18 +427,63 @@ export default function ROCAApp() {
     return true;
   }), [properties, filters]);
 
+  // Vista de galería exclusiva
+  if (galleryProperty) {
+    const out = buildOutputs(galleryProperty);
+    return (
+      <>
+        <Gallery fotos={out.fotos} onClose={() => {
+          setGalleryProperty(null);
+          // Limpiar el parámetro gallery de la URL sin recargar
+          const url = new URL(window.location);
+          url.searchParams.delete("gallery");
+          window.history.replaceState({}, "", url);
+        }} />
+      </>
+    );
+  }
+
+  // Pantalla de bloqueo para no administradores que intentan acceder a la raíz
+  if (!isAdmin && !window.location.search.includes("id=") && !window.location.search.includes("gallery=")) {
+    return (
+      <div style={S.app}>
+        <div style={S.topBar}><div style={S.logo}>🪨 ROCA</div></div>
+        <div style={{ padding: 20, textAlign: "center" }}>
+          <p style={{ marginBottom: 16 }}>Acceso restringido. Introduce la contraseña:</p>
+          <input
+            type="password"
+            value={loginPassword}
+            onChange={(e) => setLoginPassword(e.target.value)}
+            style={{ ...S.input, maxWidth: 200, marginBottom: 12 }}
+            placeholder="Contraseña"
+          />
+          <button onClick={() => checkPassword(loginPassword)} style={S.saveBtn}>
+            Entrar
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Vista de detalle de propiedad (con o sin admin)
   if (selected) {
     const current = properties.find(p => p.id === selected.id) || selected;
     return (
       <div style={S.app}>
-        <PropertyDetail p={current} onBack={() => setSelected(null)}
-          onEdit={() => { setEdit(current); setShowForm(true); }} onEstado={changeEstado} />
+        <PropertyDetail
+          p={current}
+          onBack={() => setSelected(null)}
+          onEdit={() => { setEdit(current); setShowForm(true); }}
+          onEstado={changeEstado}
+          isAdmin={isAdmin}
+        />
         {showForm && <PropertyForm initial={editTarget} onSave={saveProperty}
           onClose={() => { setShowForm(false); setEdit(null); }} />}
       </div>
     );
   }
 
+  // Panel de administración (solo visible para admin)
   return (
     <div style={S.app} onClick={() => setOpenMenu(null)}>
       <div style={S.topBar}>
