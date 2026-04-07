@@ -39,6 +39,7 @@ function buildOutputs(p) {
     ? "http://localhost:5173"
     : window.location.origin;
   const galleryUrl = `${baseUrl}?gallery=${p.id}`;
+  const publicUrl = `${baseUrl}?publica=${p.id}`;
   const media = [
     fotos.length > 0 ? `📸 Ver fotos (${fotos.length}): ${galleryUrl}` : "",
     p.video_url ? `🎥 Video: ${p.video_url}` : "",
@@ -63,14 +64,14 @@ function buildOutputs(p) {
     fotos.length > 0 ? `📸 Galería completa: ${galleryUrl}` : "",
     p.tour360_url ? `🌐 Recorrido 360: ${p.tour360_url}` : ""
   ].filter(Boolean).join("\n");
-  return { precio, mant, caracteristicasCompletas, media, ubicacion, mensajeCorto, mensajeLargo, multimedia, fotos, mapsLink };
+  return { precio, mant, caracteristicasCompletas, media, ubicacion, mensajeCorto, mensajeLargo, multimedia, fotos, mapsLink, publicUrl };
 }
 
 const ESTADOS = ["Disponible", "Reservado", "Vendido/Alquilado"];
 const EC = {
-  Disponible: { bg: "#d1fae5", text: "#065f46", dot: "#10b981" },
-  Reservado: { bg: "#fef3c7", text: "#92400e", dot: "#f59e0b" },
-  "Vendido/Alquilado": { bg: "#fee2e2", text: "#991b1b", dot: "#ef4444" },
+  Disponible: { bg: "#d1fae5", text: "#065f46", dot: "#10b981", border: "#a7f3d0" },
+  Reservado: { bg: "#fef3c7", text: "#92400e", dot: "#f59e0b", border: "#fde68a" },
+  "Vendido/Alquilado": { bg: "#fee2e2", text: "#991b1b", dot: "#ef4444", border: "#fecaca" },
 };
 
 function CopyShareBtns({ text }) {
@@ -211,7 +212,7 @@ function PropertyForm({ initial, onSave, onClose }) {
             <Field label="Distrito*" k="distrito" form={form} setForm={setForm} />
             <Field label="Dirección" k="direccion" form={form} setForm={setForm} />
           </div>
-          <Field label="Google Maps URL (opcional)" k="maps_url" form={form} setForm={setForm} placeholder="Se genera automático" />
+          <Field label="Google Maps URL" k="maps_url" form={form} setForm={setForm} placeholder="Opcional: pega tu enlace personalizado (déjalo vacío para auto-generar)" />
           <div style={S.section}>💰 Precio</div>
           <div style={S.row2}>
             <Field label="Precio*" k="precio" form={form} setForm={setForm} type="number" />
@@ -267,16 +268,103 @@ function PropertyForm({ initial, onSave, onClose }) {
   );
 }
 
+// Componente de detalle para vista pública (solo lectura)
+function PublicPropertyDetail({ p, onClose }) {
+  const out = buildOutputs(p);
+  const [tab, setTab] = useState("corto");
+  const [showGallery, setGallery] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const sharePublic = () => {
+    navigator.clipboard.writeText(out.publicUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+  return (
+    <div style={S.detail}>
+      <div style={S.detailHeader}>
+        <button onClick={onClose} style={S.backBtn}>← Cerrar</button>
+        <button onClick={sharePublic} style={S.editBtn}>{copied ? "✅ Enlace copiado" : "🔗 Compartir ficha"}</button>
+      </div>
+      {out.fotos.length > 0 && (
+        <div style={S.heroWrap} onClick={() => setGallery(true)}>
+          <img src={out.fotos[0]} alt="" style={S.heroImg} />
+          {out.fotos.length > 1 && <div style={S.heroBadge}>📸 {out.fotos.length} fotos</div>}
+        </div>
+      )}
+      <div style={S.detailCard}>
+        <div>
+          <div style={S.detailName}>{p.nombre}</div>
+          <div style={S.detailSub}>{p.tipo} · {p.distrito}</div>
+        </div>
+        <div style={S.precioBlock}>{out.precio}</div>
+        {p.mantenimiento ? <div style={S.mantBlock}>🧾 Mantenimiento: S/ {p.mantenimiento} mensuales</div> : null}
+      </div>
+      <div style={S.tabRow}>
+        {["corto","largo"].map(t => (
+          <button key={t} onClick={() => setTab(t)} style={{ ...S.tab, ...(tab === t ? S.tabActive : {}) }}>
+            {t === "corto" ? "⚡ Corto" : "🔥 Largo"}
+          </button>
+        ))}
+      </div>
+      <div style={S.msgBox}>
+        <pre style={S.msgPre}>{tab === "corto" ? out.mensajeCorto : out.mensajeLargo}</pre>
+        <CopyShareBtns text={tab === "corto" ? out.mensajeCorto : out.mensajeLargo} />
+      </div>
+      <div style={S.actionGrid}>
+        {out.fotos.length > 0 && <button onClick={() => setGallery(true)} style={{ ...S.actionBtn, cursor: "pointer" }}>📸 Ver fotos ({out.fotos.length})</button>}
+        {p.tour360_url && <a href={p.tour360_url} target="_blank" rel="noreferrer" style={S.actionBtn}>🌐 Tour 360</a>}
+        {p.video_url && <a href={p.video_url} target="_blank" rel="noreferrer" style={S.actionBtn}>🎥 Video</a>}
+        <a href={out.mapsLink} target="_blank" rel="noreferrer" style={S.actionBtn}>📍 Google Maps</a>
+      </div>
+      {/* Mini mapa incrustado */}
+      <div style={S.detailCard}>
+        <div style={S.sectionTitle}>📍 Mapa</div>
+        <iframe
+          title="mapa"
+          width="100%"
+          height="200"
+          style={{ border: 0, borderRadius: 12 }}
+          loading="lazy"
+          src={`https://maps.google.com/maps?q=${encodeURIComponent((p.direccion || "") + " " + (p.distrito || "") + " Lima Peru")}&output=embed`}
+        />
+      </div>
+      {out.multimedia && (
+        <div style={S.detailCard}>
+          <div style={S.sectionTitle}>Pack multimedia</div>
+          <pre style={{ ...S.msgPre, background: "none", border: "none", padding: 0, margin: "0 0 12px" }}>{out.multimedia}</pre>
+          <CopyShareBtns text={out.multimedia} />
+        </div>
+      )}
+      <div style={S.detailCard}>
+        <div style={S.sectionTitle}>Ubicación</div>
+        <pre style={{ ...S.msgPre, background: "none", border: "none", padding: 0, margin: "0 0 12px" }}>{out.ubicacion}</pre>
+        <CopyShareBtns text={out.ubicacion} />
+      </div>
+      {showGallery && <Gallery fotos={out.fotos} onClose={() => setGallery(false)} />}
+    </div>
+  );
+}
+
+// Componente de detalle para administrador (con edición y estado)
 function PropertyDetail({ p, onBack, onEdit, onEstado, isAdmin }) {
   const out = buildOutputs(p);
   const ec = EC[p.estado] || EC.Disponible;
   const [tab, setTab] = useState("corto");
   const [showGallery, setGallery] = useState(false);
+  const [copiedPublic, setCopiedPublic] = useState(false);
+  const sharePublic = () => {
+    navigator.clipboard.writeText(out.publicUrl);
+    setCopiedPublic(true);
+    setTimeout(() => setCopiedPublic(false), 2000);
+  };
   return (
     <div style={S.detail}>
       <div style={S.detailHeader}>
         <button onClick={onBack} style={S.backBtn}>← Volver</button>
-        {isAdmin && <button onClick={onEdit} style={S.editBtn}>✏️ Editar</button>}
+        <div style={{ display: "flex", gap: 8 }}>
+          {isAdmin && <button onClick={onEdit} style={S.editBtn}>✏️ Editar</button>}
+          <button onClick={sharePublic} style={S.editBtn}>{copiedPublic ? "✅ Copiado" : "🔗 Compartir"}</button>
+        </div>
       </div>
       {out.fotos.length > 0 && (
         <div style={S.heroWrap} onClick={() => setGallery(true)}>
@@ -317,10 +405,22 @@ function PropertyDetail({ p, onBack, onEdit, onEstado, isAdmin }) {
         <CopyShareBtns text={tab === "corto" ? out.mensajeCorto : out.mensajeLargo} />
       </div>
       <div style={S.actionGrid}>
-        {out.fotos.length > 0 && <button onClick={() => setGallery(true)} style={{ ...S.actionBtn, cursor: "pointer", border: "1.5px solid #e0e0d8" }}>📸 Ver fotos ({out.fotos.length})</button>}
+        {out.fotos.length > 0 && <button onClick={() => setGallery(true)} style={{ ...S.actionBtn, cursor: "pointer" }}>📸 Ver fotos ({out.fotos.length})</button>}
         {p.tour360_url && <a href={p.tour360_url} target="_blank" rel="noreferrer" style={S.actionBtn}>🌐 Tour 360</a>}
         {p.video_url && <a href={p.video_url} target="_blank" rel="noreferrer" style={S.actionBtn}>🎥 Video</a>}
         <a href={out.mapsLink} target="_blank" rel="noreferrer" style={S.actionBtn}>📍 Google Maps</a>
+      </div>
+      {/* Mini mapa incrustado */}
+      <div style={S.detailCard}>
+        <div style={S.sectionTitle}>📍 Mapa</div>
+        <iframe
+          title="mapa"
+          width="100%"
+          height="200"
+          style={{ border: 0, borderRadius: 12 }}
+          loading="lazy"
+          src={`https://maps.google.com/maps?q=${encodeURIComponent((p.direccion || "") + " " + (p.distrito || "") + " Lima Peru")}&output=embed`}
+        />
       </div>
       {out.multimedia && (
         <div style={S.detailCard}>
@@ -345,12 +445,13 @@ export default function ROCAApp() {
   const [selected, setSelected] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editTarget, setEdit] = useState(null);
-  const [openMenu, setOpenMenu] = useState(null);        // para el menú de tres puntos (editar/eliminar)
-  const [openEstadoMenu, setOpenEstadoMenu] = useState(null); // para el menú de cambio de estado (círculo)
+  const [openMenu, setOpenMenu] = useState(null);
+  const [openEstadoMenu, setOpenEstadoMenu] = useState(null);
   const [filters, setFilters] = useState({ q: "", operacion: "", tipo: "", estado: "" });
   const [isAdmin, setIsAdmin] = useState(false);
   const [loginPassword, setLoginPassword] = useState("");
   const [galleryProperty, setGalleryProperty] = useState(null);
+  const [publicProperty, setPublicProperty] = useState(null);
 
   useEffect(() => { fetchProps(); }, []);
 
@@ -365,6 +466,11 @@ export default function ROCAApp() {
     if (galleryId && properties.length) {
       const prop = properties.find(p => p.id === galleryId);
       if (prop) setGalleryProperty(prop);
+    }
+    const publicId = params.get("publica");
+    if (publicId && properties.length) {
+      const prop = properties.find(p => p.id === publicId);
+      if (prop) setPublicProperty(prop);
     }
   }, [properties]);
 
@@ -441,8 +547,23 @@ export default function ROCAApp() {
     );
   }
 
+  // Vista pública de ficha completa
+  if (publicProperty) {
+    return (
+      <PublicPropertyDetail
+        p={publicProperty}
+        onClose={() => {
+          setPublicProperty(null);
+          const url = new URL(window.location);
+          url.searchParams.delete("publica");
+          window.history.replaceState({}, "", url);
+        }}
+      />
+    );
+  }
+
   // Pantalla de bloqueo para no administradores
-  if (!isAdmin && !window.location.search.includes("id=") && !window.location.search.includes("gallery=")) {
+  if (!isAdmin && !window.location.search.includes("id=") && !window.location.search.includes("gallery=") && !window.location.search.includes("publica=")) {
     return (
       <div style={S.app}>
         <div style={S.topBar}><div style={S.logo}>🪨 ROCA</div></div>
@@ -463,7 +584,7 @@ export default function ROCAApp() {
     );
   }
 
-  // Vista de detalle de propiedad
+  // Vista de detalle de propiedad (para admin o cuando se comparte id)
   if (selected) {
     const current = properties.find(p => p.id === selected.id) || selected;
     return (
@@ -523,9 +644,16 @@ export default function ROCAApp() {
                 </div>
                 <div style={S.cardRight} onClick={e => e.stopPropagation()}>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
-                    {/* Círculo de estado */}
+                    {/* Círculo de estado con borde del mismo color más claro */}
                     <div
-                      style={{ width: 24, height: 24, borderRadius: '50%', backgroundColor: ec.dot, cursor: 'pointer' }}
+                      style={{
+                        width: 20,
+                        height: 20,
+                        borderRadius: '50%',
+                        backgroundColor: ec.dot,
+                        border: `2px solid ${ec.border}`,
+                        cursor: 'pointer'
+                      }}
                       onClick={(e) => { e.stopPropagation(); setOpenEstadoMenu(openEstadoMenu === p.id ? null : p.id); }}
                     />
                     {/* Botón de tres puntos */}
@@ -533,7 +661,7 @@ export default function ROCAApp() {
                   </div>
                 </div>
               </div>
-              {/* Menú desplegable para cambio de estado (al hacer clic en el círculo) */}
+              {/* Menú desplegable para cambio de estado */}
               {openEstadoMenu === p.id && (
                 <div style={{ ...S.dropdown, right: 12, top: 30 }} onClick={e => e.stopPropagation()}>
                   {ESTADOS.map(s => (
@@ -543,7 +671,7 @@ export default function ROCAApp() {
                   ))}
                 </div>
               )}
-              {/* Menú desplegable para editar/eliminar (tres puntos) */}
+              {/* Menú desplegable para editar/eliminar */}
               {openMenu === p.id && (
                 <div style={{ ...S.dropdown, right: 12, top: 70 }} onClick={e => e.stopPropagation()}>
                   <button style={S.dropItem} onClick={() => { setEdit(p); setShowForm(true); setOpenMenu(null); }}>✏️ Editar</button>
