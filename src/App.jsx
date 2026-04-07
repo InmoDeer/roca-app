@@ -64,7 +64,10 @@ function buildOutputs(p) {
     fotos.length > 0 ? `📸 Galería completa: ${galleryUrl}` : "",
     p.tour360_url ? `🌐 Recorrido 360: ${p.tour360_url}` : ""
   ].filter(Boolean).join("\n");
-  return { precio, mant, caracteristicasCompletas, media, ubicacion, mensajeCorto, mensajeLargo, multimedia, fotos, mapsLink, publicUrl };
+  // Mapa estático (imagen)
+  const queryAddress = encodeURIComponent((p.direccion || "") + " " + (p.distrito || "") + " Lima Peru");
+  const staticMapUrl = `https://staticmap.openstreetmap.de/staticmap.php?center=${queryAddress}&zoom=15&size=400x200&markers=${queryAddress}`;
+  return { precio, mant, caracteristicasCompletas, media, ubicacion, mensajeCorto, mensajeLargo, multimedia, fotos, mapsLink, publicUrl, staticMapUrl };
 }
 
 const ESTADOS = ["Disponible", "Reservado", "Vendido/Alquilado"];
@@ -86,13 +89,20 @@ function CopyShareBtns({ text }) {
   );
 }
 
-function Gallery({ fotos, onClose }) {
+function Gallery({ fotos, onClose, external }) {
   const [idx, setIdx] = useState(0);
   if (!fotos.length) return null;
+  const handleClose = () => {
+    if (external) {
+      window.history.back(); // Cierra la galería y vuelve atrás
+    } else {
+      onClose();
+    }
+  };
   return (
-    <div style={S.galleryOverlay} onClick={onClose}>
+    <div style={S.galleryOverlay} onClick={handleClose}>
       <div style={S.galleryBox} onClick={e => e.stopPropagation()}>
-        <button onClick={onClose} style={S.galleryClose}>✕</button>
+        <button onClick={handleClose} style={S.galleryClose}>✕</button>
         <img src={fotos[idx]} alt="" style={S.galleryImg} />
         <div style={S.galleryCount}>{idx + 1} / {fotos.length}</div>
         {fotos.length > 1 && (
@@ -282,7 +292,7 @@ function PublicPropertyDetail({ p, onClose }) {
   return (
     <div style={S.detail}>
       <div style={S.detailHeader}>
-        <button onClick={onClose} style={S.backBtn}>← Cerrar</button>
+        <button onClick={() => window.history.back()} style={S.backBtn}>← Cerrar</button>
         <button onClick={sharePublic} style={S.editBtn}>{copied ? "✅ Enlace copiado" : "🔗 Compartir ficha"}</button>
       </div>
       {out.fotos.length > 0 && (
@@ -316,17 +326,12 @@ function PublicPropertyDetail({ p, onClose }) {
         {p.video_url && <a href={p.video_url} target="_blank" rel="noreferrer" style={S.actionBtn}>🎥 Video</a>}
         <a href={out.mapsLink} target="_blank" rel="noreferrer" style={S.actionBtn}>📍 Google Maps</a>
       </div>
-      {/* Mini mapa incrustado */}
+      {/* Mapa estático */}
       <div style={S.detailCard}>
         <div style={S.sectionTitle}>📍 Mapa</div>
-        <iframe
-          title="mapa"
-          width="100%"
-          height="200"
-          style={{ border: 0, borderRadius: 12 }}
-          loading="lazy"
-          src={`https://maps.google.com/maps?q=${encodeURIComponent((p.direccion || "") + " " + (p.distrito || "") + " Lima Peru")}&output=embed`}
-        />
+        <a href={out.mapsLink} target="_blank" rel="noreferrer">
+          <img src={out.staticMapUrl} alt="Mapa de ubicación" style={{ width: '100%', borderRadius: 12, display: 'block' }} />
+        </a>
       </div>
       {out.multimedia && (
         <div style={S.detailCard}>
@@ -340,7 +345,7 @@ function PublicPropertyDetail({ p, onClose }) {
         <pre style={{ ...S.msgPre, background: "none", border: "none", padding: 0, margin: "0 0 12px" }}>{out.ubicacion}</pre>
         <CopyShareBtns text={out.ubicacion} />
       </div>
-      {showGallery && <Gallery fotos={out.fotos} onClose={() => setGallery(false)} />}
+      {showGallery && <Gallery fotos={out.fotos} onClose={() => setGallery(false)} external={false} />}
     </div>
   );
 }
@@ -410,17 +415,12 @@ function PropertyDetail({ p, onBack, onEdit, onEstado, isAdmin }) {
         {p.video_url && <a href={p.video_url} target="_blank" rel="noreferrer" style={S.actionBtn}>🎥 Video</a>}
         <a href={out.mapsLink} target="_blank" rel="noreferrer" style={S.actionBtn}>📍 Google Maps</a>
       </div>
-      {/* Mini mapa incrustado */}
+      {/* Mapa estático */}
       <div style={S.detailCard}>
         <div style={S.sectionTitle}>📍 Mapa</div>
-        <iframe
-          title="mapa"
-          width="100%"
-          height="200"
-          style={{ border: 0, borderRadius: 12 }}
-          loading="lazy"
-          src={`https://maps.google.com/maps?q=${encodeURIComponent((p.direccion || "") + " " + (p.distrito || "") + " Lima Peru")}&output=embed`}
-        />
+        <a href={out.mapsLink} target="_blank" rel="noreferrer">
+          <img src={out.staticMapUrl} alt="Mapa de ubicación" style={{ width: '100%', borderRadius: 12, display: 'block' }} />
+        </a>
       </div>
       {out.multimedia && (
         <div style={S.detailCard}>
@@ -434,7 +434,7 @@ function PropertyDetail({ p, onBack, onEdit, onEstado, isAdmin }) {
         <pre style={{ ...S.msgPre, background: "none", border: "none", padding: 0, margin: "0 0 12px" }}>{out.ubicacion}</pre>
         <CopyShareBtns text={out.ubicacion} />
       </div>
-      {showGallery && <Gallery fotos={out.fotos} onClose={() => setGallery(false)} />}
+      {showGallery && <Gallery fotos={out.fotos} onClose={() => setGallery(false)} external={false} />}
     </div>
   );
 }
@@ -532,19 +532,10 @@ export default function ROCAApp() {
     return true;
   }), [properties, filters]);
 
-  // Vista de galería exclusiva
+  // Vista de galería exclusiva (desde enlace externo)
   if (galleryProperty) {
     const out = buildOutputs(galleryProperty);
-    return (
-      <>
-        <Gallery fotos={out.fotos} onClose={() => {
-          setGalleryProperty(null);
-          const url = new URL(window.location);
-          url.searchParams.delete("gallery");
-          window.history.replaceState({}, "", url);
-        }} />
-      </>
-    );
+    return <Gallery fotos={out.fotos} onClose={() => {}} external={true} />;
   }
 
   // Vista pública de ficha completa
@@ -644,7 +635,6 @@ export default function ROCAApp() {
                 </div>
                 <div style={S.cardRight} onClick={e => e.stopPropagation()}>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
-                    {/* Círculo de estado con borde del mismo color más claro */}
                     <div
                       style={{
                         width: 20,
@@ -656,12 +646,10 @@ export default function ROCAApp() {
                       }}
                       onClick={(e) => { e.stopPropagation(); setOpenEstadoMenu(openEstadoMenu === p.id ? null : p.id); }}
                     />
-                    {/* Botón de tres puntos */}
                     <button style={S.menuDot} onClick={e => { e.stopPropagation(); setOpenMenu(openMenu === p.id ? null : p.id); }}>⋮</button>
                   </div>
                 </div>
               </div>
-              {/* Menú desplegable para cambio de estado */}
               {openEstadoMenu === p.id && (
                 <div style={{ ...S.dropdown, right: 12, top: 30 }} onClick={e => e.stopPropagation()}>
                   {ESTADOS.map(s => (
@@ -671,7 +659,6 @@ export default function ROCAApp() {
                   ))}
                 </div>
               )}
-              {/* Menú desplegable para editar/eliminar */}
               {openMenu === p.id && (
                 <div style={{ ...S.dropdown, right: 12, top: 70 }} onClick={e => e.stopPropagation()}>
                   <button style={S.dropItem} onClick={() => { setEdit(p); setShowForm(true); setOpenMenu(null); }}>✏️ Editar</button>
