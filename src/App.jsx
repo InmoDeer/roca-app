@@ -17,24 +17,6 @@ async function uploadToCloudinary(file) {
   return data.secure_url;
 }
 
-async function shortenUrl(longUrl, urlType, propertyId) {
-  try {
-    const res = await fetch("https://wvihhghuoayrrtdmemfo.supabase.co/functions/v1/shorten", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
-      },
-      body: JSON.stringify({ url: longUrl, url_type: urlType, property_id: propertyId })
-    });
-    const data = await res.json();
-    return data.shortUrl || longUrl;
-  } catch (error) {
-    console.error("Error shortening URL:", error);
-    return longUrl;
-  }
-}
-
 function buildOutputs(p) {
   const sym = p.moneda === "USD" ? "$" : "S/ ";
   const precio = `💰 ${p.operacion}: ${sym}${Number(p.precio)?.toLocaleString()}`;
@@ -56,21 +38,14 @@ function buildOutputs(p) {
   const baseUrl = typeof import.meta !== "undefined" && import.meta.env?.DEV
     ? "http://localhost:5173"
     : window.location.origin;
-  const galleryUrl = p.short_gallery_url || `${baseUrl}?id=${p.id}`;
+  const galleryUrl = `${baseUrl}?gallery=${p.id}`;
   const publicUrl = `${baseUrl}?publica=${p.id}`;
-  
-  const queryAddress = encodeURIComponent((p.direccion || "") + " " + (p.distrito || "") + " Lima Peru");
-  const fallbackMapsUrl = `https://maps.google.com/?q=${queryAddress}`;
-  const mapsLink = p.short_maps_url || p.maps_url || fallbackMapsUrl;
-  
-  const tourUrl = p.short_tour_url || p.tour360_url;
-
   const media = [
     fotos.length > 0 ? `📸 Ver fotos (${fotos.length}): ${galleryUrl}` : "",
     p.video_url ? `🎥 Video: ${p.video_url}` : "",
-    tourUrl ? `🌐 Recorrido 360: ${tourUrl}` : "",
+    p.tour360_url ? `🌐 Recorrido 360: ${p.tour360_url}` : "",
   ].filter(Boolean).join("\n");
-  
+  const mapsLink = p.maps_url || `https://maps.google.com/?q=${encodeURIComponent((p.direccion || "") + " " + (p.distrito || "") + " Lima Peru")}`;
   const ubicacion = `📍 ${p.distrito}${p.direccion ? ", " + p.direccion : ""}\n👉 Abrir en Maps: ${mapsLink}`;
   const mensajeCorto = [
     `🏠 ${p.tipo} en ${p.distrito}`, "",
@@ -87,12 +62,14 @@ function buildOutputs(p) {
   ].join("\n").replace(/\n{3,}/g, "\n\n").trim();
   const multimedia = [
     fotos.length > 0 ? `📸 Galería completa: ${galleryUrl}` : "",
-    tourUrl ? `🌐 Recorrido 360: ${tourUrl}` : ""
+    p.tour360_url ? `🌐 Recorrido 360: ${p.tour360_url}` : ""
   ].filter(Boolean).join("\n");
   // Mapa estático (imagen)
+  const queryAddress = encodeURIComponent((p.direccion || "") + " " + (p.distrito || "") + " Lima Peru");
   const staticMapUrl = `https://staticmap.openstreetmap.de/staticmap.php?center=${queryAddress}&zoom=15&size=400x200&markers=${queryAddress}`;
   return { precio, mant, caracteristicasCompletas, media, ubicacion, mensajeCorto, mensajeLargo, multimedia, fotos, mapsLink, publicUrl, staticMapUrl };
 }
+
 const ESTADOS = ["Disponible", "Reservado", "Vendido/Alquilado"];
 const EC = {
   Disponible: { bg: "#d1fae5", text: "#065f46", dot: "#10b981", border: "#a7f3d0" },
@@ -510,44 +487,15 @@ export default function ROCAApp() {
   };
 
   const saveProperty = async (payload, id) => {
-    let propertyId = id;
     if (id) {
       await supabase.from("propiedades").update(payload).eq("id", id);
     } else {
-      const { data } = await supabase.from("propiedades").insert(payload).select().single();
-      if (data) propertyId = data.id;
+      await supabase.from("propiedades").insert(payload);
     }
-
-    if (propertyId) {
-      const galleryLongUrl = `${window.location.origin}?id=${propertyId}`;
-      const queryAddress = encodeURIComponent((payload.direccion || "") + " " + (payload.distrito || "") + " Lima Peru");
-      const mapsLongUrl = payload.maps_url || `https://maps.google.com/?q=${queryAddress}`;
-      const tourLongUrl = payload.tour360_url;
-
-      const promises = [
-        shortenUrl(galleryLongUrl, "gallery", propertyId),
-        shortenUrl(mapsLongUrl, "maps", propertyId)
-      ];
-      if (tourLongUrl) {
-        promises.push(shortenUrl(tourLongUrl, "tour", propertyId));
-      }
-
-      const results = await Promise.all(promises);
-      const updates = {
-        short_gallery_url: results[0],
-        short_maps_url: results[1],
-      };
-      if (tourLongUrl) {
-        updates.short_tour_url = results[2];
-      }
-
-      await supabase.from("propiedades").update(updates).eq("id", propertyId);
-    }
-
     await fetchProps();
     setShowForm(false); setEdit(null);
-    if (selected && propertyId === selected.id) {
-      const { data } = await supabase.from("propiedades").select("*").eq("id", propertyId).single();
+    if (selected && id === selected.id) {
+      const { data } = await supabase.from("propiedades").select("*").eq("id", id).single();
       if (data) setSelected(data);
     }
   };
