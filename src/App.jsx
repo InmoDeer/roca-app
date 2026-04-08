@@ -94,7 +94,12 @@ function Gallery({ fotos, onClose, external }) {
   if (!fotos.length) return null;
   const handleClose = () => {
     if (external) {
-      window.history.back(); // Cierra la galería y vuelve atrás
+      // Intenta volver atrás; si no hay historial, cierra la pestaña (no siempre permitido)
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.close(); // Puede no funcionar en navegadores modernos
+      }
     } else {
       onClose();
     }
@@ -289,10 +294,16 @@ function PublicPropertyDetail({ p, onClose }) {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+  const handleClose = () => {
+    onClose(); // Limpia el estado y la URL
+    if (window.history.length > 1) {
+      window.history.back(); // Vuelve a la página anterior si es posible
+    }
+  };
   return (
     <div style={S.detail}>
       <div style={S.detailHeader}>
-        <button onClick={() => window.history.back()} style={S.backBtn}>← Cerrar</button>
+        <button onClick={handleClose} style={S.backBtn}>← Cerrar</button>
         <button onClick={sharePublic} style={S.editBtn}>{copied ? "✅ Enlace copiado" : "🔗 Compartir ficha"}</button>
       </div>
       {out.fotos.length > 0 && (
@@ -351,25 +362,44 @@ function PublicPropertyDetail({ p, onClose }) {
 }
 
 // Componente de detalle para administrador (con edición y estado)
-function PropertyDetail({ p, onBack, onEdit, onEstado, isAdmin }) {
+function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete, isAdmin }) {
   const out = buildOutputs(p);
   const ec = EC[p.estado] || EC.Disponible;
   const [tab, setTab] = useState("corto");
   const [showGallery, setGallery] = useState(false);
   const [copiedPublic, setCopiedPublic] = useState(false);
-  const sharePublic = () => {
+  
+  const copyPublicUrl = () => {
     navigator.clipboard.writeText(out.publicUrl);
     setCopiedPublic(true);
     setTimeout(() => setCopiedPublic(false), 2000);
   };
+  const sharePublic = () => {
+    if (navigator.share) {
+      navigator.share({ url: out.publicUrl });
+    } else {
+      copyPublicUrl();
+    }
+  };
+  const handleDelete = () => {
+    if (window.confirm("¿Eliminar este inmueble permanentemente?")) {
+      onDelete(p.id);
+      onBack(); // Regresa a la lista
+    }
+  };
+
   return (
     <div style={S.detail}>
       <div style={S.detailHeader}>
         <button onClick={onBack} style={S.backBtn}>← Volver</button>
-        <div style={{ display: "flex", gap: 8 }}>
-          {isAdmin && <button onClick={onEdit} style={S.editBtn}>✏️ Editar</button>}
-          <button onClick={sharePublic} style={S.editBtn}>{copiedPublic ? "✅ Copiado" : "🔗 Compartir"}</button>
-        </div>
+        {isAdmin && (
+          <div style={{ display: "flex", gap: 8 }}>
+            <button onClick={copyPublicUrl} style={S.iconBtn} title="Copiar enlace público">📋</button>
+            <button onClick={sharePublic} style={S.iconBtn} title="Compartir">📤</button>
+            <button onClick={onEdit} style={S.iconBtn} title="Editar">✏️</button>
+            <button onClick={handleDelete} style={{...S.iconBtn, color: "#ef4444"}} title="Eliminar">🗑</button>
+          </div>
+        )}
       </div>
       {out.fotos.length > 0 && (
         <div style={S.heroWrap} onClick={() => setGallery(true)}>
@@ -504,6 +534,7 @@ export default function ROCAApp() {
     await supabase.from("propiedades").delete().eq("id", id);
     setOpenMenu(null); await fetchProps();
     if (selected?.id === id) setSelected(null);
+    if (publicProperty?.id === id) setPublicProperty(null);
   };
 
   const changeEstado = async (id, estado) => {
@@ -585,6 +616,7 @@ export default function ROCAApp() {
           onBack={() => setSelected(null)}
           onEdit={() => { setEdit(current); setShowForm(true); }}
           onEstado={changeEstado}
+          onDelete={deleteProperty}
           isAdmin={isAdmin}
         />
         {showForm && <PropertyForm initial={editTarget} onSave={saveProperty}
@@ -624,13 +656,19 @@ export default function ROCAApp() {
         {filtered.map(p => {
           const out = buildOutputs(p);
           const ec = EC[p.estado] || EC.Disponible;
+          // Construir subtítulo: Tipo · Distrito · (Dormitorios, Ambientes, Baños) con iniciales
+          const dorm = p.dormitorios ? `${p.dormitorios}D` : "";
+          const amb = p.ambientes ? `${p.ambientes}A` : "";
+          const ban = p.banos ? `${p.banos}B` : "";
+          const chars = [dorm, amb, ban].filter(Boolean).join(" ");
+          const subtitle = `${p.tipo} · ${p.distrito}${chars ? ` · ${chars}` : ""}`;
           return (
             <div key={p.id} style={S.card} onClick={() => setSelected(p)}>
               {out.fotos.length > 0 && <img src={out.fotos[0]} alt="" style={S.cardThumb} />}
               <div style={S.cardMain}>
                 <div style={S.cardLeft}>
                   <div style={S.cardName}>{p.nombre}</div>
-                  <div style={S.cardSub}>{p.tipo} · {p.distrito} · {p.operacion}</div>
+                  <div style={S.cardSub}>{subtitle}</div>
                   <div style={S.cardPrice}>{out.precio}</div>
                 </div>
                 <div style={S.cardRight} onClick={e => e.stopPropagation()}>
@@ -705,6 +743,7 @@ const S = {
   detailHeader:   { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px", background: "#1a1a1a", position: "sticky", top: 0, zIndex: 10 },
   backBtn:        { background: "none", border: "none", color: "#e8ff4f", fontWeight: 700, fontSize: 15, cursor: "pointer", padding: 0 },
   editBtn:        { background: "#333", border: "none", color: "#fff", borderRadius: 8, padding: "7px 14px", fontSize: 13, fontWeight: 600, cursor: "pointer" },
+  iconBtn:        { background: "none", border: "none", fontSize: 20, cursor: "pointer", color: "#fff", padding: "4px 6px", borderRadius: 8, transition: "background 0.2s", ':hover': { background: "#444" } },
   heroWrap:       { position: "relative", cursor: "pointer" },
   heroImg:        { width: "100%", height: 220, objectFit: "cover", display: "block" },
   heroBadge:      { position: "absolute", bottom: 10, right: 10, background: "rgba(0,0,0,.6)", color: "#fff", borderRadius: 20, padding: "4px 10px", fontSize: 12, fontWeight: 700 },
