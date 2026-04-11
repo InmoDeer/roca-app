@@ -37,12 +37,7 @@ function buildOutputs(p) {
   ].filter(Boolean);
   const caracteristicasCompletas = caracteristicas + (extras.length > 0 ? "\n\n" + extras.join("\n") : "");
   const fotos = Array.isArray(p.fotos_urls) ? p.fotos_urls : [];
-  const baseUrl = typeof import.meta !== "undefined" && import.meta.env?.DEV
-    ? "http://localhost:5173"
-    : window.location.origin;
-  const propiedadUrl = `${baseUrl}?id=${p.id}`;
   const media = [
-    fotos.length > 0 ? `📸 Ver fotos (${fotos.length}): ${propiedadUrl}` : "",
     p.video_url ? `🎥 Video: ${p.video_url}` : "",
     p.tour360_url ? `🌐 Recorrido 360: ${p.tour360_url}` : "",
   ].filter(Boolean).join("\n");
@@ -64,10 +59,9 @@ function buildOutputs(p) {
     "", media, "", ubicacion, "", "👉 Disponible para visitas", "", "¿En qué fecha te gustaría visitar?",
   ].join("\n").replace(/\n{3,}/g, "\n\n").trim();
   const multimedia = [
-    fotos.length > 0 ? `📸 Galería completa: ${propiedadUrl}` : "",
     p.tour360_url ? `🌐 Recorrido 360: ${p.tour360_url}` : ""
   ].filter(Boolean).join("\n");
-  return { precio, mant, caracteristicasCompletas, media, ubicacion, mensajeCorto, mensajeLargo, multimedia, fotos, mapsLink, wazeLink, propiedadUrl };
+  return { precio, mant, caracteristicasCompletas, media, ubicacion, mensajeCorto, mensajeLargo, multimedia, fotos, mapsLink, wazeLink };
 }
 
 const ESTADOS = ["Disponible", "Reservado", "Vendido/Alquilado"];
@@ -77,7 +71,6 @@ const EC = {
   "Vendido/Alquilado": { bg: "#fee2e2", text: "#991b1b", dot: "#ef4444", border: "#fecaca" },
 };
 
-// ─── SWIPE HOOK (solo para admin, no clientes) ───────────────
 function useSwipeBack(onSwipeBack, enabled = true) {
   const touchStartX = useRef(null);
   const touchStartY = useRef(null);
@@ -91,7 +84,6 @@ function useSwipeBack(onSwipeBack, enabled = true) {
       if (touchStartX.current === null) return;
       const dx = e.changedTouches[0].clientX - touchStartX.current;
       const dy = Math.abs(e.changedTouches[0].clientY - touchStartY.current);
-      // Swipe derecha desde el borde izquierdo, más horizontal que vertical
       if (dx > 60 && dy < 80 && touchStartX.current < 40) {
         onSwipeBack();
       }
@@ -142,7 +134,6 @@ function Gallery({ fotos, onClose }) {
   );
 }
 
-// ─── BOTONES DE NAVEGACIÓN (Maps / Waze) ────────────────────
 function NavButtons({ mapsLink, wazeLink }) {
   return (
     <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
@@ -315,82 +306,21 @@ function PropertyForm({ initial, onSave, onClose }) {
   );
 }
 
-// ─── FICHA PÚBLICA (solo lectura, sin contraseña) ───────────
-function PublicDetail({ p }) {
-  const out = buildOutputs(p);
-  const [showGallery, setGallery] = useState(false);
-  const ec = EC[p.estado] || EC.Disponible;
-  return (
-    <div style={{ ...S.detail, paddingTop: 0 }}>
-      {out.fotos.length > 0 && (
-        <div style={S.heroWrap} onClick={() => setGallery(true)}>
-          <img src={out.fotos[0]} alt="" style={S.heroImg} />
-          {out.fotos.length > 1 && <div style={S.heroBadge}>📸 {out.fotos.length} fotos · toca para ver</div>}
-        </div>
-      )}
-      <div style={S.detailCard}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
-          <div>
-            <div style={S.detailName}>{p.nombre}</div>
-            <div style={S.detailSub}>{p.tipo} · {p.distrito}</div>
-          </div>
-          <span style={{ ...S.estadoBadge, backgroundColor: ec.bg, color: ec.text }}>
-            <span style={{ width: 7, height: 7, borderRadius: "50%", background: ec.dot, display: "inline-block", marginRight: 5 }} />
-            {p.estado}
-          </span>
-        </div>
-        <div style={S.precioBlock}>{out.precio}</div>
-        {p.mantenimiento ? <div style={S.mantBlock}>🧾 Mantenimiento: S/ {p.mantenimiento} mensuales</div> : null}
-      </div>
-      {/* Características */}
-      <div style={S.detailCard}>
-        <div style={S.sectionTitle}>Características</div>
-        <pre style={{ ...S.msgPre, background: "none", border: "none", padding: 0, margin: 0 }}>
-          {out.caracteristicasCompletas}
-        </pre>
-      </div>
-      {/* Botones media */}
-      <div style={S.actionGrid}>
-        {out.fotos.length > 0 && <button onClick={() => setGallery(true)} style={{ ...S.actionBtn, cursor: "pointer" }}>📸 Ver fotos ({out.fotos.length})</button>}
-        {p.tour360_url && <a href={p.tour360_url} target="_blank" rel="noreferrer" style={S.actionBtn}>🌐 Tour 360</a>}
-        {p.video_url && <a href={p.video_url} target="_blank" rel="noreferrer" style={S.actionBtn}>🎥 Video</a>}
-      </div>
-      {/* Ubicación */}
-      <div style={S.detailCard}>
-        <div style={S.sectionTitle}>📍 Ubicación</div>
-        <pre style={{ ...S.msgPre, background: "none", border: "none", padding: 0, margin: "0 0 12px" }}>{out.ubicacion}</pre>
-        <CopyShareBtns text={out.ubicacion} />
-      </div>
-      {showGallery && <Gallery fotos={out.fotos} onClose={() => setGallery(false)} />}
-    </div>
-  );
-}
-
 // ─── FICHA ADMIN (con edición) ───────────────────────────────
 function PropertyDetail({ p, onBack, onEdit, onEstado }) {
   const out = buildOutputs(p);
   const ec = EC[p.estado] || EC.Disponible;
   const [tab, setTab] = useState("corto");
   const [showGallery, setGallery] = useState(false);
-  const [copiedLink, setCopiedLink] = useState(false);
 
   // Swipe para volver — solo admin
   useSwipeBack(onBack, true);
-
-  const copyLink = () => {
-    navigator.clipboard.writeText(out.propiedadUrl);
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2000);
-  };
 
   return (
     <div style={S.detail}>
       <div style={S.detailHeader}>
         <button onClick={onBack} style={S.backBtn}>← Volver</button>
-        <div style={{ display: "flex", gap: 8 }}>
-          <button onClick={copyLink} style={S.editBtn}>{copiedLink ? "✅ Copiado" : "🔗 Compartir"}</button>
-          <button onClick={onEdit} style={S.editBtn}>✏️ Editar</button>
-        </div>
+        <button onClick={onEdit} style={S.editBtn}>✏️ Editar</button>
       </div>
       {out.fotos.length > 0 && (
         <div style={S.heroWrap} onClick={() => setGallery(true)}>
@@ -427,8 +357,8 @@ function PropertyDetail({ p, onBack, onEdit, onEstado }) {
         {out.fotos.length > 0 && <button onClick={() => setGallery(true)} style={{ ...S.actionBtn, cursor: "pointer" }}>📸 Ver fotos ({out.fotos.length})</button>}
         {p.tour360_url && <a href={p.tour360_url} target="_blank" rel="noreferrer" style={S.actionBtn}>🌐 Tour 360</a>}
         {p.video_url && <a href={p.video_url} target="_blank" rel="noreferrer" style={S.actionBtn}>🎥 Video</a>}
+        <a href={out.mapsLink} target="_blank" rel="noreferrer" style={S.actionBtn}>🗺 Ver mapa</a>
       </div>
-      {/* Ubicación con Maps/Waze */}
       <div style={S.detailCard}>
         <div style={S.sectionTitle}>📍 Ubicación</div>
         <pre style={{ ...S.msgPre, background: "none", border: "none", padding: 0, margin: "0 0 12px" }}>{out.ubicacion}</pre>
@@ -458,18 +388,12 @@ export default function ROCAApp() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [loginPassword, setLoginPassword] = useState("");
 
-  // Leer ?id= de la URL para vista pública
-  const urlParams = new URLSearchParams(window.location.search);
-  const publicId = urlParams.get("id");
-  const isPublicView = !!publicId;
-
   useEffect(() => {
     const admin = localStorage.getItem("roca_admin");
     if (admin === "true") setIsAdmin(true);
     fetchProps();
   }, []);
 
-  // Swipe para volver en lista admin
   useSwipeBack(() => {
     if (selected) setSelected(null);
   }, isAdmin && !!selected);
@@ -513,20 +437,6 @@ export default function ROCAApp() {
     return true;
   }), [properties, filters]);
 
-  // ── Vista pública por ?id= ──────────────────────────────
-  if (isPublicView) {
-    const prop = properties.find(p => p.id === publicId);
-    if (loading) return <div style={S.loadingWrap}><div style={S.logo}>🪨 ROCA</div><div style={{ color: "#888", marginTop: 12 }}>Cargando...</div></div>;
-    if (!prop) return <div style={{ padding: 32, textAlign: "center", color: "#888" }}>Inmueble no encontrado.</div>;
-    return (
-      <div style={S.app}>
-        <div style={S.topBar}><div style={S.logo}>🪨 ROCA</div></div>
-        <PublicDetail p={prop} />
-      </div>
-    );
-  }
-
-  // ── Pantalla de login ───────────────────────────────────
   if (!isAdmin) {
     return (
       <div style={S.authWrap}>
@@ -546,7 +456,6 @@ export default function ROCAApp() {
     );
   }
 
-  // ── Vista detalle admin ─────────────────────────────────
   if (selected) {
     const current = properties.find(p => p.id === selected.id) || selected;
     return (
@@ -559,7 +468,6 @@ export default function ROCAApp() {
     );
   }
 
-  // ── Lista admin ─────────────────────────────────────────
   return (
     <div style={S.app} onClick={() => setOpenMenu(null)}>
       <div style={S.topBar}>
