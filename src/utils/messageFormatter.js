@@ -98,6 +98,7 @@ export function buildOutputs(p) {
     p.frase_destacada ? `\n✨ ${p.frase_destacada}` : "",
     "",
     media,
+    fotos.length > 0 ? `📸 ${fotos.length} fotos` : "",
     "",
     ubicacion,
     "",
@@ -105,12 +106,21 @@ export function buildOutputs(p) {
     "",
     "¿En qué fecha te gustaría visitar?",
   ]
+    .filter(Boolean)
     .join("\n")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
 
-  // Multimedia
-  const multimedia = [p.tour360_url ? `🌐 Recorrido 360: ${p.tour360_url}` : ""]
+  // Property URL for sharing (used in multimedia)
+  const baseUrl = window.location.origin;
+  const propiedadUrl = `${baseUrl}?id=${p.id}`;
+
+  // Multimedia pack
+  const multimedia = [
+    fotos.length > 0 ? `📸 Galería completa: ${propiedadUrl}` : "",
+    p.tour360_url ? `🌐 Recorrido 360: ${p.tour360_url}` : "",
+    p.video_url ? `🎥 Video: ${p.video_url}` : "",
+  ]
     .filter(Boolean)
     .join("\n");
 
@@ -126,5 +136,6 @@ export function buildOutputs(p) {
     fotos,
     mapsLink,
     wazeLink,
+    propiedadUrl,
   };
 }
