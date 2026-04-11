@@ -7,7 +7,7 @@ import { buildOutputs } from "./utils/messageFormatter";
 import { ESTADO_COLORS, ESTADOS, OPERATIONS, PROPERTY_TYPES } from "./utils/constants";
 
 const S = {
-  app: { minHeight: "100vh", background: "#f4f4f0", fontFamily: "'DM Sans',sans-serif" },
+  app: { minHeight: "100vh", background: "#f4f4f0", fontFamily: "'DM Sans',sans-serif", paddingBottom: 80 },
   authWrap: { minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f4f4f4" },
   authCard: { background: "#fff", padding: 32, borderRadius: 20, width: "90%", maxWidth: 340, textAlign: "center", boxShadow: "0 4px 20px rgba(0,0,0,.08)" },
   input: { width: "100%", padding: "12px 14px", border: "1.5px solid #ddd", borderRadius: 10, fontSize: 15, outline: "none", boxSizing: "border-box" },
@@ -15,12 +15,12 @@ const S = {
   newBtn: { background: "#e8ff4f", color: "#1a1a1a", border: "none", borderRadius: 8, padding: "7px 14px", fontSize: 13, fontWeight: 700, cursor: "pointer" },
   topBar: { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px", background: "#1a1a1a", position: "sticky", top: 0, zIndex: 10 },
   logo: { fontWeight: 900, fontSize: 18, color: "#e8ff4f" },
-  searchWrap: { padding: "12px 16px 0" },
+  searchWrap: { padding: "12px 16px 0", background: "#f4f4f0", position: "sticky", top: 52, zIndex: 5 },
   searchInput: { width: "100%", padding: "11px 14px", border: "1.5px solid #ddd", borderRadius: 10, fontSize: 14, outline: "none", boxSizing: "border-box" },
-  filterRow: { display: "flex", gap: 8, padding: "10px 16px 0", overflowX: "auto" },
-  filterSelect: { padding: "7px 10px", border: "1.5px solid #e0e0d8", borderRadius: 8, fontSize: 13, background: "#fff", cursor: "pointer", whiteSpace: "nowrap" },
-  count: { padding: "10px 16px 0", fontSize: 12, color: "#888", fontWeight: 600 },
-  list: { padding: "10px 16px 80px" },
+  filterRow: { display: "flex", gap: 8, padding: "10px 16px 0", overflowX: "auto", flexWrap: "wrap" },
+  filterSelect: { minWidth: 85, padding: "7px 8px", border: "1.5px solid #e0e0d8", borderRadius: 8, fontSize: 12, background: "#fff", cursor: "pointer", whiteSpace: "nowrap" },
+  count: { padding: "10px 16px 0", fontSize: 12, color: "#888", fontWeight: 600, background: "#f4f4f0" },
+  list: { background: "#f4f4f0", padding: "16px 16px 80px", minHeight: "100vh" },
   empty: { textAlign: "center", padding: "40px 0", color: "#aaa", fontSize: 14 },
   card: { background: "#fff", borderRadius: 14, marginBottom: 10, overflow: "hidden", boxShadow: "0 1px 4px rgba(0,0,0,.05)", border: "1.5px solid #eee" },
   cardMain: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: 14 },
