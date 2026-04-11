@@ -164,7 +164,7 @@ export default function ROCAApp() {
               <div style={S.cardMain}>
                 <div style={S.cardLeft}>
                   <div style={S.cardName}>{p.nombre}</div>
-                  <div style={S.cardSub}>{p.tipo} · {p.distrito} · {p.operacion}</div>
+                  <div style={S.cardSub}>{p.tipo} · {p.distrito}</div>
                   <div style={S.cardPrice}>{out.precio}</div>
                 </div>
 
