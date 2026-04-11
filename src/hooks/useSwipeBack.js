@@ -14,6 +14,7 @@ export function useSwipeBack(onSwipeBack, enabled = true) {
     if (!enabled) return;
 
     const onTouchStart = (e) => {
+      if (e.target.closest('button, a, select, input')) return;
       touchStartX.current = e.touches[0].clientX;
       touchStartY.current = e.touches[0].clientY;
     };
@@ -24,8 +25,9 @@ export function useSwipeBack(onSwipeBack, enabled = true) {
       const dx = e.changedTouches[0].clientX - touchStartX.current;
       const dy = Math.abs(e.changedTouches[0].clientY - touchStartY.current);
 
-      // Swipe: > 60px right, < 80px vertical, from left edge (< 40px)
-      if (dx > 60 && dy < 80 && touchStartX.current < 40) {
+      // Swipe: > 50px horizontal, < 80px vertical
+      if (dx > 50 && dy < 80) {
+        e.preventDefault();
         onSwipeBack();
       }
 
@@ -33,8 +35,8 @@ export function useSwipeBack(onSwipeBack, enabled = true) {
       touchStartY.current = null;
     };
 
-    document.addEventListener("touchstart", onTouchStart);
-    document.addEventListener("touchend", onTouchEnd);
+    document.addEventListener("touchstart", onTouchStart, { passive: false });
+    document.addEventListener("touchend", onTouchEnd, { passive: false });
 
     return () => {
       document.removeEventListener("touchstart", onTouchStart);

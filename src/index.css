@@ -52,6 +52,8 @@
 
 body {
   margin: 0;
+  overscroll-behavior: none;
+  touch-action: pan-y;
 }
 
 #root {
@@ -64,6 +66,7 @@ body {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  overscroll-behavior: none;
 }
 
 h1,
