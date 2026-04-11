@@ -77,12 +77,13 @@ export function buildOutputs(p) {
       : "",
     p.banos ? `🚿 ${p.banos} ${p.banos == 1 ? "baño" : "baños"}` : "",
     p.piso ? `🏬 Piso ${p.piso}` : "",
+    p.antiguedad ? `🏗 ${p.antiguedad}` : "",
     "",
     "👉 Disponible para visitas",
     "",
     "¿Te interesa? Te paso más info 👍",
   ]
-    .filter((l) => l !== null)
+    .filter((l) => l !== null && l !== "")
     .join("\n")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
