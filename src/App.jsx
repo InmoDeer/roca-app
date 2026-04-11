@@ -1,573 +1,78 @@
-import { useState, useMemo, useEffect, useRef } from "react";
-import { createClient } from "@supabase/supabase-js";
+import { useState, useMemo } from "react";
+import { useAuth } from "./hooks/useAuth";
+import { useProperties } from "./hooks/useProperties";
+import { PropertyForm } from "./features/properties/PropertyForm.jsx";
+import { PropertyDetail } from "./features/properties/PropertyDetail.jsx";
+import { buildOutputs } from "./utils/messageFormatter";
+import { ESTADO_COLORS, ESTADOS, OPERATIONS, PROPERTY_TYPES } from "./utils/constants";
 
-const SUPABASE_URL = "https://wvihhghuoayrrtdmemfo.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind2aWhoZ2h1b2F5cnJ0ZG1lbWZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0NDU2NDIsImV4cCI6MjA5MTAyMTY0Mn0.86rstgilTvVZgV5KRNPmb7oBx8Xa73e39Sd62_OmkVI";
-const CLOUDINARY_CLOUD = "dzqfw8hm3";
-const CLOUDINARY_PRESET = "roca_fotos";
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-async function uploadToCloudinary(file) {
-  const form = new FormData();
-  form.append("file", file);
-  form.append("upload_preset", CLOUDINARY_PRESET);
-  form.append("folder", "roca");
-  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, { method: "POST", body: form });
-  const data = await res.json();
-  return data.secure_url;
-}
-
-function buildOutputs(p) {
-  const sym = p.moneda === "USD" ? "$" : "S/ ";
-  const precio = `💰 ${p.operacion}: ${sym}${Number(p.precio)?.toLocaleString()}`;
-  const mant = p.mantenimiento ? `\n🧾 Mantenimiento: S/ ${p.mantenimiento} mensuales` : "";
-  const caracteristicas = [
-    p.dormitorios ? `🛏 ${p.dormitorios} ${p.dormitorios == 1 ? "dormitorio" : "dormitorios"}` : "",
-    p.ambientes   ? `🏢 ${p.ambientes} ${p.ambientes == 1 ? "ambiente" : "ambientes"}` : "",
-    p.banos       ? `🚿 ${p.banos} ${p.banos == 1 ? "baño" : "baños"}` : "",
-    p.area_m2     ? `📐 ${p.area_m2} m²` : "",
-    p.piso        ? `🏬 Piso ${p.piso}` : "",
-    p.antiguedad  ? `🏗 ${p.antiguedad}` : "",
-  ].filter(Boolean).join("\n");
-  const extras = [
-    p.cochera ? "🚗 Cochera" : "", p.ascensor ? "🛗 Ascensor" : "",
-    p.amoblado ? "🛋 Amoblado" : "", p.area_servicio ? "🧹 Área de servicio" : "",
-    p.mascotas === "Sí" ? "🐶 Mascotas permitidas" : "",
-    p.mascotas === "A tratar" ? "🐶 Mascotas: consultar" : "",
-  ].filter(Boolean);
-  const caracteristicasCompletas = caracteristicas + (extras.length > 0 ? "\n\n" + extras.join("\n") : "");
-  const fotos = Array.isArray(p.fotos_urls) ? p.fotos_urls : [];
-  const baseUrl = typeof import.meta !== "undefined" && import.meta.env?.DEV
-    ? "http://localhost:5173"
-    : window.location.origin;
-  const propiedadUrl = `${baseUrl}?id=${p.id}`;
-  const media = [
-    fotos.length > 0 ? `📸 Ver fotos (${fotos.length}): ${propiedadUrl}` : "",
-    p.video_url ? `🎥 Video: ${p.video_url}` : "",
-    p.tour360_url ? `🌐 Recorrido 360: ${p.tour360_url}` : "",
-  ].filter(Boolean).join("\n");
-  const mapsLink = p.maps_url || `https://maps.google.com/?q=${encodeURIComponent((p.direccion || "") + " " + (p.distrito || "") + " Lima Peru")}`;
-  const wazeLink = `https://waze.com/ul?q=${encodeURIComponent((p.direccion || "") + " " + (p.distrito || "") + " Lima Peru")}`;
-  const ubicacion = `📍 ${p.distrito}${p.direccion ? ", " + p.direccion : ""}\n👉 Maps: ${mapsLink}`;
-  const mensajeCorto = [
-    `🏠 ${p.tipo} en ${p.distrito}`, "",
-    precio, "",
-    p.dormitorios ? `🛏 ${p.dormitorios} ${p.dormitorios == 1 ? "dormitorio" : "dormitorios"}` : "",
-    p.ambientes ? `🏢 ${p.ambientes} ${p.ambientes == 1 ? "ambiente" : "ambientes"}` : "",
-    p.banos ? `🚿 ${p.banos} ${p.banos == 1 ? "baño" : "baños"}` : "",
-    p.piso ? `🏬 Piso ${p.piso}` : "",
-    "", "👉 Disponible para visitas", "", "¿Te interesa? Te paso más info 👍",
-  ].filter(l => l !== null).join("\n").replace(/\n{3,}/g, "\n\n").trim();
-  const mensajeLargo = [
-    `🏠 ${p.tipo} en ${p.distrito}`, "", precio + mant, "",
-    caracteristicasCompletas, p.frase_destacada ? `\n✨ ${p.frase_destacada}` : "",
-    "", media, "", ubicacion, "", "👉 Disponible para visitas", "", "¿En qué fecha te gustaría visitar?",
-  ].join("\n").replace(/\n{3,}/g, "\n\n").trim();
-  const multimedia = [
-    fotos.length > 0 ? `📸 Galería completa: ${propiedadUrl}` : "",
-    p.tour360_url ? `🌐 Recorrido 360: ${p.tour360_url}` : ""
-  ].filter(Boolean).join("\n");
-  return { precio, mant, caracteristicasCompletas, media, ubicacion, mensajeCorto, mensajeLargo, multimedia, fotos, mapsLink, wazeLink, propiedadUrl };
-}
-
-const ESTADOS = ["Disponible", "Reservado", "Vendido/Alquilado"];
-const EC = {
-  Disponible: { bg: "#d1fae5", text: "#065f46", dot: "#10b981", border: "#a7f3d0" },
-  Reservado: { bg: "#fef3c7", text: "#92400e", dot: "#f59e0b", border: "#fde68a" },
-  "Vendido/Alquilado": { bg: "#fee2e2", text: "#991b1b", dot: "#ef4444", border: "#fecaca" },
+const S = {
+  app: { minHeight: "100vh", background: "#f4f4f0", fontFamily: "'DM Sans',sans-serif" },
+  authWrap: { minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f4f4f4" },
+  authCard: { background: "#fff", padding: 32, borderRadius: 20, width: "90%", maxWidth: 340, textAlign: "center", boxShadow: "0 4px 20px rgba(0,0,0,.08)" },
+  input: { width: "100%", padding: "12px 14px", border: "1.5px solid #ddd", borderRadius: 10, fontSize: 15, outline: "none", boxSizing: "border-box" },
+  signOutBtn: { background: "#f0f0ec", border: "none", borderRadius: 8, padding: "7px 14px", fontSize: 13, fontWeight: 600, cursor: "pointer" },
+  newBtn: { background: "#e8ff4f", color: "#1a1a1a", border: "none", borderRadius: 8, padding: "7px 14px", fontSize: 13, fontWeight: 700, cursor: "pointer" },
+  topBar: { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px", background: "#1a1a1a", position: "sticky", top: 0, zIndex: 10 },
+  logo: { fontWeight: 900, fontSize: 18, color: "#e8ff4f" },
+  searchWrap: { padding: "12px 16px 0" },
+  searchInput: { width: "100%", padding: "11px 14px", border: "1.5px solid #ddd", borderRadius: 10, fontSize: 14, outline: "none", boxSizing: "border-box" },
+  filterRow: { display: "flex", gap: 8, padding: "10px 16px 0", overflowX: "auto" },
+  filterSelect: { padding: "7px 10px", border: "1.5px solid #e0e0d8", borderRadius: 8, fontSize: 13, background: "#fff", cursor: "pointer", whiteSpace: "nowrap" },
+  count: { padding: "10px 16px 0", fontSize: 12, color: "#888", fontWeight: 600 },
+  list: { padding: "10px 16px 80px" },
+  empty: { textAlign: "center", padding: "40px 0", color: "#aaa", fontSize: 14 },
+  card: { background: "#fff", borderRadius: 14, marginBottom: 10, overflow: "hidden", boxShadow: "0 1px 4px rgba(0,0,0,.05)", border: "1.5px solid #eee" },
+  cardMain: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: 14 },
+  cardLeft: { flex: 1 },
+  cardName: { fontWeight: 800, fontSize: 15, color: "#1a1a1a", marginBottom: 3 },
+  cardSub: { fontSize: 12, color: "#888", marginBottom: 6 },
+  cardPrice: { fontSize: 13, fontWeight: 700, color: "#1a1a1a" },
+  cardRight: { display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8 },
+  menuDot: { background: "none", border: "none", fontSize: 18, cursor: "pointer", color: "#aaa", padding: 0 },
+  dropdown: { background: "#fff", borderRadius: 10, margin: "0 14px 14px", padding: 6, boxShadow: "0 4px 16px rgba(0,0,0,.12)", position: "absolute", right: 0, left: 0, zIndex: 20 },
+  dropItem: { display: "block", width: "100%", padding: "10px 12px", background: "none", border: "none", textAlign: "left", fontSize: 14, cursor: "pointer", borderRadius: 6 },
+  dropDivider: { height: 1, background: "#eee", margin: "6px 0" },
+  loadingWrap: { minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "#f4f4f4" },
 };
 
-// ─── SWIPE HOOK (solo para admin, no clientes) ───────────────
-function useSwipeBack(onSwipeBack, enabled = true) {
-  const touchStartX = useRef(null);
-  const touchStartY = useRef(null);
-  useEffect(() => {
-    if (!enabled) return;
-    const onTouchStart = (e) => {
-      touchStartX.current = e.touches[0].clientX;
-      touchStartY.current = e.touches[0].clientY;
-    };
-    const onTouchEnd = (e) => {
-      if (touchStartX.current === null) return;
-      const dx = e.changedTouches[0].clientX - touchStartX.current;
-      const dy = Math.abs(e.changedTouches[0].clientY - touchStartY.current);
-      // Swipe derecha desde el borde izquierdo, más horizontal que vertical
-      if (dx > 60 && dy < 80 && touchStartX.current < 40) {
-        onSwipeBack();
-      }
-      touchStartX.current = null;
-      touchStartY.current = null;
-    };
-    document.addEventListener("touchstart", onTouchStart);
-    document.addEventListener("touchend", onTouchEnd);
-    return () => {
-      document.removeEventListener("touchstart", onTouchStart);
-      document.removeEventListener("touchend", onTouchEnd);
-    };
-  }, [onSwipeBack, enabled]);
-}
-
-function CopyShareBtns({ text }) {
-  const [copied, setCopied] = useState(false);
-  const copy = () => { navigator.clipboard.writeText(text); setCopied(true); setTimeout(() => setCopied(false), 2000); };
-  const share = () => { if (navigator.share) navigator.share({ text }); else copy(); };
-  return (
-    <div style={{ display: "flex", gap: 8 }}>
-      <button onClick={copy} style={S.copyBtn}>{copied ? "✅ Copiado" : "📋 Copiar"}</button>
-      <button onClick={share} style={S.shareBtn}>📤 Compartir</button>
-    </div>
-  );
-}
-
-function Gallery({ fotos, onClose }) {
-  const [idx, setIdx] = useState(0);
-  if (!fotos.length) return null;
-  return (
-    <div style={S.galleryOverlay} onClick={onClose}>
-      <div style={S.galleryBox} onClick={e => e.stopPropagation()}>
-        <button onClick={onClose} style={S.galleryClose}>✕</button>
-        <img src={fotos[idx]} alt="" style={S.galleryImg} />
-        <div style={S.galleryCount}>{idx + 1} / {fotos.length}</div>
-        {fotos.length > 1 && (
-          <div style={S.galleryNav}>
-            <button onClick={() => setIdx(i => (i - 1 + fotos.length) % fotos.length)} style={S.galleryArrow}>‹</button>
-            <button onClick={() => setIdx(i => (i + 1) % fotos.length)} style={S.galleryArrow}>›</button>
-          </div>
-        )}
-        <div style={S.galleryThumbs}>
-          {fotos.map((f, i) => <img key={i} src={f} alt="" onClick={() => setIdx(i)} style={{ ...S.galleryThumb, outline: i === idx ? "2px solid #e8ff4f" : "none" }} />)}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── BOTONES DE NAVEGACIÓN (Maps / Waze) ────────────────────
-function NavButtons({ mapsLink, wazeLink }) {
-  return (
-    <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
-      <a href={mapsLink} target="_blank" rel="noreferrer"
-        style={{ ...S.navBtn, background: "#4285F4", color: "#fff" }}>
-        🗺 Google Maps
-      </a>
-      <a href={wazeLink} target="_blank" rel="noreferrer"
-        style={{ ...S.navBtn, background: "#00D4FF", color: "#1a1a1a" }}>
-        🔵 Waze
-      </a>
-    </div>
-  );
-}
-
-function Field({ label, k, form, setForm, type = "text", placeholder = "" }) {
-  return (
-    <div style={S.field}>
-      <label style={S.label}>{label}</label>
-      <input style={S.input} type={type} value={form[k] ?? ""} placeholder={placeholder}
-        onChange={e => setForm(f => ({ ...f, [k]: type === "number" ? (e.target.value === "" ? "" : Number(e.target.value)) : e.target.value }))} />
-    </div>
-  );
-}
-function Sel({ label, k, form, setForm, opts }) {
-  return (
-    <div style={S.field}>
-      <label style={S.label}>{label}</label>
-      <select style={S.input} value={form[k] ?? ""} onChange={e => setForm(f => ({ ...f, [k]: e.target.value }))}>
-        {opts.map(o => <option key={o} value={o}>{o}</option>)}
-      </select>
-    </div>
-  );
-}
-function Check({ label, k, form, setForm }) {
-  return (
-    <label style={S.checkRow}>
-      <input type="checkbox" checked={!!form[k]} onChange={e => setForm(f => ({ ...f, [k]: e.target.checked }))} style={{ marginRight: 8 }} />
-      {label}
-    </label>
-  );
-}
-
-function PropertyForm({ initial, onSave, onClose }) {
-  const blank = {
-    nombre: "", tipo: "Departamento", operacion: "Alquiler",
-    distrito: "", direccion: "", maps_url: "", precio: "", moneda: "PEN", mantenimiento: "",
-    dormitorios: "", ambientes: "", banos: "", area_m2: "", piso: "", antiguedad: "",
-    cochera: false, ascensor: false, amoblado: false, area_servicio: false,
-    mascotas: "No", fotos_urls: [], video_url: "", tour360_url: "", frase_destacada: "",
-    estado: "Disponible",
-  };
-  const [form, setForm] = useState(initial || blank);
-  const [uploading, setUp] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const fileRef = useRef();
-
-  const handlePhotos = async (e) => {
-    const files = Array.from(e.target.files);
-    if (!files.length) return;
-    setUp(true);
-    const urls = await Promise.all(files.map(uploadToCloudinary));
-    setForm(f => ({ ...f, fotos_urls: [...(f.fotos_urls || []), ...urls] }));
-    setUp(false);
-  };
-  const removePhoto = (i) => setForm(f => { const arr = [...f.fotos_urls]; arr.splice(i, 1); return { ...f, fotos_urls: arr }; });
-
-  const handleSave = async () => {
-    if (!form.nombre || !form.distrito || !form.precio) return;
-    setSaving(true);
-    const payload = {
-      nombre: form.nombre, tipo: form.tipo, operacion: form.operacion,
-      estado: form.estado || "Disponible", distrito: form.distrito,
-      direccion: form.direccion || null, maps_url: form.maps_url || null,
-      precio: Number(form.precio), moneda: form.moneda,
-      mantenimiento: form.mantenimiento ? Number(form.mantenimiento) : null,
-      dormitorios: form.dormitorios ? Number(form.dormitorios) : null,
-      ambientes: form.ambientes ? Number(form.ambientes) : null,
-      banos: form.banos ? Number(form.banos) : null,
-      area_m2: form.area_m2 ? Number(form.area_m2) : null,
-      piso: form.piso ? Number(form.piso) : null,
-      antiguedad: form.antiguedad || null,
-      cochera: !!form.cochera, ascensor: !!form.ascensor,
-      amoblado: !!form.amoblado, area_servicio: !!form.area_servicio,
-      mascotas: form.mascotas || "No", fotos_urls: form.fotos_urls || [],
-      video_url: form.video_url || null, tour360_url: form.tour360_url || null,
-      frase_destacada: form.frase_destacada || null,
-    };
-    await onSave(payload, initial?.id);
-    setSaving(false);
-  };
-
-  return (
-    <div style={S.overlay} onClick={onClose}>
-      <div style={S.modal} onClick={e => e.stopPropagation()}>
-        <div style={S.modalHeader}>
-          <span style={S.modalTitle}>{initial ? "✏️ Editar inmueble" : "➕ Nuevo inmueble"}</span>
-          <button onClick={onClose} style={S.closeBtn}>✕</button>
-        </div>
-        <div style={S.modalBody}>
-          <div style={S.section}>📌 General</div>
-          <Field label="Nombre*" k="nombre" form={form} setForm={setForm} placeholder="Depa Lince 98m²" />
-          <div style={S.row2}>
-            <Sel label="Tipo*" k="tipo" form={form} setForm={setForm} opts={["Departamento","Casa","Local","Oficina","Terreno"]} />
-            <Sel label="Operación*" k="operacion" form={form} setForm={setForm} opts={["Venta","Alquiler"]} />
-          </div>
-          <div style={S.section}>📍 Ubicación</div>
-          <div style={S.row2}>
-            <Field label="Distrito*" k="distrito" form={form} setForm={setForm} />
-            <Field label="Dirección" k="direccion" form={form} setForm={setForm} />
-          </div>
-          <Field label="Google Maps URL (opcional)" k="maps_url" form={form} setForm={setForm} placeholder="Se genera automático" />
-          <div style={S.section}>💰 Precio</div>
-          <div style={S.row2}>
-            <Field label="Precio*" k="precio" form={form} setForm={setForm} type="number" />
-            <Sel label="Moneda*" k="moneda" form={form} setForm={setForm} opts={["PEN","USD"]} />
-          </div>
-          <Field label="Mantenimiento mensual" k="mantenimiento" form={form} setForm={setForm} type="number" placeholder="opcional" />
-          <div style={S.section}>📐 Características</div>
-          <div style={S.row2}>
-            <Field label="Dormitorios" k="dormitorios" form={form} setForm={setForm} type="number" />
-            <Field label="Ambientes" k="ambientes" form={form} setForm={setForm} type="number" />
-          </div>
-          <div style={S.row2}>
-            <Field label="Baños" k="banos" form={form} setForm={setForm} type="number" />
-            <Field label="Área m²" k="area_m2" form={form} setForm={setForm} type="number" />
-          </div>
-          <div style={S.row2}>
-            <Field label="🏬 Piso" k="piso" form={form} setForm={setForm} type="number" placeholder="ej: 5" />
-            <Sel label="🏗 Antigüedad" k="antiguedad" form={form} setForm={setForm}
-              opts={["", "A estrenar", "1-5 años", "5-10 años", "10-20 años", "20+ años"]} />
-          </div>
-          <div style={S.section}>✨ Extras</div>
-          <div style={S.checkGrid}>
-            <Check label="🚗 Cochera" k="cochera" form={form} setForm={setForm} />
-            <Check label="🛗 Ascensor" k="ascensor" form={form} setForm={setForm} />
-            <Check label="🛋 Amoblado" k="amoblado" form={form} setForm={setForm} />
-            <Check label="🧹 Área servicio" k="area_servicio" form={form} setForm={setForm} />
-          </div>
-          <Sel label="🐶 Mascotas" k="mascotas" form={form} setForm={setForm} opts={["Sí","No","A tratar"]} />
-          <div style={S.section}>📸 Fotos</div>
-          <input ref={fileRef} type="file" accept="image/*" multiple style={{ display: "none" }} onChange={handlePhotos} />
-          <button onClick={() => fileRef.current.click()} style={S.uploadBtn} disabled={uploading}>
-            {uploading ? "⏳ Subiendo fotos..." : "📱 Seleccionar fotos"}
-          </button>
-          {(form.fotos_urls || []).length > 0 && (
-            <div style={S.photoGrid}>
-              {form.fotos_urls.map((url, i) => (
-                <div key={i} style={S.photoThumbWrap}>
-                  <img src={url} alt="" style={S.photoThumb} />
-                  <button onClick={() => removePhoto(i)} style={S.photoRemove}>✕</button>
-                </div>
-              ))}
-            </div>
-          )}
-          <div style={S.section}>🎥 Media adicional</div>
-          <Field label="Video (YouTube URL)" k="video_url" form={form} setForm={setForm} placeholder="opcional" />
-          <Field label="Tour 360 URL" k="tour360_url" form={form} setForm={setForm} placeholder="opcional" />
-          <div style={S.section}>💬 Copywriting</div>
-          <Field label="Frase destacada" k="frase_destacada" form={form} setForm={setForm} placeholder="opcional" />
-        </div>
-        <div style={S.modalFooter}>
-          <button onClick={onClose} style={S.cancelBtn}>Cancelar</button>
-          <button onClick={handleSave} disabled={saving} style={S.saveBtn}>
-            {saving ? "Guardando..." : initial ? "Guardar cambios" : "Crear inmueble"}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── FICHA PÚBLICA (solo lectura, sin contraseña) ───────────
-function PublicDetail({ p }) {
-  const out = buildOutputs(p);
-  const [showGallery, setGallery] = useState(false);
-  const ec = EC[p.estado] || EC.Disponible;
-  return (
-    <div style={{ ...S.detail, paddingTop: 0 }}>
-      {out.fotos.length > 0 && (
-        <div style={S.heroWrap} onClick={() => setGallery(true)}>
-          <img src={out.fotos[0]} alt="" style={S.heroImg} />
-          {out.fotos.length > 1 && <div style={S.heroBadge}>📸 {out.fotos.length} fotos · toca para ver</div>}
-        </div>
-      )}
-      <div style={S.detailCard}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
-          <div>
-            <div style={S.detailName}>{p.nombre}</div>
-            <div style={S.detailSub}>{p.tipo} · {p.distrito}</div>
-          </div>
-          <span style={{ ...S.estadoBadge, backgroundColor: ec.bg, color: ec.text }}>
-            <span style={{ width: 7, height: 7, borderRadius: "50%", background: ec.dot, display: "inline-block", marginRight: 5 }} />
-            {p.estado}
-          </span>
-        </div>
-        <div style={S.precioBlock}>{out.precio}</div>
-        {p.mantenimiento ? <div style={S.mantBlock}>🧾 Mantenimiento: S/ {p.mantenimiento} mensuales</div> : null}
-      </div>
-      {/* Características */}
-      <div style={S.detailCard}>
-        <div style={S.sectionTitle}>Características</div>
-        <pre style={{ ...S.msgPre, background: "none", border: "none", padding: 0, margin: 0 }}>
-          {out.caracteristicasCompletas}
-        </pre>
-      </div>
-      {/* Botones media */}
-      <div style={S.actionGrid}>
-        {out.fotos.length > 0 && <button onClick={() => setGallery(true)} style={{ ...S.actionBtn, cursor: "pointer" }}>📸 Ver fotos ({out.fotos.length})</button>}
-        {p.tour360_url && <a href={p.tour360_url} target="_blank" rel="noreferrer" style={S.actionBtn}>🌐 Tour 360</a>}
-        {p.video_url && <a href={p.video_url} target="_blank" rel="noreferrer" style={S.actionBtn}>🎥 Video</a>}
-      </div>
-      {/* Ubicación */}
-      <div style={S.detailCard}>
-        <div style={S.sectionTitle}>📍 Ubicación</div>
-        <pre style={{ ...S.msgPre, background: "none", border: "none", padding: 0, margin: "0 0 12px" }}>{out.ubicacion}</pre>
-        <CopyShareBtns text={out.ubicacion} />
-      </div>
-      {showGallery && <Gallery fotos={out.fotos} onClose={() => setGallery(false)} />}
-    </div>
-  );
-}
-
-// ─── FICHA ADMIN (con edición) ───────────────────────────────
-function PropertyDetail({ p, onBack, onEdit, onEstado }) {
-  const out = buildOutputs(p);
-  const ec = EC[p.estado] || EC.Disponible;
-  const [tab, setTab] = useState("corto");
-  const [showGallery, setGallery] = useState(false);
-  const [copiedLink, setCopiedLink] = useState(false);
-
-  // Swipe para volver — solo admin
-  useSwipeBack(onBack, true);
-
-  const copyLink = () => {
-    navigator.clipboard.writeText(out.propiedadUrl);
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2000);
-  };
-
-  return (
-    <div style={S.detail}>
-      <div style={S.detailHeader}>
-        <button onClick={onBack} style={S.backBtn}>← Volver</button>
-        <div style={{ display: "flex", gap: 8 }}>
-          <button onClick={copyLink} style={S.editBtn}>{copiedLink ? "✅ Copiado" : "🔗 Compartir"}</button>
-          <button onClick={onEdit} style={S.editBtn}>✏️ Editar</button>
-        </div>
-      </div>
-      {out.fotos.length > 0 && (
-        <div style={S.heroWrap} onClick={() => setGallery(true)}>
-          <img src={out.fotos[0]} alt="" style={S.heroImg} />
-          {out.fotos.length > 1 && <div style={S.heroBadge}>📸 {out.fotos.length} fotos</div>}
-        </div>
-      )}
-      <div style={S.detailCard}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
-          <div>
-            <div style={S.detailName}>{p.nombre}</div>
-            <div style={S.detailSub}>{p.tipo} · {p.distrito}</div>
-          </div>
-          <select value={p.estado} onChange={e => onEstado(p.id, e.target.value)}
-            style={{ ...S.estadoBadge, backgroundColor: ec.bg, color: ec.text, border: `1px solid ${ec.dot}`, cursor: "pointer" }}>
-            {ESTADOS.map(s => <option key={s}>{s}</option>)}
-          </select>
-        </div>
-        <div style={S.precioBlock}>{out.precio}</div>
-        {p.mantenimiento ? <div style={S.mantBlock}>🧾 Mantenimiento: S/ {p.mantenimiento} mensuales</div> : null}
-      </div>
-      <div style={S.tabRow}>
-        {["corto","largo"].map(t => (
-          <button key={t} onClick={() => setTab(t)} style={{ ...S.tab, ...(tab === t ? S.tabActive : {}) }}>
-            {t === "corto" ? "⚡ Corto" : "🔥 Largo"}
-          </button>
-        ))}
-      </div>
-      <div style={S.msgBox}>
-        <pre style={S.msgPre}>{tab === "corto" ? out.mensajeCorto : out.mensajeLargo}</pre>
-        <CopyShareBtns text={tab === "corto" ? out.mensajeCorto : out.mensajeLargo} />
-      </div>
-      <div style={S.actionGrid}>
-        {out.fotos.length > 0 && <button onClick={() => setGallery(true)} style={{ ...S.actionBtn, cursor: "pointer" }}>📸 Ver fotos ({out.fotos.length})</button>}
-        {p.tour360_url && <a href={p.tour360_url} target="_blank" rel="noreferrer" style={S.actionBtn}>🌐 Tour 360</a>}
-        {p.video_url && <a href={p.video_url} target="_blank" rel="noreferrer" style={S.actionBtn}>🎥 Video</a>}
-      </div>
-      {/* Ubicación con Maps/Waze */}
-      <div style={S.detailCard}>
-        <div style={S.sectionTitle}>📍 Ubicación</div>
-        <pre style={{ ...S.msgPre, background: "none", border: "none", padding: 0, margin: "0 0 12px" }}>{out.ubicacion}</pre>
-        <CopyShareBtns text={out.ubicacion} />
-      </div>
-      {out.multimedia && (
-        <div style={S.detailCard}>
-          <div style={S.sectionTitle}>Pack multimedia</div>
-          <pre style={{ ...S.msgPre, background: "none", border: "none", padding: 0, margin: "0 0 12px" }}>{out.multimedia}</pre>
-          <CopyShareBtns text={out.multimedia} />
-        </div>
-      )}
-      {showGallery && <Gallery fotos={out.fotos} onClose={() => setGallery(false)} />}
-    </div>
-  );
-}
-
-// ─── MAIN APP ────────────────────────────────────────────────
 export default function ROCAApp() {
-  // Authentication
   const { isAdmin, loginPassword, setLoginPassword, login, logout } = useAuth();
-
-  // Properties management
-  const { properties, loading, saveProperty, removeProperty, changeStatus } =
-    useProperties();
-
-  // UI State
+  const { properties, loading, saveProperty, removeProperty, changeStatus } = useProperties();
   const [selected, setSelected] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editTarget, setEdit] = useState(null);
   const [openMenu, setOpenMenu] = useState(null);
   const [filters, setFilters] = useState({ q: "", operacion: "", tipo: "", estado: "" });
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [loginPassword, setLoginPassword] = useState("");
 
-  // Leer ?id= de la URL para vista pública
-  const urlParams = new URLSearchParams(window.location.search);
-  const publicId = urlParams.get("id");
-  const isPublicView = !!publicId;
+  const filtered = useMemo(() => {
+    return properties.filter((p) => {
+      const q = filters.q.toLowerCase();
+      if (q && !p.nombre?.toLowerCase().includes(q) && !p.distrito?.toLowerCase().includes(q)) return false;
+      if (filters.operacion && p.operacion !== filters.operacion) return false;
+      if (filters.tipo && p.tipo !== filters.tipo) return false;
+      if (filters.estado && p.estado !== filters.estado) return false;
+      return true;
+    });
+  }, [properties, filters]);
 
-  useEffect(() => {
-    const admin = localStorage.getItem("roca_admin");
-    if (admin === "true") setIsAdmin(true);
-    fetchProps();
-  }, []);
-
-  // Swipe para volver en lista admin
-  useSwipeBack(() => {
-    if (selected) setSelected(null);
-  }, isAdmin && !!selected);
-
-  const fetchProps = async () => {
-    setLoading(true);
-    const { data } = await supabase.from("propiedades").select("*").order("created_at", { ascending: false });
-    if (data) setProps(data);
-    setLoading(false);
-  };
-
-  const saveProperty = async (payload, id) => {
-    if (id) await supabase.from("propiedades").update(payload).eq("id", id);
-    else await supabase.from("propiedades").insert(payload);
-    await fetchProps();
-    setShowForm(false); setEdit(null);
-    if (selected && id === selected.id) {
-      const { data } = await supabase.from("propiedades").select("*").eq("id", id).single();
-      if (data) setSelected(data);
-    }
-  };
-
-  const deleteProperty = async (id) => {
-    await supabase.from("propiedades").delete().eq("id", id);
-    setOpenMenu(null); await fetchProps();
-    if (selected?.id === id) setSelected(null);
-  };
-
-  const changeEstado = async (id, estado) => {
-    await supabase.from("propiedades").update({ estado }).eq("id", id);
-    setProps(ps => ps.map(p => p.id === id ? { ...p, estado } : p));
-    if (selected?.id === id) setSelected(s => ({ ...s, estado }));
-  };
-
-  const filtered = useMemo(() => properties.filter(p => {
-    const q = filters.q.toLowerCase();
-    if (q && !p.nombre?.toLowerCase().includes(q) && !p.distrito?.toLowerCase().includes(q)) return false;
-    if (filters.operacion && p.operacion !== filters.operacion) return false;
-    if (filters.tipo && p.tipo !== filters.tipo) return false;
-    if (filters.estado && p.estado !== filters.estado) return false;
-    return true;
-  }), [properties, filters]);
-
-  // ── Vista pública por ?id= ──────────────────────────────
-  if (isPublicView) {
-    const prop = properties.find(p => p.id === publicId);
-    if (loading) return <div style={S.loadingWrap}><div style={S.logo}>🪨 ROCA</div><div style={{ color: "#888", marginTop: 12 }}>Cargando...</div></div>;
-    if (!prop) return <div style={{ padding: 32, textAlign: "center", color: "#888" }}>Inmueble no encontrado.</div>;
-    return (
-      <div style={S.app}>
-        <div style={S.topBar}><div style={S.logo}>🪨 ROCA</div></div>
-        <PublicDetail p={prop} />
-      </div>
-    );
-  }
-
-  // ── Pantalla de login ───────────────────────────────────
   if (!isAdmin) {
     return (
       <div style={S.authWrap}>
         <div style={S.authCard}>
           <div style={{ fontSize: 36, marginBottom: 8 }}>🪨</div>
-          <div style={{ fontWeight: 800, fontSize: 22, marginBottom: 4 }}>
-            ROCA
-          </div>
-          <div style={{ color: "#888", fontSize: 14, marginBottom: 28 }}>
-            Sistema inmobiliario
-          </div>
+          <div style={{ fontWeight: 800, fontSize: 22, marginBottom: 4 }}>ROCA</div>
+          <div style={{ color: "#888", fontSize: 14, marginBottom: 28 }}>Sistema inmobiliario</div>
           <input
             type="password"
             value={loginPassword}
             onChange={(e) => setLoginPassword(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                if (login(loginPassword)) {
-                  // Success - component will re-render
-                } else {
-                  alert("Contraseña incorrecta");
-                }
-              }
-            }}
+            onKeyDown={(e) => { if (e.key === "Enter") login(loginPassword) ? null : alert("Contraseña incorrecta"); }}
             style={S.input}
             placeholder="Contraseña"
           />
           <button
-            onClick={() => {
-              if (login(loginPassword)) {
-                // Success
-              } else {
-                alert("Contraseña incorrecta");
-              }
-            }}
+            onClick={() => login(loginPassword) ? null : alert("Contraseña incorrecta")}
             style={{ ...S.signOutBtn, marginTop: 12, width: "100%", background: "#1a1a1a", color: "#e8ff4f", border: "none" }}
           >
             Entrar
@@ -577,7 +82,6 @@ export default function ROCAApp() {
     );
   }
 
-  // ── Vista detalle admin ─────────────────────────────────
   if (selected) {
     const current = properties.find((p) => p.id === selected.id) || selected;
     return (
@@ -585,49 +89,30 @@ export default function ROCAApp() {
         <PropertyDetail
           p={current}
           onBack={() => setSelected(null)}
-          onEdit={() => {
-            setEdit(current);
-            setShowForm(true);
-          }}
+          onEdit={() => { setEdit(current); setShowForm(true); }}
           onEstado={changeStatus}
         />
         {showForm && (
           <PropertyForm
             initial={editTarget}
             onSave={saveProperty}
-            onClose={() => {
-              setShowForm(false);
-              setEdit(null);
-            }}
+            onClose={() => { setShowForm(false); setEdit(null); }}
           />
         )}
       </div>
     );
   }
 
-  // ── Lista admin ─────────────────────────────────────────
   return (
     <div style={S.app} onClick={() => setOpenMenu(null)}>
-      {/* Top Bar */}
       <div style={S.topBar}>
         <div style={S.logo}>🪨 ROCA</div>
         <div style={{ display: "flex", gap: 8 }}>
-          <button onClick={logout} style={S.signOutBtn}>
-            Salir
-          </button>
-          <button
-            onClick={() => {
-              setEdit(null);
-              setShowForm(true);
-            }}
-            style={S.newBtn}
-          >
-            + Nuevo
-          </button>
+          <button onClick={logout} style={S.signOutBtn}>Salir</button>
+          <button onClick={() => { setEdit(null); setShowForm(true); }} style={S.newBtn}>+ Nuevo</button>
         </div>
       </div>
 
-      {/* Search */}
       <div style={S.searchWrap}>
         <input
           style={S.searchInput}
@@ -637,7 +122,6 @@ export default function ROCAApp() {
         />
       </div>
 
-      {/* Filters */}
       <div style={S.filterRow}>
         {[
           { k: "operacion", opts: ["", ...OPERATIONS], label: "Operación" },
@@ -652,27 +136,19 @@ export default function ROCAApp() {
           >
             <option value="">{label}</option>
             {opts.filter(Boolean).map((o) => (
-              <option key={o} value={o}>
-                {o}
-              </option>
+              <option key={o} value={o}>{o}</option>
             ))}
           </select>
         ))}
       </div>
 
-      {/* Count */}
       <div style={S.count}>
-        {loading
-          ? "Cargando..."
-          : `${filtered.length} inmueble${filtered.length !== 1 ? "s" : ""}`}
+        {loading ? "Cargando..." : `${filtered.length} inmueble${filtered.length !== 1 ? "s" : ""}`}
       </div>
 
-      {/* List */}
       <div style={S.list}>
         {!loading && filtered.length === 0 && (
-          <div style={S.empty}>
-            Sin resultados. Toca + Nuevo para agregar.
-          </div>
+          <div style={S.empty}>Sin resultados. Toca + Nuevo para agregar.</div>
         )}
 
         {filtered.map((p) => {
@@ -682,90 +158,46 @@ export default function ROCAApp() {
           return (
             <div
               key={p.id}
-              style={S.card}
+              style={{ ...S.card, position: "relative" }}
               onClick={() => setSelected(p)}
             >
               <div style={S.cardMain}>
                 <div style={S.cardLeft}>
                   <div style={S.cardName}>{p.nombre}</div>
-                  <div style={S.cardSub}>
-                    {p.tipo} · {p.distrito} · {p.operacion}
-                  </div>
+                  <div style={S.cardSub}>{p.tipo} · {p.distrito} · {p.operacion}</div>
                   <div style={S.cardPrice}>{out.precio}</div>
                 </div>
 
                 <div style={S.cardRight} onClick={(e) => e.stopPropagation()}>
-                  <span
-                    style={{
-                      fontSize: 11,
-                      fontWeight: 700,
-                      borderRadius: 20,
-                      padding: "3px 9px",
-                      display: "flex",
-                      alignItems: "center",
-                      whiteSpace: "nowrap",
-                      backgroundColor: ec.bg,
-                      color: ec.text,
-                    }}
-                  >
-                    <span
-                      style={{
-                        width: 7,
-                        height: 7,
-                        borderRadius: "50%",
-                        background: ec.dot,
-                        display: "inline-block",
-                        marginRight: 5,
-                      }}
-                    />
+                  <span style={{ fontSize: 11, fontWeight: 700, borderRadius: 20, padding: "3px 9px", display: "flex", alignItems: "center", whiteSpace: "nowrap", backgroundColor: ec.bg, color: ec.text }}>
+                    <span style={{ width: 7, height: 7, borderRadius: "50%", background: ec.dot, display: "inline-block", marginRight: 5 }} />
                     {p.estado}
                   </span>
                   <button
                     style={S.menuDot}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setOpenMenu(openMenu === p.id ? null : p.id);
-                    }}
-                  >
-                    ⋮
-                  </button>
+                    onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === p.id ? null : p.id); }}
+                  >⋮</button>
                 </div>
               </div>
 
-              {/* Dropdown Menu */}
               {openMenu === p.id && (
                 <div style={S.dropdown} onClick={(e) => e.stopPropagation()}>
                   {ESTADOS.map((s) => (
                     <button
                       key={s}
                       style={S.dropItem}
-                      onClick={() => {
-                        changeStatus(p.id, s);
-                        setOpenMenu(null);
-                      }}
+                      onClick={() => { changeStatus(p.id, s); setOpenMenu(null); }}
                     >
-                      <span style={{ color: ESTADO_COLORS[s]?.dot }}>●</span>{" "}
-                      {s}
+                      <span style={{ color: ESTADO_COLORS[s]?.dot }}>●</span> {s}
                     </button>
                   ))}
                   <div style={S.dropDivider} />
-                  <button
-                    style={S.dropItem}
-                    onClick={() => {
-                      setEdit(p);
-                      setShowForm(true);
-                      setOpenMenu(null);
-                    }}
-                  >
+                  <button style={S.dropItem} onClick={() => { setEdit(p); setShowForm(true); setOpenMenu(null); }}>
                     ✏️ Editar
                   </button>
                   <button
                     style={{ ...S.dropItem, color: "#ef4444" }}
-                    onClick={() => {
-                      if (confirm("¿Eliminar este inmueble?")) {
-                        removeProperty(p.id);
-                      }
-                    }}
+                    onClick={() => { if (confirm("¿Eliminar este inmueble?")) removeProperty(p.id); }}
                   >
                     🗑 Eliminar
                   </button>
@@ -776,18 +208,13 @@ export default function ROCAApp() {
         })}
       </div>
 
-      {/* Form Modal */}
       {showForm && (
         <PropertyForm
           initial={editTarget}
           onSave={saveProperty}
-          onClose={() => {
-            setShowForm(false);
-            setEdit(null);
-          }}
+          onClose={() => { setShowForm(false); setEdit(null); }}
         />
       )}
     </div>
   );
 }
-

@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
-import { Field } from "../formFields/Field";
-import { Select } from "../formFields/Select";
-import { Checkbox } from "../formFields/Checkbox";
+import { Field } from "../../components/formFields/Field";
+import { Select } from "../../components/formFields/Select";
+import { Checkbox } from "../../components/formFields/Checkbox";
 import { uploadToCloudinary } from "../../utils/cloudinary";
 import {
   PROPERTY_TYPES,
