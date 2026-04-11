@@ -18,7 +18,7 @@ const S = {
   searchWrap: { padding: "12px 16px 0", background: "#f4f4f0", position: "sticky", top: 52, zIndex: 5 },
   searchInput: { width: "100%", padding: "11px 14px", border: "1.5px solid #ddd", borderRadius: 10, fontSize: 14, outline: "none", boxSizing: "border-box" },
   filterRow: { display: "flex", gap: 8, padding: "10px 16px 0", overflowX: "auto", flexWrap: "wrap" },
-  filterSelect: { minWidth: 85, padding: "7px 8px", border: "1.5px solid #e0e0d8", borderRadius: 8, fontSize: 12, background: "#fff", cursor: "pointer", whiteSpace: "nowrap" },
+  filterSelect: { minWidth: 85, padding: "7px 8px", border: "1.5px solid #e0e0d8", borderRadius: 8, fontSize: 12, background: "#fff", cursor: "pointer", whiteSpace: "nowrap", color: "#333" },
   count: { padding: "10px 16px 0", fontSize: 12, color: "#888", fontWeight: 600, background: "#f4f4f0" },
   list: { background: "#f4f4f0", padding: "16px 16px 80px", minHeight: "100vh" },
   empty: { textAlign: "center", padding: "40px 0", color: "#aaa", fontSize: 14 },
@@ -134,7 +134,7 @@ export default function ROCAApp() {
             value={filters[k]}
             onChange={(e) => setFilters((f) => ({ ...f, [k]: e.target.value }))}
           >
-            <option value="">{label}</option>
+            <option value="" style={{ color: "#888" }}>{label}</option>
             {opts.filter(Boolean).map((o) => (
               <option key={o} value={o}>{o}</option>
             ))}
