@@ -47,6 +47,7 @@ export function PropertyForm({ initial, onSave, onClose }) {
   const [form, setForm] = useState(initial || blank);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [draggingIdx, setDraggingIdx] = useState(null);
   const fileRef = useRef();
 
   const handlePhotos = async (e) => {
@@ -71,6 +72,17 @@ export function PropertyForm({ initial, onSave, onClose }) {
       arr.splice(i, 1);
       return { ...f, fotos_urls: arr };
     });
+  };
+
+  const movePhoto = (fromIdx, toIdx) => {
+    if (fromIdx === toIdx) return;
+    setForm((f) => {
+      const newFotos = [...f.fotos_urls];
+      const [moved] = newFotos.splice(fromIdx, 1);
+      newFotos.splice(toIdx, 0, moved);
+      return { ...f, fotos_urls: newFotos };
+    });
+    setDraggingIdx(null);
   };
 
   const handleSave = async () => {
@@ -279,7 +291,21 @@ export function PropertyForm({ initial, onSave, onClose }) {
           {(form.fotos_urls || []).length > 0 && (
             <div style={formStyles.photoGrid}>
               {form.fotos_urls.map((url, i) => (
-                <div key={i} style={formStyles.photoThumbWrap}>
+                <div
+                  key={i}
+                  draggable
+                  onDragStart={() => setDraggingIdx(i)}
+                  onDragOver={(e) => { e.preventDefault(); }}
+                  onDrop={(e) => { e.preventDefault(); movePhoto(draggingIdx, i); }}
+                  onDragEnd={() => setDraggingIdx(null)}
+                  style={{
+                    ...formStyles.photoThumbWrap,
+                    opacity: draggingIdx === i ? 0.5 : 1,
+                    transform: draggingIdx === i ? 'scale(1.05)' : 'scale(1)',
+                    cursor: 'grab',
+                  }}
+                >
+                  <span style={formStyles.dragHandle}>⋮⋮</span>
                   <img src={url} alt="" style={formStyles.photoThumb} />
                   <button
                     onClick={() => removePhoto(i)}
@@ -287,6 +313,7 @@ export function PropertyForm({ initial, onSave, onClose }) {
                   >
                     ✕
                   </button>
+                  {i === 0 && <span style={formStyles.mainPhotoBadge}>Principal</span>}
                 </div>
               ))}
             </div>
@@ -440,6 +467,7 @@ const formStyles = {
   },
   photoThumbWrap: {
     position: "relative",
+    transition: "all 0.2s ease",
   },
   photoThumb: {
     width: 72,
@@ -459,5 +487,31 @@ const formStyles = {
     height: 20,
     fontSize: 11,
     cursor: "pointer",
+  },
+  dragHandle: {
+    position: "absolute",
+    top: 4,
+    left: "50%",
+    transform: "translateX(-50%)",
+    fontSize: 12,
+    color: "#888",
+    background: "rgba(255,255,255,0.9)",
+    borderRadius: 4,
+    padding: "2px 6px",
+    cursor: "grab",
+    zIndex: 5,
+  },
+  mainPhotoBadge: {
+    position: "absolute",
+    bottom: 4,
+    left: "50%",
+    transform: "translateX(-50%)",
+    fontSize: 9,
+    fontWeight: 700,
+    color: "#fff",
+    background: "rgba(0,0,0,0.7)",
+    borderRadius: 4,
+    padding: "2px 6px",
+    whiteSpace: "nowrap",
   },
 };
