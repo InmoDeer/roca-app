@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { useAuth } from "./hooks/useAuth";
 import { useProperties } from "./hooks/useProperties";
 import { PropertyForm } from "./features/properties/PropertyForm.jsx";
@@ -38,31 +38,18 @@ const S = {
 };
 
 export default function ROCAApp() {
+  // 1. TODOS LOS HOOKS PRIMERO (antes de cualquier return condicional)
   const { isAdmin, loginPassword, setLoginPassword, login, logout } = useAuth();
   const { properties, loading, saveProperty, removeProperty, changeStatus } = useProperties();
+  
+  // Estados de la UI
   const [selected, setSelected] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editTarget, setEdit] = useState(null);
   const [openMenu, setOpenMenu] = useState(null);
-  // Detectar vista pública de galería ANTES de todo
-  const urlParams = new URLSearchParams(window.location.search);
-  const galleryId = urlParams.get('galeria');
+  const [filters, setFilters] = useState({ q: "", operacion: "", tipo: "", estado: "" });
 
-  // Si es vista pública de galería, renderizar solo la galería (sin necesidad de login)
-  if (galleryId) {
-    const property = properties.find(p => String(p.id) === String(galleryId));
-    if (property) {
-      const handleClose = () => {
-        window.close();
-      };
-      return <PublicGallery property={property} onClose={handleClose} />;
-    }
-    if (loading) {
-      return <div style={S.loadingWrap}>Cargando...</div>;
-    }
-    return <div style={S.loadingWrap}>Propiedad no encontrada</div>;
-  }
-
+  // 2. TODOS LOS useMemo Y useEffect (antes de cualquier return)
   const filtered = useMemo(() => {
     return properties.filter((p) => {
       const q = filters.q.toLowerCase();
@@ -74,6 +61,32 @@ export default function ROCAApp() {
     });
   }, [properties, filters]);
 
+  // 3. LÓGICA DE GALERÍA PÚBLICA (después de todos los hooks)
+  const urlParams = new URLSearchParams(window.location.search);
+  const galleryId = urlParams.get('id');
+  
+  if (galleryId) {
+    const property = properties.find(p => String(p.id) === String(galleryId));
+    
+    if (property) {
+      return <PublicGallery property={property} onClose={() => window.close()} />;
+    }
+    
+    if (loading) {
+      return <div style={S.loadingWrap}>Cargando...</div>;
+    }
+    
+    // Mostrar mensaje claro con opción de volver
+    return (
+      <div style={{...S.loadingWrap, background: '#000', color: '#fff'}}>
+        <div style={{fontSize: 48, marginBottom: 16}}>📷</div>
+        <p style={{marginBottom: 16}}>Propiedad no encontrada</p>
+        <a href="/" style={{color: '#e8ff4f', textDecoration: 'underline'}}>Volver a la app</a>
+      </div>
+    );
+  }
+
+  // 4. AUTH CHECK (si no hay galería pública, verificar login)
   if (!isAdmin) {
     return (
       <div style={S.authWrap}>
@@ -100,6 +113,7 @@ export default function ROCAApp() {
     );
   }
 
+  // 5. VISTA DETALLE (cuando hay propiedad seleccionada)
   if (selected) {
     const current = properties.find((p) => p.id === selected.id) || selected;
     return (
@@ -121,6 +135,7 @@ export default function ROCAApp() {
     );
   }
 
+  // 6. VISTA LISTA PRINCIPAL
   return (
     <div style={S.app} onClick={() => setOpenMenu(null)}>
       <div style={S.topBar}>
