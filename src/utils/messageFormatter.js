@@ -63,6 +63,19 @@ export function buildOutputs(p) {
     p.direccion ? ", " + p.direccion : ""
   }\n👉 Maps: ${mapsLink}`;
 
+  // Property URL for sharing (used in multimedia)
+  const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
+  const propiedadUrl = `${baseUrl}/?id=${p.id}`;
+
+  // Multimedia pack (reusable)
+  const multimedia = [
+    fotos.length > 0 ? `📸 Galería completa: ${propiedadUrl}` : "",
+    p.tour360_url ? `🌐 Recorrido 360: ${p.tour360_url}` : "",
+    p.video_url ? `🎥 Video: ${p.video_url}` : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
+
   // Short message template
   const mensajeCorto = [
     `🏠 ${p.tipo} en ${p.distrito}`,
@@ -109,19 +122,6 @@ export function buildOutputs(p) {
     .join("\n")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
-
-  // Property URL for sharing (used in multimedia)
-  const baseUrl = window.location.origin;
-  const propiedadUrl = `${baseUrl}/?id=${p.id}`;
-
-  // Multimedia pack
-  const multimedia = [
-    fotos.length > 0 ? `📸 Galería completa: ${propiedadUrl}` : "",
-    p.tour360_url ? `🌐 Recorrido 360: ${p.tour360_url}` : "",
-    p.video_url ? `🎥 Video: ${p.video_url}` : "",
-  ]
-    .filter(Boolean)
-    .join("\n");
 
   return {
     precio,
