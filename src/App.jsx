@@ -44,15 +44,13 @@ export default function ROCAApp() {
   const [showForm, setShowForm] = useState(false);
   const [editTarget, setEdit] = useState(null);
   const [openMenu, setOpenMenu] = useState(null);
-  const [filters, setFilters] = useState({ q: "", operacion: "", tipo: "", estado: "" });
-
-  // Detectar vista pública de galería
+  // Detectar vista pública de galería ANTES de todo
   const urlParams = new URLSearchParams(window.location.search);
   const galleryId = urlParams.get('galeria');
 
-  // Si es vista pública de galería, renderizar solo la galería
+  // Si es vista pública de galería, renderizar solo la galería (sin necesidad de login)
   if (galleryId) {
-    const property = properties.find(p => p.id === galleryId);
+    const property = properties.find(p => String(p.id) === String(galleryId));
     if (property) {
       const handleClose = () => {
         window.close();
