@@ -109,16 +109,17 @@ export function buildOutputs(p) {
     "",
     caracteristicasCompletas,
     p.frase_destacada ? `\n✨ ${p.frase_destacada}` : "",
-    "",
+    multimedia ? "" : null,
     multimedia,
-    "",
+    multimedia ? "" : null,
+    ubicacion ? "" : null,
     ubicacion,
-    "",
+    ubicacion ? "" : null,
     "👉 Disponible para visitas",
     "",
     "¿En qué fecha te gustaría visitar?",
   ]
-    .filter(Boolean)
+    .filter((l) => l !== null && l !== "")
     .join("\n")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
