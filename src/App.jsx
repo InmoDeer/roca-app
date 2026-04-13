@@ -141,7 +141,6 @@ const S = {
     background: "rgba(255,255,255,0.03)", 
     borderRadius: 16, 
     marginBottom: 12, 
-    overflow: "hidden", 
     boxShadow: "0 4px 20px rgba(0,0,0,0.3)", 
     border: "1px solid rgba(255,255,255,0.05)",
     transition: "all 0.3s ease"
