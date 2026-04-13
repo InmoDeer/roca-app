@@ -178,10 +178,12 @@ const S = {
   menuDot: { 
     background: "none", 
     border: "none", 
-    fontSize: 20, 
+    fontSize: 22, 
     cursor: "pointer", 
-    color: "#666666", 
-    padding: 4 
+    color: "#888888", 
+    padding: "8px",
+    zIndex: 10,
+    position: "relative"
   },
   dropdown: { 
     background: "#1a1a1a", 
