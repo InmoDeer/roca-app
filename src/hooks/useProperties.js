@@ -25,6 +25,7 @@ export function useProperties() {
     setLoading(false);
   };
 
+  // Initialize on first render
   useEffect(() => {
     loadProperties();
   }, []);

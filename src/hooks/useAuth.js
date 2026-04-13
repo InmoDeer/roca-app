@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ADMIN_PASSWORD } from "../config/environment";
 
 const ADMIN_STORAGE_KEY = "roca_admin";
@@ -9,16 +9,10 @@ const ADMIN_STORAGE_KEY = "roca_admin";
  * @returns {Object} - Auth state and methods
  */
 export function useAuth() {
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(() => {
+    return localStorage.getItem(ADMIN_STORAGE_KEY) === "true";
+  });
   const [loginPassword, setLoginPassword] = useState("");
-
-  // Check if already logged in on mount
-  useEffect(() => {
-    const admin = localStorage.getItem(ADMIN_STORAGE_KEY);
-    if (admin === "true") {
-      setIsAdmin(true);
-    }
-  }, []);
 
   // Login with password
   const login = (password) => {

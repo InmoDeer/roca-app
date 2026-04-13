@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Gallery } from "../../components/ui/Gallery";
 
 export function PublicGallery({ property, onClose }) {
