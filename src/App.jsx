@@ -303,6 +303,7 @@ export default function ROCAApp() {
           onBack={() => setSelected(null)}
           onEdit={() => { setEdit(current); setShowForm(true); }}
           onEstado={changeStatus}
+          onDelete={(id) => { removeProperty(id); setSelected(null); }}
         />
         {showForm && (
           <PropertyForm

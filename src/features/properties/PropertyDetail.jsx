@@ -9,7 +9,7 @@ import { useSwipeBack } from "../../hooks/useSwipeBack";
  * Property detail component showing full information for admin
  * Displays messages, photos, location, and status management
  */
-export function PropertyDetail({ p, onBack, onEdit, onEstado }) {
+export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete }) {
   const out = buildOutputs(p);
   const ec = ESTADO_COLORS[p.estado] || ESTADO_COLORS.Disponible;
   const [tab, setTab] = useState("corto");
@@ -18,15 +18,26 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado }) {
   // Swipe to go back
   useSwipeBack(onBack, true);
 
+  const handleDelete = () => {
+    if (confirm("¿Estás seguro de eliminar este inmueble? Esta acción no se puede deshacer.")) {
+      onDelete(p.id);
+    }
+  };
+
   return (
     <div style={detailStyles.container}>
       <div style={detailStyles.header}>
         <button onClick={onBack} style={detailStyles.backBtn}>
           ← Volver
         </button>
-        <button onClick={onEdit} style={detailStyles.editBtn}>
-          ✏️ Editar
-        </button>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button onClick={handleDelete} style={detailStyles.deleteBtn}>
+            🗑
+          </button>
+          <button onClick={onEdit} style={detailStyles.editBtn}>
+            ✏️ Editar
+          </button>
+        </div>
       </div>
 
       {out.fotos.length > 0 && (
@@ -180,6 +191,16 @@ const detailStyles = {
     color: "#fff",
     borderRadius: 10,
     padding: "8px 16px",
+    fontSize: 13,
+    fontWeight: 600,
+    cursor: "pointer",
+  },
+  deleteBtn: {
+    background: "rgba(239,68,68,0.2)",
+    border: "1px solid rgba(239,68,68,0.3)",
+    color: "#ef4444",
+    borderRadius: 10,
+    padding: "8px 12px",
     fontSize: 13,
     fontWeight: 600,
     cursor: "pointer",
