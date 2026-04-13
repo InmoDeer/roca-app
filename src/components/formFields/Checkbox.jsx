@@ -12,7 +12,8 @@ export function Checkbox({ label, k, form, setForm }) {
         }
         style={checkboxStyles.input}
       />
-      {label}
+      <span style={checkboxStyles.checkmark}></span>
+      <span style={checkboxStyles.label}>{label}</span>
     </label>
   );
 }
@@ -23,9 +24,25 @@ const checkboxStyles = {
     alignItems: "center",
     fontSize: 14,
     cursor: "pointer",
-    padding: "8px 0",
+    padding: "10px 0",
+    color: "#cccccc",
   },
   input: {
-    marginRight: 8,
+    display: "none",
+  },
+  checkmark: {
+    width: 20,
+    height: 20,
+    borderRadius: 6,
+    border: "1px solid rgba(255,255,255,0.2)",
+    background: "rgba(255,255,255,0.03)",
+    marginRight: 10,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    transition: "all 0.3s ease",
+  },
+  label: {
+    flex: 1,
   },
 };

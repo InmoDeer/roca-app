@@ -11,7 +11,7 @@ export function Select({ label, k, form, setForm, opts }) {
         onChange={(e) => setForm((f) => ({ ...f, [k]: e.target.value }))}
       >
         {opts.map((o) => (
-          <option key={o} value={o}>
+          <option key={o} value={o} style={{ background: "#1a1a1a", color: "#fff" }}>
             {o}
           </option>
         ))}
@@ -22,24 +22,27 @@ export function Select({ label, k, form, setForm, opts }) {
 
 const selectStyles = {
   container: {
-    marginBottom: 12,
+    marginBottom: 14,
   },
   label: {
     display: "block",
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: 600,
-    color: "#555",
-    marginBottom: 5,
+    color: "#888888",
+    marginBottom: 6,
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
   },
   select: {
     width: "100%",
-    padding: "10px 12px",
-    borderRadius: 9,
-    border: "1.5px solid #e0e0d8",
+    padding: "12px 14px",
+    borderRadius: 12,
+    border: "1px solid rgba(255,255,255,0.1)",
     fontSize: 15,
     boxSizing: "border-box",
     outline: "none",
-    background: "#fafaf8",
-    color: "#1a1a1a",
+    background: "rgba(255,255,255,0.03)",
+    color: "#ffffff",
+    transition: "all 0.3s ease",
   },
 };

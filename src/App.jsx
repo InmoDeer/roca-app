@@ -8,48 +8,233 @@ import { buildOutputs } from "./utils/messageFormatter";
 import { ESTADO_COLORS, ESTADOS, OPERATIONS, PROPERTY_TYPES } from "./utils/constants";
 
 const S = {
-  app: { minHeight: "100vh", background: "#f4f4f0", fontFamily: "'DM Sans',sans-serif", paddingBottom: 80 },
-  authWrap: { minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f4f4f4" },
-  authCard: { background: "#fff", padding: 32, borderRadius: 20, width: "90%", maxWidth: 340, textAlign: "center", boxShadow: "0 4px 20px rgba(0,0,0,.08)" },
-  input: { width: "100%", padding: "12px 14px", border: "1.5px solid #ddd", borderRadius: 10, fontSize: 15, outline: "none", boxSizing: "border-box" },
-  signOutBtn: { background: "#f0f0ec", border: "none", borderRadius: 8, padding: "7px 14px", fontSize: 13, fontWeight: 600, cursor: "pointer" },
-  newBtn: { background: "#e8ff4f", color: "#1a1a1a", border: "none", borderRadius: 8, padding: "7px 14px", fontSize: 13, fontWeight: 700, cursor: "pointer" },
-  topBar: { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px", background: "#1a1a1a", position: "sticky", top: 0, zIndex: 10 },
-  logo: { fontWeight: 900, fontSize: 18, color: "#e8ff4f" },
-  searchWrap: { padding: "12px 16px 0", background: "#f4f4f0", position: "sticky", top: 52, zIndex: 5 },
-  searchInput: { width: "100%", padding: "11px 14px", border: "1.5px solid #ddd", borderRadius: 10, fontSize: 14, outline: "none", boxSizing: "border-box" },
-  filterRow: { display: "flex", gap: 8, padding: "10px 16px 0", overflowX: "auto", flexWrap: "wrap" },
-  filterSelect: { minWidth: 85, padding: "7px 8px", border: "1.5px solid #e0e0d8", borderRadius: 8, fontSize: 12, background: "#fff", cursor: "pointer", whiteSpace: "nowrap", color: "#333" },
-  count: { padding: "10px 16px 0", fontSize: 12, color: "#888", fontWeight: 600, background: "#f4f4f0" },
-  list: { background: "#f4f4f0", padding: "16px 16px 80px", minHeight: "100vh" },
-  empty: { textAlign: "center", padding: "40px 0", color: "#aaa", fontSize: 14 },
-  card: { background: "#fff", borderRadius: 14, marginBottom: 10, overflow: "hidden", boxShadow: "0 1px 4px rgba(0,0,0,.05)", border: "1.5px solid #eee" },
-  cardMain: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: 14 },
+  app: { 
+    minHeight: "100vh", 
+    background: "#0a0a0a", 
+    fontFamily: "'Outfit', sans-serif", 
+    paddingBottom: 80,
+    color: "#ffffff"
+  },
+  authWrap: { 
+    minHeight: "100vh", 
+    display: "flex", 
+    alignItems: "center", 
+    justifyContent: "center", 
+    background: "linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%)" 
+  },
+  authCard: { 
+    background: "rgba(255,255,255,0.03)", 
+    backdropFilter: "blur(20px)",
+    border: "1px solid rgba(255,255,255,0.08)",
+    padding: 40, 
+    borderRadius: 24, 
+    width: "90%", 
+    maxWidth: 360, 
+    textAlign: "center", 
+    boxShadow: "0 8px 32px rgba(0,0,0,0.4), 0 0 60px rgba(212,175,55,0.08)" 
+  },
+  input: { 
+    width: "100%", 
+    padding: "14px 16px", 
+    border: "1px solid rgba(255,255,255,0.1)", 
+    borderRadius: 12, 
+    fontSize: 15, 
+    outline: "none", 
+    boxSizing: "border-box",
+    background: "rgba(255,255,255,0.05)",
+    color: "#ffffff",
+    transition: "all 0.3s ease"
+  },
+  signOutBtn: { 
+    background: "rgba(255,255,255,0.08)", 
+    border: "1px solid rgba(255,255,255,0.1)", 
+    borderRadius: 10, 
+    padding: "8px 16px", 
+    fontSize: 13, 
+    fontWeight: 600, 
+    cursor: "pointer",
+    color: "#ffffff"
+  },
+  newBtn: { 
+    background: "linear-gradient(135deg, #d4af37 0%, #b8962e 100%)", 
+    color: "#0a0a0a", 
+    border: "none", 
+    borderRadius: 10, 
+    padding: "8px 16px", 
+    fontSize: 13, 
+    fontWeight: 700, 
+    cursor: "pointer",
+    boxShadow: "0 4px 15px rgba(212,175,55,0.3)"
+  },
+  topBar: { 
+    display: "flex", 
+    justifyContent: "space-between", 
+    alignItems: "center", 
+    padding: "16px 20px", 
+    background: "rgba(10,10,10,0.85)", 
+    backdropFilter: "blur(10px)",
+    position: "sticky", 
+    top: 0, 
+    zIndex: 10,
+    borderBottom: "1px solid rgba(255,255,255,0.05)"
+  },
+  logo: { 
+    fontWeight: 800, 
+    fontSize: 20, 
+    color: "#d4af37",
+    letterSpacing: "1px"
+  },
+  searchWrap: { 
+    padding: "16px 20px 0", 
+    background: "#0a0a0a", 
+    position: "sticky", 
+    top: 60, 
+    zIndex: 5 
+  },
+  searchInput: { 
+    width: "100%", 
+    padding: "12px 16px", 
+    border: "1px solid rgba(255,255,255,0.08)", 
+    borderRadius: 12, 
+    fontSize: 14, 
+    outline: "none", 
+    boxSizing: "border-box",
+    background: "rgba(255,255,255,0.05)",
+    color: "#ffffff"
+  },
+  filterRow: { 
+    display: "flex", 
+    gap: 10, 
+    padding: "12px 20px 0", 
+    overflowX: "auto", 
+    flexWrap: "wrap",
+    background: "#0a0a0a"
+  },
+  filterSelect: { 
+    minWidth: 90, 
+    padding: "8px 12px", 
+    border: "1px solid rgba(255,255,255,0.1)", 
+    borderRadius: 10, 
+    fontSize: 12, 
+    background: "rgba(255,255,255,0.05)", 
+    cursor: "pointer", 
+    whiteSpace: "nowrap", 
+    color: "#ffffff"
+  },
+  count: { 
+    padding: "12px 20px 0", 
+    fontSize: 12, 
+    color: "#666666", 
+    fontWeight: 600,
+    background: "#0a0a0a"
+  },
+  list: { 
+    background: "#0a0a0a", 
+    padding: "16px 20px 100px", 
+    minHeight: "100vh" 
+  },
+  empty: { 
+    textAlign: "center", 
+    padding: "60px 0", 
+    color: "#666666", 
+    fontSize: 14 
+  },
+  card: { 
+    background: "rgba(255,255,255,0.03)", 
+    borderRadius: 16, 
+    marginBottom: 12, 
+    overflow: "hidden", 
+    boxShadow: "0 4px 20px rgba(0,0,0,0.3)", 
+    border: "1px solid rgba(255,255,255,0.05)",
+    transition: "all 0.3s ease"
+  },
+  cardMain: { 
+    display: "flex", 
+    justifyContent: "space-between", 
+    alignItems: "flex-start", 
+    padding: 16 
+  },
   cardLeft: { flex: 1 },
-  cardName: { fontWeight: 800, fontSize: 15, color: "#1a1a1a", marginBottom: 3 },
-  cardSub: { fontSize: 12, color: "#888", marginBottom: 6 },
-  cardPrice: { fontSize: 13, fontWeight: 700, color: "#1a1a1a" },
-  cardRight: { display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8 },
-  menuDot: { background: "none", border: "none", fontSize: 18, cursor: "pointer", color: "#aaa", padding: 0 },
-  dropdown: { background: "#fff", borderRadius: 10, margin: "0 14px 14px", padding: 6, boxShadow: "0 4px 16px rgba(0,0,0,.12)", position: "absolute", right: 0, left: 0, zIndex: 20 },
-  dropItem: { display: "block", width: "100%", padding: "10px 12px", background: "none", border: "none", textAlign: "left", fontSize: 14, cursor: "pointer", borderRadius: 6 },
-  dropDivider: { height: 1, background: "#eee", margin: "6px 0" },
-  loadingWrap: { minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "#f4f4f4" },
+  cardName: { 
+    fontWeight: 700, 
+    fontSize: 16, 
+    color: "#ffffff", 
+    marginBottom: 4 
+  },
+  cardSub: { 
+    fontSize: 13, 
+    color: "#666666", 
+    marginBottom: 8 
+  },
+  cardPrice: { 
+    fontSize: 14, 
+    fontWeight: 700, 
+    color: "#d4af37" 
+  },
+  cardRight: { 
+    display: "flex", 
+    flexDirection: "column", 
+    alignItems: "flex-end", 
+    gap: 8 
+  },
+  menuDot: { 
+    background: "none", 
+    border: "none", 
+    fontSize: 20, 
+    cursor: "pointer", 
+    color: "#666666", 
+    padding: 4 
+  },
+  dropdown: { 
+    background: "#1a1a1a", 
+    borderRadius: 12, 
+    margin: "0 16px 16px", 
+    padding: 8, 
+    boxShadow: "0 8px 32px rgba(0,0,0,0.5)", 
+    position: "absolute", 
+    right: 0, 
+    left: 0, 
+    zIndex: 20,
+    border: "1px solid rgba(255,255,255,0.08)"
+  },
+  dropItem: { 
+    display: "block", 
+    width: "100%", 
+    padding: "12px 14px", 
+    background: "none", 
+    border: "none", 
+    textAlign: "left", 
+    fontSize: 14, 
+    cursor: "pointer", 
+    borderRadius: 8,
+    color: "#ffffff"
+  },
+  dropDivider: { 
+    height: 1, 
+    background: "rgba(255,255,255,0.08)", 
+    margin: "8px 0" 
+  },
+  loadingWrap: { 
+    minHeight: "100vh", 
+    display: "flex", 
+    flexDirection: "column", 
+    alignItems: "center", 
+    justifyContent: "center", 
+    background: "#0a0a0a",
+    color: "#666666"
+  },
 };
 
 export default function ROCAApp() {
-  // 1. TODOS LOS HOOKS PRIMERO (antes de cualquier return condicional)
   const { isAdmin, loginPassword, setLoginPassword, login, logout } = useAuth();
   const { properties, loading, saveProperty, removeProperty, changeStatus } = useProperties();
   
-  // Estados de la UI
   const [selected, setSelected] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editTarget, setEdit] = useState(null);
   const [openMenu, setOpenMenu] = useState(null);
   const [filters, setFilters] = useState({ q: "", operacion: "", tipo: "", estado: "" });
 
-  // 2. TODOS LOS useMemo Y useEffect (antes de cualquier return)
   const filtered = useMemo(() => {
     return properties.filter((p) => {
       const q = filters.q.toLowerCase();
@@ -61,7 +246,6 @@ export default function ROCAApp() {
     });
   }, [properties, filters]);
 
-  // 3. LÓGICA DE GALERÍA PÚBLICA (después de todos los hooks)
   const urlParams = new URLSearchParams(window.location.search);
   const galleryId = urlParams.get('id');
   
@@ -76,24 +260,22 @@ export default function ROCAApp() {
       return <div style={S.loadingWrap}>Cargando...</div>;
     }
     
-    // Mostrar mensaje claro con opción de volver
     return (
       <div style={{...S.loadingWrap, background: '#000', color: '#fff'}}>
         <div style={{fontSize: 48, marginBottom: 16}}>📷</div>
         <p style={{marginBottom: 16}}>Propiedad no encontrada</p>
-        <a href="/" style={{color: '#e8ff4f', textDecoration: 'underline'}}>Volver a la app</a>
+        <a href="/" style={{color: '#d4af37', textDecoration: 'underline'}}>Volver a la app</a>
       </div>
     );
   }
 
-  // 4. AUTH CHECK (si no hay galería pública, verificar login)
   if (!isAdmin) {
     return (
       <div style={S.authWrap}>
         <div style={S.authCard}>
-          <div style={{ fontSize: 36, marginBottom: 8 }}>🪨</div>
-          <div style={{ fontWeight: 800, fontSize: 22, marginBottom: 4 }}>ROCA</div>
-          <div style={{ color: "#888", fontSize: 14, marginBottom: 28 }}>Sistema inmobiliario</div>
+          <div style={{ fontSize: 48, marginBottom: 12 }}>🪨</div>
+          <div style={{ fontWeight: 800, fontSize: 28, marginBottom: 6, color: '#ffffff', letterSpacing: '2px' }}>ROCA</div>
+          <div style={{ color: "#666666", fontSize: 13, marginBottom: 32 }}>Sistema inmobiliario premium</div>
           <input
             type="password"
             value={loginPassword}
@@ -104,7 +286,7 @@ export default function ROCAApp() {
           />
           <button
             onClick={() => login(loginPassword) ? null : alert("Contraseña incorrecta")}
-            style={{ ...S.signOutBtn, marginTop: 12, width: "100%", background: "#1a1a1a", color: "#e8ff4f", border: "none" }}
+            style={{ ...S.newBtn, marginTop: 16, width: "100%", padding: "14px" }}
           >
             Entrar
           </button>
@@ -113,7 +295,6 @@ export default function ROCAApp() {
     );
   }
 
-  // 5. VISTA DETALLE (cuando hay propiedad seleccionada)
   if (selected) {
     const current = properties.find((p) => p.id === selected.id) || selected;
     return (
@@ -135,12 +316,11 @@ export default function ROCAApp() {
     );
   }
 
-  // 6. VISTA LISTA PRINCIPAL
   return (
     <div style={S.app} onClick={() => setOpenMenu(null)}>
       <div style={S.topBar}>
-        <div style={S.logo}>🪨 ROCA</div>
-        <div style={{ display: "flex", gap: 8 }}>
+        <div style={S.logo}>ROCA</div>
+        <div style={{ display: "flex", gap: 10 }}>
           <button onClick={logout} style={S.signOutBtn}>Salir</button>
           <button onClick={() => { setEdit(null); setShowForm(true); }} style={S.newBtn}>+ Nuevo</button>
         </div>
@@ -167,9 +347,9 @@ export default function ROCAApp() {
             value={filters[k]}
             onChange={(e) => setFilters((f) => ({ ...f, [k]: e.target.value }))}
           >
-            <option value="" style={{ color: "#888" }}>{label}</option>
+            <option value="" style={{ color: "#666666" }}>{label}</option>
             {opts.filter(Boolean).map((o) => (
-              <option key={o} value={o}>{o}</option>
+              <option key={o} value={o} style={{ color: "#fff" }}>{o}</option>
             ))}
           </select>
         ))}
@@ -202,8 +382,18 @@ export default function ROCAApp() {
                 </div>
 
                 <div style={S.cardRight} onClick={(e) => e.stopPropagation()}>
-                  <span style={{ fontSize: 11, fontWeight: 700, borderRadius: 20, padding: "3px 9px", display: "flex", alignItems: "center", whiteSpace: "nowrap", backgroundColor: ec.bg, color: ec.text }}>
-                    <span style={{ width: 7, height: 7, borderRadius: "50%", background: ec.dot, display: "inline-block", marginRight: 5 }} />
+                  <span style={{ 
+                    fontSize: 11, 
+                    fontWeight: 700, 
+                    borderRadius: 20, 
+                    padding: "4px 10px", 
+                    display: "flex", 
+                    alignItems: "center", 
+                    whiteSpace: "nowrap", 
+                    backgroundColor: ec.bg, 
+                    color: ec.text 
+                  }}>
+                    <span style={{ width: 6, height: 6, borderRadius: "50%", background: ec.dot, display: "inline-block", marginRight: 4 }} />
                     {p.estado}
                   </span>
                   <button
@@ -221,7 +411,7 @@ export default function ROCAApp() {
                       style={S.dropItem}
                       onClick={() => { changeStatus(p.id, s); setOpenMenu(null); }}
                     >
-                      <span style={{ color: ESTADO_COLORS[s]?.dot }}>●</span> {s}
+                      <span style={{ color: ESTADO_COLORS[s]?.dot, marginRight: 8 }}>●</span> {s}
                     </button>
                   ))}
                   <div style={S.dropDivider} />

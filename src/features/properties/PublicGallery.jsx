@@ -27,7 +27,7 @@ export function PublicGallery({ property, onClose }) {
 const publicStyles = {
   container: {
     minHeight: "100vh",
-    background: "#000",
+    background: "#000000",
     position: "relative",
   },
   closeBtn: {
@@ -35,21 +35,23 @@ const publicStyles = {
     top: 16,
     right: 16,
     zIndex: 201,
-    background: "rgba(255,255,255,0.2)",
-    color: "#fff",
-    border: "none",
-    borderRadius: 8,
-    padding: "8px 16px",
+    background: "rgba(255,255,255,0.1)",
+    backdropFilter: "blur(10px)",
+    color: "#ffffff",
+    border: "1px solid rgba(255,255,255,0.1)",
+    borderRadius: 12,
+    padding: "10px 18px",
     cursor: "pointer",
     fontSize: 14,
     fontWeight: 600,
+    transition: "all 0.3s ease",
   },
   empty: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     minHeight: "100vh",
-    color: "#fff",
+    color: "#666666",
     fontSize: 16,
   },
 };
