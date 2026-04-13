@@ -48,6 +48,7 @@ export function PropertyForm({ initial, onSave, onClose }) {
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [draggingIdx, setDraggingIdx] = useState(null);
+  const [dragOverIdx, setDragOverIdx] = useState(null);
   const fileRef = useRef();
 
   const handlePhotos = async (e) => {
@@ -83,6 +84,19 @@ export function PropertyForm({ initial, onSave, onClose }) {
       return { ...f, fotos_urls: newFotos };
     });
     setDraggingIdx(null);
+    setDragOverIdx(null);
+  };
+
+  const handleDragOver = (e, i) => {
+    e.preventDefault();
+    if (draggingIdx !== null && i !== draggingIdx) {
+      setDragOverIdx(i);
+    }
+  };
+
+  const handleDragEnd = () => {
+    setDraggingIdx(null);
+    setDragOverIdx(null);
   };
 
   const handleSave = async () => {
@@ -295,14 +309,16 @@ export function PropertyForm({ initial, onSave, onClose }) {
                   key={i}
                   draggable
                   onDragStart={() => setDraggingIdx(i)}
-                  onDragOver={(e) => { e.preventDefault(); }}
+                  onDragOver={(e) => handleDragOver(e, i)}
                   onDrop={(e) => { e.preventDefault(); movePhoto(draggingIdx, i); }}
-                  onDragEnd={() => setDraggingIdx(null)}
+                  onDragEnd={handleDragEnd}
                   style={{
                     ...formStyles.photoThumbWrap,
                     opacity: draggingIdx === i ? 0.5 : 1,
                     transform: draggingIdx === i ? 'scale(1.05)' : 'scale(1)',
                     cursor: 'grab',
+                    border: dragOverIdx === i && draggingIdx !== i ? '2px dashed #e8ff4f' : 'none',
+                    padding: dragOverIdx === i && draggingIdx !== i ? 2 : 0,
                   }}
                 >
                   <span style={formStyles.dragHandle}>⋮⋮</span>
