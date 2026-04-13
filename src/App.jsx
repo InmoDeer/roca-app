@@ -1,8 +1,9 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useAuth } from "./hooks/useAuth";
 import { useProperties } from "./hooks/useProperties";
 import { PropertyForm } from "./features/properties/PropertyForm.jsx";
 import { PropertyDetail } from "./features/properties/PropertyDetail.jsx";
+import { PublicGallery } from "./features/properties/PublicGallery.jsx";
 import { buildOutputs } from "./utils/messageFormatter";
 import { ESTADO_COLORS, ESTADOS, OPERATIONS, PROPERTY_TYPES } from "./utils/constants";
 
@@ -44,6 +45,25 @@ export default function ROCAApp() {
   const [editTarget, setEdit] = useState(null);
   const [openMenu, setOpenMenu] = useState(null);
   const [filters, setFilters] = useState({ q: "", operacion: "", tipo: "", estado: "" });
+
+  // Detectar vista pública de galería
+  const urlParams = new URLSearchParams(window.location.search);
+  const galleryId = urlParams.get('galeria');
+
+  // Si es vista pública de galería, renderizar solo la galería
+  if (galleryId) {
+    const property = properties.find(p => p.id === galleryId);
+    if (property) {
+      const handleClose = () => {
+        window.close();
+      };
+      return <PublicGallery property={property} onClose={handleClose} />;
+    }
+    if (loading) {
+      return <div style={S.loadingWrap}>Cargando...</div>;
+    }
+    return <div style={S.loadingWrap}>Propiedad no encontrada</div>;
+  }
 
   const filtered = useMemo(() => {
     return properties.filter((p) => {
