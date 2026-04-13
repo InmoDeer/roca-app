@@ -12,7 +12,7 @@ export function Gallery({ fotos, onClose }) {
     <div style={galleryStyles.overlay} onClick={onClose}>
       <div style={galleryStyles.box} onClick={(e) => e.stopPropagation()}>
         <button onClick={onClose} style={galleryStyles.closeBtn}>
-          ✕
+          ✕ Cerrar
         </button>
         <img
           src={fotos[idx]}
