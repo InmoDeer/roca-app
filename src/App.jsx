@@ -329,7 +329,7 @@ export default function ROCAApp() {
       <div style={S.searchWrap}>
         <input
           style={S.searchInput}
-          placeholder="🔍 Buscar por nombre o distrito..."
+          placeholder="Buscar..."
           value={filters.q}
           onChange={(e) => setFilters((f) => ({ ...f, q: e.target.value }))}
         />
@@ -416,13 +416,13 @@ export default function ROCAApp() {
                   ))}
                   <div style={S.dropDivider} />
                   <button style={S.dropItem} onClick={() => { setEdit(p); setShowForm(true); setOpenMenu(null); }}>
-                    ✏️ Editar
+                    ✎ Editar
                   </button>
                   <button
                     style={{ ...S.dropItem, color: "#ef4444" }}
                     onClick={() => { if (confirm("¿Eliminar este inmueble?")) removeProperty(p.id); }}
                   >
-                    🗑 Eliminar
+                    ✕ Eliminar
                   </button>
                 </div>
               )}

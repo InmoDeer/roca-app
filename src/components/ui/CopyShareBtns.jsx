@@ -23,10 +23,10 @@ export function CopyShareBtns({ text }) {
   return (
     <div style={copyShareStyles.container}>
       <button onClick={copy} style={copyShareStyles.copyBtn}>
-        {copied ? "✅ Copiado" : "📋 Copiar"}
+        {copied ? "Listo" : "Copiar"}
       </button>
       <button onClick={share} style={copyShareStyles.shareBtn}>
-        📤 Compartir
+        Compartir
       </button>
     </div>
   );

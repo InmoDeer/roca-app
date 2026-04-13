@@ -162,14 +162,14 @@ export function PropertyForm({ initial, onSave, onClose }) {
       <div style={formStyles.modal} onClick={(e) => e.stopPropagation()}>
         <div style={formStyles.header}>
           <span style={formStyles.title}>
-            {initial ? "✏️ Editar inmueble" : "➕ Nuevo inmueble"}
+            {initial ? "Editar propiedad" : "Nueva propiedad"}
           </span>
           <button onClick={onClose} style={formStyles.closeBtn}>
             ✕
           </button>
         </div>
         <div style={formStyles.body}>
-          <div style={formStyles.section}>📌 General</div>
+          <div style={formStyles.section}>General</div>
           <Field
             label="Nombre*"
             k="nombre"
@@ -207,7 +207,7 @@ export function PropertyForm({ initial, onSave, onClose }) {
             placeholder="Se genera automático"
           />
 
-          <div style={formStyles.section}>💰 Precio</div>
+          <div style={formStyles.section}>Precio</div>
           <div style={formStyles.row2}>
             <Field
               label="Precio*"
@@ -233,7 +233,7 @@ export function PropertyForm({ initial, onSave, onClose }) {
             placeholder="opcional"
           />
 
-          <div style={formStyles.section}>📐 Características</div>
+          <div style={formStyles.section}>Características</div>
           <div style={formStyles.row2}>
             <Field
               label="Dormitorios"
@@ -284,7 +284,7 @@ export function PropertyForm({ initial, onSave, onClose }) {
             />
           </div>
 
-          <div style={formStyles.section}>✨ Extras</div>
+          <div style={formStyles.section}>Extras</div>
           <div style={formStyles.checkGrid}>
             <Checkbox label="🚗 Cochera" k="cochera" form={form} setForm={setForm} />
             <Checkbox label="🛗 Ascensor" k="ascensor" form={form} setForm={setForm} />
@@ -299,7 +299,7 @@ export function PropertyForm({ initial, onSave, onClose }) {
             opts={MASCOTAS_OPTIONS}
           />
 
-          <div style={formStyles.section}>📸 Fotos</div>
+          <div style={formStyles.section}>Fotos</div>
           <input
             ref={fileRef}
             type="file"
@@ -355,7 +355,7 @@ export function PropertyForm({ initial, onSave, onClose }) {
             </div>
           )}
 
-          <div style={formStyles.section}>🎥 Media adicional</div>
+          <div style={formStyles.section}>Media</div>
           <Field
             label="Video (YouTube URL)"
             k="video_url"
@@ -371,7 +371,7 @@ export function PropertyForm({ initial, onSave, onClose }) {
             placeholder="opcional"
           />
 
-          <div style={formStyles.section}>💬 Copywriting</div>
+          <div style={formStyles.section}>Copywriting</div>
           <Field
             label="Frase destacada"
             k="frase_destacada"

@@ -31,11 +31,11 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete }) {
           ← Volver
         </button>
         <div style={{ display: "flex", gap: 8 }}>
-          <button onClick={handleDelete} style={detailStyles.deleteBtn}>
-            🗑
+          <button onClick={handleDelete} style={detailStyles.iconBtn}>
+            ✕
           </button>
-          <button onClick={onEdit} style={detailStyles.editBtn}>
-            ✏️ Editar
+          <button onClick={onEdit} style={detailStyles.iconBtn}>
+            ✎
           </button>
         </div>
       </div>
@@ -195,15 +195,18 @@ const detailStyles = {
     fontWeight: 600,
     cursor: "pointer",
   },
-  deleteBtn: {
-    background: "rgba(239,68,68,0.2)",
-    border: "1px solid rgba(239,68,68,0.3)",
-    color: "#ef4444",
+  iconBtn: {
+    background: "rgba(255,255,255,0.08)",
+    border: "1px solid rgba(255,255,255,0.1)",
+    color: "#fff",
     borderRadius: 10,
     padding: "8px 12px",
-    fontSize: 13,
-    fontWeight: 600,
+    fontSize: 14,
     cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    minWidth: 40,
   },
   heroWrap: {
     position: "relative",
