@@ -129,8 +129,7 @@ const S = {
   },
   list: { 
     background: "#0a0a0a", 
-    padding: "16px 20px 100px", 
-    minHeight: "100vh" 
+    padding: "16px 20px 100px" 
   },
   empty: { 
     textAlign: "center", 
