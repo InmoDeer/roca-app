@@ -113,7 +113,7 @@ export function buildOutputs(p) {
 
   // Property URL for sharing (used in multimedia)
   const baseUrl = window.location.origin;
-  const propiedadUrl = `${baseUrl}?id=${p.id}`;
+  const propiedadUrl = `${baseUrl}/galeria?id=${p.id}`;
 
   // Multimedia pack
   const multimedia = [
