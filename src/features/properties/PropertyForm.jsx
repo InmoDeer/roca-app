@@ -95,8 +95,21 @@ export function PropertyForm({ initial, onSave, onClose }) {
   };
 
   const handleDragEnd = () => {
+    if (draggingIdx !== null && dragOverIdx !== null && draggingIdx !== dragOverIdx) {
+      movePhoto(draggingIdx, dragOverIdx);
+    }
     setDraggingIdx(null);
     setDragOverIdx(null);
+  };
+
+  const getVisibleFotos = () => {
+    if (draggingIdx === null || dragOverIdx === null || draggingIdx === dragOverIdx) {
+      return form.fotos_urls || [];
+    }
+    const newFotos = [...(form.fotos_urls || [])];
+    const [moved] = newFotos.splice(draggingIdx, 1);
+    newFotos.splice(dragOverIdx, 0, moved);
+    return newFotos;
   };
 
   const handleSave = async () => {
@@ -304,27 +317,34 @@ export function PropertyForm({ initial, onSave, onClose }) {
           </button>
           {(form.fotos_urls || []).length > 0 && (
             <div style={formStyles.photoGrid}>
-              {form.fotos_urls.map((url, i) => (
+              {getVisibleFotos().map((url, i) => (
                 <div
                   key={i}
                   draggable
                   onDragStart={() => setDraggingIdx(i)}
                   onDragOver={(e) => handleDragOver(e, i)}
-                  onDrop={(e) => { e.preventDefault(); movePhoto(draggingIdx, i); }}
                   onDragEnd={handleDragEnd}
                   style={{
                     ...formStyles.photoThumbWrap,
-                    opacity: draggingIdx === i ? 0.5 : 1,
-                    transform: draggingIdx === i ? 'scale(1.05)' : 'scale(1)',
+                    opacity: draggingIdx !== null && 
+                      ((dragOverIdx === null && i === draggingIdx) || 
+                       (dragOverIdx !== null && (
+                         (draggingIdx < dragOverIdx && i > draggingIdx && i <= dragOverIdx) ||
+                         (draggingIdx > dragOverIdx && i >= dragOverIdx && i < draggingIdx)
+                       ))) ? 0.5 : 1,
+                    transform: draggingIdx !== null && i === draggingIdx ? 'scale(1.05)' : 'scale(1)',
                     cursor: 'grab',
-                    border: dragOverIdx === i && draggingIdx !== i ? '2px dashed #e8ff4f' : 'none',
-                    padding: dragOverIdx === i && draggingIdx !== i ? 2 : 0,
+                    border: dragOverIdx !== null && i === dragOverIdx ? '2px dashed #e8ff4f' : 'none',
+                    padding: dragOverIdx !== null && i === dragOverIdx ? 2 : 0,
                   }}
                 >
                   <span style={formStyles.dragHandle}>⋮⋮</span>
                   <img src={url} alt="" style={formStyles.photoThumb} />
                   <button
-                    onClick={() => removePhoto(i)}
+                    onClick={() => {
+                      const originalIdx = form.fotos_urls.indexOf(url);
+                      removePhoto(originalIdx);
+                    }}
                     style={formStyles.photoRemove}
                   >
                     ✕
