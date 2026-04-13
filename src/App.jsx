@@ -104,25 +104,24 @@ const S = {
   },
   filterRow: { 
     display: "flex", 
-    gap: 10, 
-    padding: "12px 20px 0", 
-    overflowX: "auto", 
-    flexWrap: "wrap",
+    gap: 8, 
+    padding: "10px 20px", 
     background: "#0a0a0a"
   },
   filterSelect: { 
-    minWidth: 90, 
-    padding: "8px 12px", 
+    flex: 1, 
+    padding: "8px 8px", 
     border: "1px solid rgba(255,255,255,0.1)", 
     borderRadius: 10, 
-    fontSize: 12, 
+    fontSize: 11, 
     background: "rgba(255,255,255,0.05)", 
     cursor: "pointer", 
     whiteSpace: "nowrap", 
-    color: "#ffffff"
+    color: "#ffffff",
+    minWidth: 0
   },
   count: { 
-    padding: "12px 20px 0", 
+    padding: "8px 20px", 
     fontSize: 12, 
     color: "#666666", 
     fontWeight: 600,
