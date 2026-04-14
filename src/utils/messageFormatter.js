@@ -5,137 +5,102 @@
  */
 export function buildOutputs(p) {
   const sym = p.moneda === "USD" ? "$" : "S/ ";
-  const precio = `💰 ${p.operacion}: ${sym}${Number(p.precio)?.toLocaleString()}`;
-  const mant = p.mantenimiento
-    ? `\n🧾 Mantenimiento: S/ ${p.mantenimiento} mensuales`
-    : "";
+  const precioRaw = Number(p.precio)?.toLocaleString();
+  const precioFormatted = `${sym}${precioRaw}`;
+  
+  // URLs
+  const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
+  const propiedadUrl = `${baseUrl}/?id=${p.id}`;
+  const mapsLink = p.maps_url || `https://maps.google.com/?q=${encodeURIComponent(
+    (p.direccion || "") + " " + (p.distrito || "") + " Lima Peru"
+  )}`;
+  const wazeLink = `https://waze.com/ul?q=${encodeURIComponent(
+    (p.direccion || "") + " " + (p.distrito || "") + " Lima Peru"
+  )}`;
 
-  // Characteristics
-  const caracteristicas = [
-    p.dormitorios
-      ? `🛏 ${p.dormitorios} ${p.dormitorios == 1 ? "dormitorio" : "dormitorios"}`
-      : "",
-    p.ambientes
-      ? `🏢 ${p.ambientes} ${p.ambientes == 1 ? "ambiente" : "ambientes"}`
-      : "",
-    p.banos ? `🚿 ${p.banos} ${p.banos == 1 ? "baño" : "baños"}` : "",
-    p.area_m2 ? `📐 ${p.area_m2} m²` : "",
-    p.piso ? `🏬 Piso ${p.piso}` : "",
-    p.antiguedad ? `🏗 ${p.antiguedad}` : "",
-  ]
-    .filter(Boolean)
-    .join("\n");
+  const fotos = Array.isArray(p.fotos_urls) ? p.fotos_urls : [];
 
-  // Extras
+  // Multimedia (pack de links)
+  const multimedia = [
+    fotos.length > 0 ? `📸 Galería: ${propiedadUrl}` : "",
+    p.tour360_url ? `🌐 Tour 360°: ${p.tour360_url}` : "",
+    p.video_url ? `🎥 Video: ${p.video_url}` : "",
+    `🗺 Maps: ${mapsLink}`
+  ].filter(Boolean).join("\n");
+
+  // Características en formato línea (ahorra espacio vertical)
+  const specsLine = [
+    p.dormitorios ? `🛏 ${p.dormitorios}` : "",
+    p.banos ? `🚿 ${p.banos}` : "",
+    p.area_m2 ? `📐 ${p.area_m2}m²` : "",
+    p.piso ? `🏢 Piso ${p.piso}` : ""
+  ].filter(Boolean).join(" · ");
+
   const extras = [
     p.cochera ? "🚗 Cochera" : "",
     p.ascensor ? "🛗 Ascensor" : "",
     p.amoblado ? "🛋 Amoblado" : "",
-    p.area_servicio ? "🧹 Área de servicio" : "",
-    p.mascotas === "Sí" ? "🐶 Mascotas permitidas" : "",
-    p.mascotas === "A tratar" ? "🐶 Mascotas: consultar" : "",
-  ].filter(Boolean);
+    p.mascotas === "Sí" ? "🐶 Mascotas OK" : ""
+  ].filter(Boolean).join(" · ");
 
-  const caracteristicasCompletas =
-    caracteristicas + (extras.length > 0 ? "\n\n" + extras.join("\n") : "");
-
-  // Photos
-  const fotos = Array.isArray(p.fotos_urls) ? p.fotos_urls : [];
-
-  // Media
-  const media = [
-    p.video_url ? `🎥 Video: ${p.video_url}` : "",
-    p.tour360_url ? `🌐 Recorrido 360: ${p.tour360_url}` : "",
-  ]
-    .filter(Boolean)
-    .join("\n");
-
-  // Location & Maps Links
-  const mapsLink =
-    p.maps_url ||
-    `https://maps.google.com/?q=${encodeURIComponent(
-      (p.direccion || "") + " " + (p.distrito || "") + " Lima Peru"
-    )}`;
-  const wazeLink = `https://waze.com/ul?q=${encodeURIComponent(
-    (p.direccion || "") + " " + (p.distrito || "") + " Lima Peru"
-  )}`;
-  const ubicacion = `📍 ${p.distrito}${
-    p.direccion ? ", " + p.direccion : ""
-  }\n👉 Maps: ${mapsLink}`;
-
-  // Property URL for sharing (used in multimedia)
-  const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
-  const propiedadUrl = `${baseUrl}/?id=${p.id}`;
-
-  // Multimedia pack (reusable)
-  const multimedia = [
-    fotos.length > 0 ? `📸 Galería completa: ${propiedadUrl}` : "",
-    p.tour360_url ? `🌐 Recorrido 360: ${p.tour360_url}` : "",
-    p.video_url ? `🎥 Video: ${p.video_url}` : "",
-  ]
-    .filter(Boolean)
-    .join("\n");
-
-  // Short message template
+  // 1️⃣ MENSAJE CORTO (Gancho)
   const mensajeCorto = [
-    `🏠 ${p.tipo} en ${p.distrito}`,
+    `🏠 *${p.tipo}* en *${p.distrito}*`,
     "",
-    precio,
+    `💰 *${precioFormatted}*`,
     "",
-    p.dormitorios
-      ? `🛏 ${p.dormitorios} ${p.dormitorios == 1 ? "dormitorio" : "dormitorios"}`
-      : "",
-    p.ambientes
-      ? `🏢 ${p.ambientes} ${p.ambientes == 1 ? "ambiente" : "ambientes"}`
-      : "",
-    p.banos ? `🚿 ${p.banos} ${p.banos == 1 ? "baño" : "baños"}` : "",
-    p.piso ? `🏬 Piso ${p.piso}` : "",
-    p.antiguedad ? `🏗 ${p.antiguedad}` : "",
+    specsLine,
+    extras,
     "",
-    "👉 Disponible para visitas",
-    "",
-    "¿Te interesa? Te paso más info 👍",
-  ]
-    .filter((l) => l !== null && l !== "")
-    .join("\n")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
+    "¿Te gustaría ver fotos? 📸"
+  ].filter(Boolean).join("\n").trim();
 
-  // Long message template
+  // 2️⃣ MENSAJE LARGO (Ficha completa)
+  const caracteristicasCompletas = [
+    specsLine,
+    extras,
+    p.antiguedad ? `🏗 ${p.antiguedad}` : ""
+  ].filter(Boolean).join("\n");
+
   const mensajeLargo = [
-    `🏠 ${p.tipo} en ${p.distrito}`,
+    `🏠 *${p.tipo} en ${p.distrito}*`,
     "",
-    precio + mant,
+    `💰 *${p.operacion}:* ${precioFormatted}`,
+    p.mantenimiento ? `🧾 Mantenimiento: S/ ${p.mantenimiento}/mes` : "",
     "",
     caracteristicasCompletas,
-    p.frase_destacada ? `\n✨ ${p.frase_destacada}` : "",
-    multimedia ? "" : null,
-    multimedia,
-    multimedia ? "" : null,
-    ubicacion ? "" : null,
-    ubicacion,
-    ubicacion ? "" : null,
-    "👉 Disponible para visitas",
     "",
-    "¿En qué fecha te gustaría visitar?",
-  ]
-    .filter((l) => l !== null && l !== "")
-    .join("\n")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
+    p.frase_destacada ? `💬 _"${p.frase_destacada}"_` : "",
+    "",
+    "━━━━━━━━━━━",
+    multimedia,
+    "━━━━━━━━━━━",
+    "",
+    "¿Cuándo podés pasar a verla? 📅"
+  ].filter(Boolean).join("\n").trim();
+
+  // 3️⃣ UBICACIÓN (Solo para navegar)
+  const ubicacion = [
+    `📍 *${p.nombre}*`,
+    `${p.direccion || "Centro de " + p.distrito}`,
+    "",
+    `🗺 Maps: ${mapsLink}`,
+    wazeLink ? `🚗 Waze: ${wazeLink}` : ""
+  ].filter(Boolean).join("\n");
 
   return {
-    precio,
-    mant,
+    precio: `💰 ${precioFormatted}`,
+    precioRaw: p.precio,
+    precioFormatted,
+    specsLine,
     caracteristicasCompletas,
-    media,
+    multimedia,
     ubicacion,
     mensajeCorto,
     mensajeLargo,
-    multimedia,
     fotos,
     mapsLink,
     wazeLink,
-    propiedadUrl,
+    propiedadUrl
   };
 }
