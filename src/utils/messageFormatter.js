@@ -22,11 +22,11 @@ export function buildOutputs(p) {
 
   // Multimedia (pack de links)
   const multimedia = [
-    fotos.length > 0 ? `📸 Galería: ${propiedadUrl}` : "",
-    p.tour360_url ? `🌐 Tour 360°: ${p.tour360_url}` : "",
-    p.video_url ? `🎥 Video: ${p.video_url}` : "",
-    `🗺 Maps: ${mapsLink}`
-  ].filter(Boolean).join("\n");
+    fotos.length > 0 ? `📸 Galería:\n${propiedadUrl}` : "",
+    p.tour360_url ? `🌐 Tour 360°:\n${p.tour360_url}` : "",
+    p.video_url ? `🎥 Video:\n${p.video_url}` : "",
+    `🗺 Maps:\n${mapsLink}`
+  ].filter(Boolean).join("\n\n");
 
   // Características en formato línea (ahorra espacio vertical)
   const specsLine = [
