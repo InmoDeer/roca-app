@@ -1,41 +1,48 @@
-import { useState } from "react";
-import { ADMIN_PASSWORD } from "../config/environment";
+import { useState, useEffect } from "react";
+import { supabase } from "../utils/api";
 
-const ADMIN_STORAGE_KEY = "roca_admin";
-
-/**
- * Custom hook for managing authentication
- * Handles admin login/logout with localStorage persistence
- * @returns {Object} - Auth state and methods
- */
 export function useAuth() {
-  const [isAdmin, setIsAdmin] = useState(() => {
-    return localStorage.getItem(ADMIN_STORAGE_KEY) === "true";
-  });
-  const [loginPassword, setLoginPassword] = useState("");
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  // Login with password
-  const login = (password) => {
-    if (password === ADMIN_PASSWORD) {
-      setIsAdmin(true);
-      localStorage.setItem(ADMIN_STORAGE_KEY, "true");
-      setLoginPassword("");
-      return true;
-    }
-    return false;
+  useEffect(() => {
+    // Verificar sesión existente
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
+
+    // Escuchar cambios de autenticación
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const login = async () => {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) throw error;
   };
 
-  // Logout
-  const logout = () => {
-    setIsAdmin(false);
-    localStorage.removeItem(ADMIN_STORAGE_KEY);
-    setLoginPassword("");
+  const logout = async () => {
+    await supabase.auth.signOut();
+    setEmail("");
+    setPassword("");
   };
 
   return {
-    isAdmin,
-    loginPassword,
-    setLoginPassword,
+    user,
+    loading,
+    email,
+    setEmail,
+    password,
+    setPassword,
     login,
     logout,
   };
