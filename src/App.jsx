@@ -84,6 +84,12 @@ const S = {
     color: "#d4af37",
     letterSpacing: "1px"
   },
+  userTag: {
+    color: "#666666",
+    fontSize: 12,
+    marginRight: 10,
+    fontWeight: 500
+  },
   searchWrap: { 
     padding: "16px 20px 0", 
     background: "#0a0a0a", 
@@ -225,8 +231,8 @@ const S = {
 };
 
 export default function ROCAApp() {
-  const { isAdmin, loginPassword, setLoginPassword, login, logout } = useAuth();
-  const { properties, loading, saveProperty, removeProperty, changeStatus } = useProperties();
+  const { user, loading: authLoading, email, setEmail, password, setPassword, login, logout } = useAuth();
+  const { properties, loading, saveProperty, removeProperty, changeStatus } = useProperties(user?.id);
   
   const [selected, setSelected] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -248,6 +254,7 @@ export default function ROCAApp() {
   const urlParams = new URLSearchParams(window.location.search);
   const galleryId = urlParams.get('id');
   
+  // Galería pública - no requiere auth
   if (galleryId) {
     const property = properties.find(p => String(p.id) === String(galleryId));
     
@@ -268,23 +275,47 @@ export default function ROCAApp() {
     );
   }
 
-  if (!isAdmin) {
+  // Loading inicial
+  if (authLoading) {
+    return (
+      <div style={S.loadingWrap}>
+        <div style={{fontSize: 32, marginBottom: 16}}>🪨</div>
+        <p>Cargando...</p>
+      </div>
+    );
+  }
+
+  // Login
+  if (!user) {
     return (
       <div style={S.authWrap}>
         <div style={S.authCard}>
           <div style={{ fontSize: 48, marginBottom: 12 }}>🪨</div>
           <div style={{ fontWeight: 800, fontSize: 28, marginBottom: 6, color: '#ffffff', letterSpacing: '2px' }}>ROCA</div>
           <div style={{ color: "#666666", fontSize: 13, marginBottom: 32 }}>Sistema inmobiliario premium</div>
+          
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            style={{...S.input, marginBottom: 12}}
+            placeholder="Email"
+          />
           <input
             type="password"
-            value={loginPassword}
-            onChange={(e) => setLoginPassword(e.target.value)}
-            onKeyDown={(e) => { if (e.key === "Enter") login(loginPassword) ? null : alert("Contraseña incorrecta"); }}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={(e) => { 
+              if (e.key === "Enter") {
+                login().catch(() => alert("Credenciales incorrectas"));
+              }
+            }}
             style={S.input}
             placeholder="Contraseña"
           />
+          
           <button
-            onClick={() => login(loginPassword) ? null : alert("Contraseña incorrecta")}
+            onClick={() => login().catch(() => alert("Credenciales incorrectas"))}
             style={{ ...S.newBtn, marginTop: 16, width: "100%", padding: "14px" }}
           >
             Entrar
@@ -294,6 +325,7 @@ export default function ROCAApp() {
     );
   }
 
+  // App principal
   if (selected) {
     const current = properties.find((p) => p.id === selected.id) || selected;
     return (
@@ -320,9 +352,12 @@ export default function ROCAApp() {
     <div style={S.app} onClick={() => setOpenMenu(null)}>
       <div style={S.topBar}>
         <div style={S.logo}>ROCA</div>
-        <div style={{ display: "flex", gap: 10 }}>
-          <button onClick={logout} style={S.signOutBtn}>Salir</button>
-          <button onClick={() => { setEdit(null); setShowForm(true); }} style={S.newBtn}>+ Nuevo</button>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <span style={S.userTag}>{user.email?.split('@')[0]}</span>
+          <div style={{ display: "flex", gap: 10 }}>
+            <button onClick={logout} style={S.signOutBtn}>Salir</button>
+            <button onClick={() => { setEdit(null); setShowForm(true); }} style={S.newBtn}>+ Nuevo</button>
+          </div>
         </div>
       </div>
 
