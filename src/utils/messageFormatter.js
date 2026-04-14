@@ -22,7 +22,7 @@ export function buildOutputs(p) {
     fotos.length > 0 ? `📸 Galería:\n${propiedadUrl}` : "",
     p.tour360_url ? `🌐 Tour 360°:\n${p.tour360_url}` : "",
     p.video_url ? `🎥 Video:\n${p.video_url}` : ""
-  ].filter(Boolean).join("\n\n");
+  ].filter(Boolean).join("\n");
 
   // Características en formato línea
   const specsLine = [
