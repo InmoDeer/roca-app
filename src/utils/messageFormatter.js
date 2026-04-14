@@ -81,8 +81,8 @@ export function buildOutputs(p) {
 
   // 3️⃣ UBICACIÓN (Solo para navegar)
   const ubicacion = [
-    `📍 *${p.nombre}*`,
-    `${p.direccion || "Centro de " + p.distrito}`,
+    `📍 *${p.distrito}*`,
+    `${p.direccion || ""}`,
     "",
     `🗺 Maps: ${mapsLink}`,
     wazeLink ? `🚗 Waze: ${wazeLink}` : ""
