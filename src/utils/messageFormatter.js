@@ -1,5 +1,6 @@
 /**
  * Format property data into WhatsApp-optimized messages with emojis and links
+ * Genera automáticamente frases cualitativas basadas en los datos del inmueble.
  * @param {Object} p - Property object from Supabase
  * @returns {Object} Formatted outputs (price, features, messages, links, etc)
  */
@@ -19,93 +20,177 @@ export function buildOutputs(p) {
 
   const fotos = Array.isArray(p.fotos_urls) ? p.fotos_urls : [];
 
-  // ---------- FUNCIONES DE INFERENCIA CUALITATIVA ----------
-  /**
-   * Genera frases atractivas basadas en los datos numéricos y booleanos
-   */
-  function getQualitativeFeatures(prop) {
-    const features = [];
+  // ---------- GENERACIÓN AUTOMÁTICA DE FRASES CUALITATIVAS ----------
 
-    // Amplitud
-    if (prop.area_m2 >= 100) features.push("🏢 Muy amplio");
-    else if (prop.area_m2 >= 70) features.push("📐 Ambientes amplios");
+  function generateAutoHighlights(prop) {
+    const highlights = [];
 
-    // Iluminación y vista (por piso)
-    if (prop.piso >= 10) {
-      features.push("☀️ Excelente iluminación natural");
-      features.push("🌆 Vista panorámica");
-    } else if (prop.piso >= 7) {
-      features.push("☀️ Muy iluminado");
-      features.push("🏙️ Vista despejada");
-    } else if (prop.piso >= 4) {
-      features.push("💡 Buena iluminación");
+    // ----- AMPLITUD -----
+    const area = prop.area_m2 || 0;
+    const ambientes = prop.ambientes || 0;
+    if (area >= 120) highlights.push("🏰 Muy amplio y espacioso");
+    else if (area >= 90) highlights.push("📐 Ambientes amplios");
+    else if (area >= 60) highlights.push("✨ Bien distribuido");
+    if (ambientes >= 4) highlights.push("🛋️ Múltiples ambientes");
+
+    // ----- ILUMINACIÓN Y VISTA (según piso) -----
+    const piso = prop.piso || 0;
+    if (piso >= 15) {
+      highlights.push("🌇 Vista panorámica de la ciudad");
+      highlights.push("☀️ Iluminación natural todo el día");
+    } else if (piso >= 10) {
+      highlights.push("🏙️ Vista despejada");
+      highlights.push("☀️ Muy iluminado");
+    } else if (piso >= 6) {
+      highlights.push("🌳 Buena iluminación y ventilación");
+    } else if (piso >= 2) {
+      highlights.push("🍃 Vista a zona tranquila");
+    }
+    if (piso < 6 && area >= 70) {
+      highlights.push("💡 Ambientes luminosos");
     }
 
-    // Antigüedad
-    if (prop.antiguedad === "Estreno") features.push("✨ A estrenar");
-    else if (prop.antiguedad === "1-5 años") features.push("🆕 Como nuevo");
+    // ----- VENTANAS AMPLIAS (nuevo campo) -----
+    if (prop.ventanas_amplias) {
+      highlights.push("🪟 Ventanas amplias, excelente iluminación natural");
+    }
 
-    // Amenities destacables
-    if (prop.amoblado) features.push("🛋️ Totalmente amoblado");
-    if (prop.mascotas === "Sí") features.push("🐾 Pet friendly");
-    if (prop.cochera) features.push("🚗 Estacionamiento incluido");
-    if (prop.area_servicio) features.push("🧺 Área de servicio");
+    // ----- BALCÓN (nuevo campo) -----
+    if (prop.balcon) {
+      highlights.push("🌿 Balcón privado");
+    }
 
-    return features;
+    // ----- VISTA ESPECÍFICA (nuevo campo) -----
+    if (prop.vista) {
+      const vistaMap = {
+        "Parque": "🌳 Vista directa al parque",
+        "Panorámica": "🏙️ Vista panorámica despejada",
+        "Mar": "🌊 Vista al mar",
+        "Jardín interior": "🌸 Tranquilidad con vista a jardín interior",
+        "Avenida": "🏢 Vista a avenida principal",
+        "Calle": "🏘️ Vista a calle residencial"
+      };
+      highlights.push(vistaMap[prop.vista] || `👀 Vista a ${prop.vista.toLowerCase()}`);
+    }
+
+    // ----- CERCA DE (nuevo campo) -----
+    if (prop.cerca_a) {
+      highlights.push(`🚶 A pasos de ${prop.cerca_a}`);
+    }
+
+    // ----- COCINA EQUIPADA (nuevo campo) -----
+    if (prop.cocina_equipada) {
+      highlights.push("🍳 Cocina completamente equipada");
+    }
+
+    // ----- CLOSETS (nuevo campo) -----
+    if (prop.closet) {
+      highlights.push("🚪 Closets empotrados en dormitorios");
+    }
+
+    // ----- RECEPCIÓN (nuevo campo) -----
+    if (prop.recepcion) {
+      highlights.push("🛎️ Recepción / Seguridad 24h");
+    }
+
+    // ----- ANTIGÜEDAD / ESTADO -----
+    const antiguedad = prop.antiguedad || "";
+    if (antiguedad === "Estreno") {
+      highlights.push("✨ A estrenar, acabados de lujo");
+    } else if (antiguedad === "1-5 años") {
+      highlights.push("🆕 Como nuevo, muy bien conservado");
+    } else if (antiguedad === "5-10 años") {
+      highlights.push("🏗 Buen estado general");
+    }
+
+    // ----- AMENITIES DESTACABLES (existentes) -----
+    if (prop.amoblado) {
+      highlights.push("🛋️ Totalmente amoblado y equipado");
+    }
+    if (prop.cochera) {
+      highlights.push("🚗 Estacionamiento privado incluido");
+    }
+    if (prop.ascensor && piso > 1) {
+      highlights.push("🛗 Edificio con ascensor");
+    }
+    if (prop.area_servicio) {
+      highlights.push("🧺 Cuarto y baño de servicio");
+    }
+    if (prop.mascotas === "Sí") {
+      highlights.push("🐾 Pet friendly");
+    }
+
+    // ----- ÁREAS COMUNES (nuevos campos) -----
+    const areas = [];
+    if (prop.piscina) areas.push("piscina");
+    if (prop.terraza) areas.push("terraza");
+    if (prop.jardin) areas.push("jardín");
+    if (prop.sum) areas.push("SUM");
+    if (prop.parrilla) areas.push("parrilla / BBQ");
+    if (prop.juegos_ninos) areas.push("juegos infantiles");
+    if (prop.gimnasio) areas.push("gimnasio");
+    
+    if (areas.length > 0) {
+      highlights.push(`🏊 Áreas comunes: ${areas.join(", ")}`);
+    }
+
+    // ----- DORMITORIOS / BAÑOS -----
+    if (prop.dormitorios >= 3 && prop.banos >= 2) {
+      highlights.push("🚿 Baños completos para cada dormitorio");
+    } else if (prop.dormitorios >= 2) {
+      highlights.push("🛏 Ideal para familias o roommates");
+    }
+
+    // Evitar duplicados y limitar
+    const unique = [...new Set(highlights)];
+    return unique.slice(0, 8);
   }
 
-  /**
-   * Genera un destacado de ubicación
-   */
   function getLocationHighlight(prop) {
     if (prop.direccion) {
-      const dirLower = prop.direccion.toLowerCase();
-      if (dirLower.includes("av.")) return "📍 Sobre avenida principal";
-      if (dirLower.includes("jr.") || dirLower.includes("calle"))
-        return "📍 Calle tranquila y residencial";
+      const dir = prop.direccion.toLowerCase();
+      if (dir.includes("av.")) {
+        return "📍 Sobre avenida principal, excelente conectividad";
+      } else if (dir.includes("jr.") || dir.includes("calle")) {
+        return "📍 Zona residencial tranquila y segura";
+      } else if (dir.includes("parque") || dir.includes("plaza")) {
+        return "🌳 Frente a área verde";
+      }
     }
-    return `📍 Céntrico en ${prop.distrito}`;
+    const distritosTop = ["Miraflores", "San Isidro", "Barranco", "Surco", "La Molina"];
+    if (distritosTop.includes(prop.distrito)) {
+      return `📍 Ubicación privilegiada en ${prop.distrito}`;
+    }
+    return `📍 Céntrico en ${prop.distrito}, cerca a todo`;
   }
 
-  // ---------- FIN INFERENCIA ----------
-
-  const qualitativeFeatures = getQualitativeFeatures(p);
+  const autoHighlights = generateAutoHighlights(p);
   const locationHighlight = getLocationHighlight(p);
-  const customHighlight = p.frase_destacada
-    ? p.frase_destacada.replace(/^_"|"_$/g, "").trim()
-    : null;
 
-  // Multimedia 
+  // Multimedia
   const multimedia = [
-    fotos.length > 0
-      ? `📸 Galería:\n${propiedadUrl}`
-      : "",
+    fotos.length > 0 ? `📸 Galería (${fotos.length} fotos):\n${propiedadUrl}` : "",
     p.tour360_url ? `🌐 Tour 360°:\n${p.tour360_url}` : "",
     p.video_url ? `🎥 Video:\n${p.video_url}` : "",
-  ]
-    .filter(Boolean)
-    .join("\n");
+  ].filter(Boolean).join("\n");
 
-  // Características básicas en una línea
+  // Características básicas
   const specsLine = [
     p.dormitorios ? `🛏 ${p.dormitorios}` : "",
     p.banos ? `🚿 ${p.banos}` : "",
     p.area_m2 ? `📐 ${p.area_m2}m²` : "",
     p.piso ? `🏢 Piso ${p.piso}` : "",
-  ]
-    .filter(Boolean)
-    .join(" · ");
+  ].filter(Boolean).join(" · ");
 
   const extras = [
     p.cochera ? "🚗 Cochera" : "",
     p.ascensor ? "🛗 Ascensor" : "",
     p.amoblado ? "🛋 Amoblado" : "",
     p.mascotas === "Sí" ? "🐶 Mascotas OK" : "",
-  ]
-    .filter(Boolean)
-    .join(" · ");
+  ].filter(Boolean).join(" · ");
 
-  // ---------- MENSAJE CORTO (Gancho) ----------
+  // Mensaje Corto
+  const hookPhrase = autoHighlights.length > 0 ? `✨ ${autoHighlights[0]}` : "✨ Excelente oportunidad";
   const mensajeCorto = [
     `🏠 *${p.tipo} en ${p.distrito}*`,
     `💰 *${precioFormatted}*`,
@@ -113,40 +198,29 @@ export function buildOutputs(p) {
     specsLine,
     extras,
     "",
-    qualitativeFeatures.length > 0
-      ? `✨ ${qualitativeFeatures[0]}`
-      : "",
-    customHighlight ? `💬 ${customHighlight}` : "",
+    hookPhrase,
     "",
     "¿Te gustaría ver fotos? 📸",
-  ]
-    .filter(Boolean)
-    .join("\n")
-    .trim();
+  ].filter(Boolean).join("\n").trim();
 
-  // ---------- CARACTERÍSTICAS COMPLETAS (con destacados) ----------
+  // Características completas
   const caracteristicasCompletas = [
     specsLine,
     extras,
     p.antiguedad ? `🏗 ${p.antiguedad}` : "",
     "",
-    qualitativeFeatures.length > 0 ? "✨ *Destacados:*" : "",
-    ...qualitativeFeatures.map((f) => `• ${f}`),
-    customHighlight ? `💬 ${customHighlight}` : "",
-  ]
-    .filter(Boolean)
-    .join("\n");
+    autoHighlights.length > 0 ? "✨ *Destacados:*" : "",
+    ...autoHighlights.map((f) => `• ${f}`),
+  ].filter(Boolean).join("\n");
 
-  // ---------- UBICACIÓN MEJORADA ----------
+  // Ubicación mejorada
   const ubicacion = [
     `📍 ${p.distrito}${p.direccion ? ", " + p.direccion : ""}`,
     locationHighlight,
     `🗺 Maps: ${mapsLink}`,
-  ]
-    .filter(Boolean)
-    .join("\n");
+  ].filter(Boolean).join("\n");
 
-  // ---------- MENSAJE LARGO ----------
+  // Mensaje Largo
   const mensajeLargo = [
     `🏠 *${p.tipo} en ${p.distrito}*`,
     "",
@@ -162,10 +236,7 @@ export function buildOutputs(p) {
     ubicacion,
     "",
     "¿Cuándo podés pasar a verla? 📅",
-  ]
-    .filter(Boolean)
-    .join("\n")
-    .trim();
+  ].filter(Boolean).join("\n").trim();
 
   return {
     precio: `💰 ${precioFormatted}`,
