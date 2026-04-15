@@ -349,5 +349,6 @@ const detailStyles = {
     marginBottom: 12,
     textTransform: "uppercase",
     letterSpacing: "1px",
+    textAlign: "center",
   },
 };
