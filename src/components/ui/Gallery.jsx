@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 
 /**
  * Gallery component for viewing property photos with navigation
@@ -7,10 +7,18 @@ import { X, ChevronLeft, ChevronRight } from "lucide-react";
 export function Gallery({ fotos, onClose }) {
   const [idx, setIdx] = useState(0);
   const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     requestAnimationFrame(() => setVisible(true));
   }, []);
+
+  useEffect(() => {
+    setLoading(true);
+    const img = new Image();
+    img.src = fotos[idx];
+    img.onload = () => setLoading(false);
+  }, [idx, fotos]);
 
   if (!fotos.length) return null;
 
@@ -33,11 +41,24 @@ export function Gallery({ fotos, onClose }) {
         <button onClick={onClose} style={galleryStyles.closeBtn}>
           <X size={20} strokeWidth={1.5} />
         </button>
-        <img
-          src={fotos[idx]}
-          alt=""
-          style={galleryStyles.img}
-        />
+        
+        <div style={galleryStyles.imgContainer}>
+          {loading && (
+            <div style={galleryStyles.loader}>
+              <Loader2 size={32} strokeWidth={1.5} className="spin" />
+            </div>
+          )}
+          <img
+            src={fotos[idx]}
+            alt=""
+            style={{
+              ...galleryStyles.img,
+              opacity: loading ? 0 : 1,
+            }}
+            onLoad={() => setLoading(false)}
+          />
+        </div>
+
         <div style={galleryStyles.count}>
           {idx + 1} / {fotos.length}
         </div>
@@ -99,6 +120,24 @@ const galleryStyles = {
     position: "relative",
     transition: "opacity 0.3s ease, transform 0.3s ease",
   },
+  imgContainer: {
+    width: "100%",
+    maxHeight: "65vh",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+    background: "rgba(255,255,255,0.02)",
+    borderRadius: 16,
+    overflow: "hidden",
+  },
+  loader: {
+    position: "absolute",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#d4af37",
+  },
   closeBtn: {
     position: "absolute",
     top: 10,
@@ -118,12 +157,12 @@ const galleryStyles = {
     transition: "all 0.3s ease",
   },
   img: {
-    width: "100%",
+    maxWidth: "100%",
     maxHeight: "65vh",
     objectFit: "contain",
     borderRadius: 16,
     display: "block",
-    boxShadow: "0 8px 40px rgba(0,0,0,0.5)",
+    transition: "opacity 0.3s ease",
   },
   count: {
     textAlign: "center",
