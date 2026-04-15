@@ -5,3 +5,4 @@ export const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiO
 // Cloudinary Configuration
 export const CLOUDINARY_CLOUD = "dzqfw8hm3";
 export const CLOUDINARY_PRESET = "roca_fotos";
+export const CLOUDINARY_API_SECRET = "nyX4Plsbh1AauomXksDw35Ec2wA";

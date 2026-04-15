@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "../config/environment";
+import { deleteCloudinaryImage } from "./cloudinary";
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -45,6 +46,14 @@ export async function updateProperty(id, payload) {
 }
 
 export async function deleteProperty(id) {
+  const property = await fetchPropertyById(id);
+  
+  if (property && property.fotos_urls && Array.isArray(property.fotos_urls)) {
+    for (const fotoUrl of property.fotos_urls) {
+      await deleteCloudinaryImage(fotoUrl);
+    }
+  }
+
   const { error } = await supabase
     .from("propiedades")
     .delete()
