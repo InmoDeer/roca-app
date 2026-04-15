@@ -6,7 +6,7 @@ import { PropertyDetail } from "./features/properties/PropertyDetail.jsx";
 import { PublicGallery } from "./features/properties/PublicGallery.jsx";
 import { buildOutputs } from "./utils/messageFormatter";
 import { ESTADO_COLORS, ESTADOS, OPERATIONS, PROPERTY_TYPES } from "./utils/constants";
-import { MoreVertical, PencilLine, Trash2, DollarSign } from "lucide-react";
+import { MoreVertical, PencilLine, Trash2 } from "lucide-react";
 
 const S = {
   app: { 
@@ -194,16 +194,15 @@ const S = {
   dropdown: { 
     background: "#1a1a1a", 
     borderRadius: 12, 
-    margin: "0 16px 16px", 
     padding: 8, 
     boxShadow: "0 8px 32px rgba(0,0,0,0.5)", 
     position: "absolute", 
     right: 0, 
-    left: 0, 
-    bottom: "100%",
-    marginBottom: 8,
-    zIndex: 20,
-    border: "1px solid rgba(255,255,255,0.08)"
+    top: "50%",
+    transform: "translateY(-50%)",
+    zIndex: 50,
+    border: "1px solid rgba(255,255,255,0.08)",
+    minWidth: 140,
   },
   dropItem: { 
     display: "block", 
@@ -416,7 +415,7 @@ export default function ROCAApp() {
                 <div style={S.cardLeft}>
                   <div style={S.cardName}>{p.nombre}</div>
                   <div style={S.cardSub}>{p.tipo} · {p.distrito}</div>
-                  <div style={S.cardPrice}><DollarSign size={14} strokeWidth={1.5} />{out.precio}</div>
+                  <div style={S.cardPrice}>{out.precio}</div>
                 </div>
 
                 <div style={S.cardRight} onClick={(e) => e.stopPropagation()}>

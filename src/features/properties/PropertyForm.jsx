@@ -421,12 +421,12 @@ const formStyles = {
   },
   modal: {
     background: "#121212",
-    borderRadius: "24px 24px 0 0",
+    borderRadius: 0,
     width: "100%",
-    maxHeight: "92vh",
+    maxHeight: "100vh",
     display: "flex",
     flexDirection: "column",
-    borderTop: "1px solid rgba(255,255,255,0.08)",
+    marginTop: 0,
   },
   header: {
     display: "flex",
