@@ -197,7 +197,7 @@ const S = {
     padding: 8, 
     boxShadow: "0 8px 32px rgba(0,0,0,0.5)", 
     position: "absolute", 
-    right: 0, 
+    left: 0,
     top: "50%",
     transform: "translateY(-50%)",
     zIndex: 50,
