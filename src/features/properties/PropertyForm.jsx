@@ -353,7 +353,6 @@ export function PropertyForm({ initial, onSave, onClose }) {
                     padding: dragOverIdx !== null && i === dragOverIdx ? 2 : 0,
                   }}
                 >
-                  <span style={formStyles.dragHandle}>⋮⋮</span>
                   <img src={url} alt="" style={formStyles.photoThumb} />
                   <button
                     onClick={() => {
@@ -538,19 +537,19 @@ const formStyles = {
   },
   photoRemove: {
     position: "absolute",
-    top: -8,
-    right: -8,
+    top: 4,
+    right: 4,
     background: "#ef4444",
     color: "#fff",
     border: "none",
     borderRadius: "50%",
-    width: 22,
-    height: 22,
-    fontSize: 12,
+    width: 20,
+    height: 20,
     cursor: "pointer",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
   },
   dragHandle: {
     position: "absolute",
