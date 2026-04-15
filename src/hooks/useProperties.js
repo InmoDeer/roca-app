@@ -23,12 +23,13 @@ export function useProperties(userId) {
   useEffect(() => {
     loadProperties();
     
-    // Recargar cada 30 segundos para detectar cambios del otro usuario
+    // Recargar cada 60 segundos para detectar cambios del otro usuario
     const interval = setInterval(() => {
       loadProperties();
-    }, 30000);
+    }, 60000);
     
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   const saveProperty = async (payload, id) => {

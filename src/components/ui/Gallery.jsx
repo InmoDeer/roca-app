@@ -1,16 +1,34 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 /**
  * Gallery component for viewing property photos with navigation
  */
 export function Gallery({ fotos, onClose }) {
   const [idx, setIdx] = useState(0);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    requestAnimationFrame(() => setVisible(true));
+  }, []);
 
   if (!fotos.length) return null;
 
   return (
-    <div style={galleryStyles.overlay} onClick={onClose}>
-      <div style={galleryStyles.box} onClick={(e) => e.stopPropagation()}>
+    <div 
+      style={{
+        ...galleryStyles.overlay,
+        opacity: visible ? 1 : 0,
+      }} 
+      onClick={onClose}
+    >
+      <div 
+        style={{
+          ...galleryStyles.box,
+          opacity: visible ? 1 : 0,
+          transform: visible ? "scale(1)" : "scale(0.95)",
+        }} 
+        onClick={(e) => e.stopPropagation()}
+      >
         <button onClick={onClose} style={galleryStyles.closeBtn}>
           ✕
         </button>
@@ -46,6 +64,7 @@ export function Gallery({ fotos, onClose }) {
               key={i}
               src={f}
               alt=""
+              loading="lazy"
               onClick={() => setIdx(i)}
               style={{
                 ...galleryStyles.thumb,
@@ -70,12 +89,14 @@ const galleryStyles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    transition: "opacity 0.3s ease",
   },
   box: {
     width: "100%",
     maxWidth: 500,
     padding: 20,
     position: "relative",
+    transition: "opacity 0.3s ease, transform 0.3s ease",
   },
   closeBtn: {
     position: "absolute",

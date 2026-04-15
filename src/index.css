@@ -85,3 +85,10 @@ body {
   outline: 2px solid var(--accent-gold);
   outline-offset: 2px;
 }
+
+/* Spinner animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

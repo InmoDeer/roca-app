@@ -199,6 +199,8 @@ const S = {
     position: "absolute", 
     right: 0, 
     left: 0, 
+    bottom: "100%",
+    marginBottom: 8,
     zIndex: 20,
     border: "1px solid rgba(255,255,255,0.08)"
   },
@@ -440,16 +442,6 @@ export default function ROCAApp() {
 
               {openMenu === p.id && (
                 <div style={S.dropdown} onClick={(e) => e.stopPropagation()}>
-                  {ESTADOS.map((s) => (
-                    <button
-                      key={s}
-                      style={S.dropItem}
-                      onClick={() => { changeStatus(p.id, s); setOpenMenu(null); }}
-                    >
-                      <span style={{ color: ESTADO_COLORS[s]?.dot, marginRight: 8 }}>●</span> {s}
-                    </button>
-                  ))}
-                  <div style={S.dropDivider} />
                   <button style={S.dropItem} onClick={() => { setEdit(p); setShowForm(true); setOpenMenu(null); }}>
                     ✎ Editar
                   </button>
@@ -457,7 +449,7 @@ export default function ROCAApp() {
                     style={{ ...S.dropItem, color: "#ef4444" }}
                     onClick={() => { if (confirm("¿Eliminar este inmueble?")) removeProperty(p.id); }}
                   >
-                    ✕ Eliminar
+                    🗑️ Eliminar
                   </button>
                 </div>
               )}

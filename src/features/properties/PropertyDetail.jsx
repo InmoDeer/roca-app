@@ -31,10 +31,10 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete }) {
           ← Volver
         </button>
         <div style={{ display: "flex", gap: 8 }}>
-          <button onClick={handleDelete} style={detailStyles.iconBtn}>
-            ✕
+          <button onClick={handleDelete} style={detailStyles.iconBtn} title="Eliminar">
+            🗑️
           </button>
-          <button onClick={onEdit} style={detailStyles.iconBtn}>
+          <button onClick={onEdit} style={detailStyles.iconBtn} title="Editar">
             ✎
           </button>
         </div>

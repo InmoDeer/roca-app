@@ -310,10 +310,21 @@ export function PropertyForm({ initial, onSave, onClose }) {
           />
           <button
             onClick={() => fileRef.current.click()}
-            style={formStyles.uploadBtn}
+            style={{
+              ...formStyles.uploadBtn,
+              opacity: uploading ? 0.6 : 1,
+              pointerEvents: uploading ? "none" : "auto",
+            }}
             disabled={uploading}
           >
-            {uploading ? "⏳ Subiendo fotos..." : "📱 Seleccionar fotos"}
+            {uploading ? (
+              <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                <span style={formStyles.spinner} />
+                Subiendo fotos...
+              </span>
+            ) : (
+              "📱 Seleccionar fotos"
+            )}
           </button>
           {(form.fotos_urls || []).length > 0 && (
             <div style={formStyles.photoGrid}>
@@ -562,5 +573,13 @@ const formStyles = {
     borderRadius: 4,
     padding: "2px 8px",
     whiteSpace: "nowrap",
+  },
+  spinner: {
+    width: 16,
+    height: 16,
+    border: "2px solid rgba(255,255,255,0.3)",
+    borderTopColor: "#ffffff",
+    borderRadius: "50%",
+    animation: "spin 0.8s linear infinite",
   },
 };
