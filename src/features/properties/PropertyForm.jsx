@@ -345,19 +345,14 @@ export function PropertyForm({ initial, onSave, onClose }) {
                   onDragEnd={handleDragEnd}
                   style={{
                     ...formStyles.photoThumbWrap,
-                    opacity: draggingIdx !== null && 
-                      ((dragOverIdx === null && i === draggingIdx) || 
-                       (dragOverIdx !== null && (
-                         (draggingIdx < dragOverIdx && i > draggingIdx && i <= dragOverIdx) ||
-                         (draggingIdx > dragOverIdx && i >= dragOverIdx && i < draggingIdx)
-                       ))) ? 0.5 : 1,
+                    visibility: draggingIdx !== null && i === draggingIdx ? 'hidden' : 'visible',
                     transform: draggingIdx !== null && i === draggingIdx ? 'scale(1.05)' : 'scale(1)',
                     cursor: 'grab',
                     border: dragOverIdx !== null && i === dragOverIdx ? '2px dashed #e8ff4f' : 'none',
                     padding: dragOverIdx !== null && i === dragOverIdx ? 2 : 0,
                   }}
                 >
-                  <span style={formStyles.dragHandle}>⋮⋮</span>
+                  <span style={formStyles.dragHandle}>⇕</span>
                   <img src={url} alt="" style={formStyles.photoThumb} />
                   <button
                     onClick={() => {
@@ -533,6 +528,8 @@ const formStyles = {
     transition: "all 0.2s ease",
     borderRadius: 10,
     overflow: "hidden",
+    minWidth: 80,
+    minHeight: 80,
   },
   photoThumb: {
     width: 80,
@@ -562,15 +559,16 @@ const formStyles = {
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    fontSize: 16,
+    fontSize: 18,
     color: "#ffffff",
-    background: "rgba(0,0,0,0.5)",
-    borderRadius: 6,
-    padding: "6px 10px",
+    background: "rgba(0,0,0,0.7)",
+    borderRadius: 8,
+    padding: "8px 12px",
     cursor: "grab",
     zIndex: 5,
-    letterSpacing: 2,
+    letterSpacing: 1,
     pointerEvents: "auto",
+    border: "1px solid rgba(255,255,255,0.2)",
   },
   mainPhotoBadge: {
     position: "absolute",
