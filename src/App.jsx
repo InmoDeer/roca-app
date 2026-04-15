@@ -137,7 +137,10 @@ const S = {
   },
   list: { 
     background: "#0a0a0a", 
-    padding: "16px 20px 100px" 
+    padding: "16px 20px 100px",
+    display: "flex",
+    flexDirection: "column",
+    gap: 12
   },
   empty: { 
     textAlign: "center", 

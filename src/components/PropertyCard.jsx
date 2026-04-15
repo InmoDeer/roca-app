@@ -71,6 +71,7 @@ const styles = {
     border: "1px solid rgba(255,255,255,0.06)",
     position: "relative",
     transition: "all 0.2s ease",
+    cursor: "pointer",
   },
   cardMain: {
     display: "flex",
