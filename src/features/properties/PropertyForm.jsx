@@ -336,8 +336,8 @@ export function PropertyForm({ initial, onSave, onClose }) {
                 <div
                   key={i}
                   draggable
-                  onDragStart={() => setDraggingIdx(i)}
-                  onDragOver={(e) => handleDragOver(e, i)}
+                  onDragStart={(e) => { e.dataTransfer.effectAllowed = 'move'; setDraggingIdx(i); }}
+                  onDragOver={(e) => { e.preventDefault(); handleDragOver(e, i); }}
                   onDragEnd={handleDragEnd}
                   style={{
                     ...formStyles.photoThumbWrap,
@@ -351,9 +351,17 @@ export function PropertyForm({ initial, onSave, onClose }) {
                     cursor: 'grab',
                     border: dragOverIdx !== null && i === dragOverIdx ? '2px dashed #e8ff4f' : 'none',
                     padding: dragOverIdx !== null && i === dragOverIdx ? 2 : 0,
+                    userSelect: 'none',
+                    WebkitUserDrag: 'none',
                   }}
                 >
-                  <img src={url} alt="" style={formStyles.photoThumb} />
+                  <img 
+                    src={url} 
+                    alt="" 
+                    style={formStyles.photoThumb} 
+                    draggable={false}
+                    onDragStart={(e) => e.preventDefault()}
+                  />
                   <button
                     onClick={() => {
                       const originalIdx = form.fotos_urls.indexOf(url);
