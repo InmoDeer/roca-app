@@ -73,7 +73,7 @@ export function buildOutputs(p) {
     "",
     caracteristicasCompletas,
     "",
-    p.frase_destacada ? `💬 "${p.frase_destacada.replace(/^_"|"_$/g, "")}"` : "",
+    p.frase_destacada ? `💬 _${p.frase_destacada.replace(/^_"|"_$/g, "")}_` : "",
     "",
     "━━━━━━━━━━━",
     multimedia,
