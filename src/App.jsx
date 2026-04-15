@@ -6,7 +6,7 @@ import { PropertyDetail } from "./features/properties/PropertyDetail.jsx";
 import { PublicGallery } from "./features/properties/PublicGallery.jsx";
 import { buildOutputs } from "./utils/messageFormatter";
 import { ESTADO_COLORS, ESTADOS, OPERATIONS, PROPERTY_TYPES } from "./utils/constants";
-import { MoreVertical, PencilLine, Trash2 } from "lucide-react";
+import { MoreVertical, PencilLine, Trash2, DollarSign } from "lucide-react";
 
 const S = {
   app: { 
@@ -416,7 +416,7 @@ export default function ROCAApp() {
                 <div style={S.cardLeft}>
                   <div style={S.cardName}>{p.nombre}</div>
                   <div style={S.cardSub}>{p.tipo} · {p.distrito}</div>
-                  <div style={S.cardPrice}>{out.precio}</div>
+                  <div style={S.cardPrice}><DollarSign size={14} strokeWidth={1.5} />{out.precio}</div>
                 </div>
 
                 <div style={S.cardRight} onClick={(e) => e.stopPropagation()}>

@@ -4,7 +4,7 @@ import { ESTADO_COLORS } from "../../utils/constants";
 import { CopyShareBtns } from "../../components/ui/CopyShareBtns";
 import { Gallery } from "../../components/ui/Gallery";
 import { useSwipeBack } from "../../hooks/useSwipeBack";
-import { MapPin, Video, PencilLine, Trash2, X, ArrowLeft, Link, Play, Eye, Images, Globe } from "lucide-react";
+import { MapPin, Video, PencilLine, Trash2, X, ArrowLeft, Link, Play, Eye, Images, Globe, DollarSign, FileText } from "lucide-react";
 
 /**
  * Property detail component showing full information for admin
@@ -87,7 +87,7 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete }) {
         <div style={detailStyles.precioBlock}>{out.precio}</div>
         {p.mantenimiento && (
           <div style={detailStyles.mantBlock}>
-            🧾 Mantenimiento: S/ {p.mantenimiento} mensuales
+            <FileText size={14} strokeWidth={1.5} /> Mantenimiento: S/ {p.mantenimiento} mensuales
           </div>
         )}
       </div>
