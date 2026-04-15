@@ -5,8 +5,9 @@ import { PropertyForm } from "./features/properties/PropertyForm.jsx";
 import { PropertyDetail } from "./features/properties/PropertyDetail.jsx";
 import { PublicGallery } from "./features/properties/PublicGallery.jsx";
 import { buildOutputs } from "./utils/messageFormatter";
-import { ESTADO_COLORS, ESTADOS, OPERATIONS, PROPERTY_TYPES } from "./utils/constants";
-import { MoreVertical, PencilLine, Trash2 } from "lucide-react";
+import { ESTADO_COLORS, ESTADOS } from "./utils/constants";
+import { PropertyCard } from "./components/PropertyCard.jsx";
+import { PropertyFilters } from "./components/PropertyFilters.jsx";
 
 const S = {
   app: { 
@@ -365,38 +366,12 @@ export default function ROCAApp() {
         </div>
       </div>
 
-      <div style={S.searchWrap}>
-        <input
-          style={S.searchInput}
-          placeholder="Buscar..."
-          value={filters.q}
-          onChange={(e) => setFilters((f) => ({ ...f, q: e.target.value }))}
+      <PropertyFilters 
+          filters={filters} 
+          setFilters={setFilters} 
+          loading={loading} 
+          filteredCount={filtered.length} 
         />
-      </div>
-
-      <div style={S.filterRow}>
-        {[
-          { k: "operacion", opts: ["", ...OPERATIONS], label: "Operación" },
-          { k: "tipo", opts: ["", ...PROPERTY_TYPES], label: "Tipo" },
-          { k: "estado", opts: ["", ...ESTADOS], label: "Estado" },
-        ].map(({ k, opts, label }) => (
-          <select
-            key={k}
-            style={S.filterSelect}
-            value={filters[k]}
-            onChange={(e) => setFilters((f) => ({ ...f, [k]: e.target.value }))}
-          >
-            <option value="" style={{ color: "#666666" }}>{label}</option>
-            {opts.filter(Boolean).map((o) => (
-              <option key={o} value={o} style={{ color: "#fff" }}>{o}</option>
-            ))}
-          </select>
-        ))}
-      </div>
-
-      <div style={S.count}>
-        {loading ? "Cargando..." : `${filtered.length} inmueble${filtered.length !== 1 ? "s" : ""}`}
-      </div>
 
       <div style={S.list}>
         {!loading && filtered.length === 0 && (
@@ -408,55 +383,17 @@ export default function ROCAApp() {
           const ec = ESTADO_COLORS[p.estado] || ESTADO_COLORS.Disponible;
 
           return (
-            <div
+            <PropertyCard
               key={p.id}
-              style={{ ...S.card, position: "relative" }}
+              property={p}
+              out={out}
+              ec={ec}
               onClick={() => setSelected(p)}
-            >
-              <div style={S.cardMain}>
-                <div style={S.cardLeft}>
-                  <div style={S.cardName}>{p.nombre}</div>
-                  <div style={S.cardSub}>{p.tipo} · {p.distrito}</div>
-                  <div style={S.cardPrice}>{out.precio}</div>
-                </div>
-
-                <div style={S.cardRight} onClick={(e) => e.stopPropagation()}>
-                  <span style={{ 
-                    fontSize: 11, 
-                    fontWeight: 700, 
-                    borderRadius: 20, 
-                    padding: "4px 10px", 
-                    display: "flex", 
-                    alignItems: "center", 
-                    whiteSpace: "nowrap", 
-                    backgroundColor: ec.bg, 
-                    color: ec.text 
-                  }}>
-                    <span style={{ width: 6, height: 6, borderRadius: "50%", background: ec.dot, display: "inline-block", marginRight: 4 }} />
-                    {p.estado}
-                  </span>
-                  {openMenu === p.id && (
-                    <div style={S.dropdown} onClick={(e) => e.stopPropagation()}>
-                      <button style={S.dropItem} onClick={() => { setEdit(p); setShowForm(true); setOpenMenu(null); }}>
-                        <PencilLine size={16} strokeWidth={1.5} style={{ marginRight: 8 }} /> Editar
-                      </button>
-                      <button
-                        style={{ ...S.dropItem, color: "#ef4444" }}
-                        onClick={() => { if (confirm("¿Eliminar este inmueble?")) removeProperty(p.id); }}
-                      >
-                        <Trash2 size={16} strokeWidth={1.5} style={{ marginRight: 8 }} /> Eliminar
-                      </button>
-                    </div>
-                  )}
-                  <button
-                    style={S.menuDot}
-                    onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === p.id ? null : p.id); }}
-                  >
-                    <MoreVertical size={18} strokeWidth={1.5} />
-                  </button>
-                </div>
-              </div>
-            </div>
+              onEdit={() => { setEdit(p); setShowForm(true); }}
+              onDelete={() => removeProperty(p.id)}
+              openMenu={openMenu}
+              setOpenMenu={setOpenMenu}
+            />
           );
         })}
       </div>
