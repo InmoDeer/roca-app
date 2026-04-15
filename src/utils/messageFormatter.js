@@ -75,10 +75,10 @@ export function buildOutputs(p) {
     ? p.frase_destacada.replace(/^_"|"_$/g, "").trim()
     : null;
 
-  // Multimedia (con contador de fotos)
+  // Multimedia 
   const multimedia = [
     fotos.length > 0
-      ? `📸 Galería (${fotos.length} fotos):\n${propiedadUrl}`
+      ? `📸 Galería:\n${propiedadUrl}`
       : "",
     p.tour360_url ? `🌐 Tour 360°:\n${p.tour360_url}` : "",
     p.video_url ? `🎥 Video:\n${p.video_url}` : "",
