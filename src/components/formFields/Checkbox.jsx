@@ -23,13 +23,10 @@ export function Checkbox({ label, k, form, setForm, icon: Icon }) {
       </span>
       {Icon && (
         <span style={checkboxStyles.icon}>
-          <Icon size={16} strokeWidth={1.5} color={isChecked ? "#0a0a0a" : "#888888"} />
+          <Icon size={16} strokeWidth={1.5} color="#888888" />
         </span>
       )}
-      <span style={{
-        ...checkboxStyles.label,
-        color: isChecked ? "#ffffff" : "#cccccc",
-      }}>{label}</span>
+      <span style={checkboxStyles.label}>{label}</span>
     </label>
   );
 }
@@ -69,6 +66,6 @@ const checkboxStyles = {
   },
   label: {
     flex: 1,
-    transition: "color 0.3s ease",
+    color: "#cccccc",
   },
 };
