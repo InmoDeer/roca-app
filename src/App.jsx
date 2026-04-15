@@ -177,9 +177,10 @@ const S = {
   },
   cardRight: { 
     display: "flex", 
-    flexDirection: "column", 
-    alignItems: "flex-end", 
-    gap: 8 
+    flexDirection: "row", 
+    alignItems: "center", 
+    gap: 8,
+    position: "relative"
   },
   menuDot: { 
     background: "none", 
@@ -434,6 +435,19 @@ export default function ROCAApp() {
                     <span style={{ width: 6, height: 6, borderRadius: "50%", background: ec.dot, display: "inline-block", marginRight: 4 }} />
                     {p.estado}
                   </span>
+                  {openMenu === p.id && (
+                    <div style={S.dropdown} onClick={(e) => e.stopPropagation()}>
+                      <button style={S.dropItem} onClick={() => { setEdit(p); setShowForm(true); setOpenMenu(null); }}>
+                        <PencilLine size={16} strokeWidth={1.5} style={{ marginRight: 8 }} /> Editar
+                      </button>
+                      <button
+                        style={{ ...S.dropItem, color: "#ef4444" }}
+                        onClick={() => { if (confirm("¿Eliminar este inmueble?")) removeProperty(p.id); }}
+                      >
+                        <Trash2 size={16} strokeWidth={1.5} style={{ marginRight: 8 }} /> Eliminar
+                      </button>
+                    </div>
+                  )}
                   <button
                     style={S.menuDot}
                     onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === p.id ? null : p.id); }}
@@ -442,20 +456,6 @@ export default function ROCAApp() {
                   </button>
                 </div>
               </div>
-
-              {openMenu === p.id && (
-                <div style={S.dropdown} onClick={(e) => e.stopPropagation()}>
-                  <button style={S.dropItem} onClick={() => { setEdit(p); setShowForm(true); setOpenMenu(null); }}>
-                    <PencilLine size={16} strokeWidth={1.5} style={{ marginRight: 8 }} /> Editar
-                  </button>
-                  <button
-                    style={{ ...S.dropItem, color: "#ef4444" }}
-                    onClick={() => { if (confirm("¿Eliminar este inmueble?")) removeProperty(p.id); }}
-                  >
-                    <Trash2 size={16} strokeWidth={1.5} style={{ marginRight: 8 }} /> Eliminar
-                  </button>
-                </div>
-              )}
             </div>
           );
         })}
