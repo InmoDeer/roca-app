@@ -417,12 +417,12 @@ const formStyles = {
   },
   modal: {
     background: "#121212",
-    borderRadius: "24px 24px 0 0",
+    borderRadius: 0,
     width: "100%",
-    maxHeight: "92vh",
+    maxHeight: "100vh",
     display: "flex",
     flexDirection: "column",
-    borderTop: "1px solid rgba(255,255,255,0.08)",
+    marginTop: 0,
   },
   header: {
     display: "flex",
@@ -486,9 +486,11 @@ const formStyles = {
     color: "#666666",
     textTransform: "uppercase",
     letterSpacing: "1px",
-    margin: "20px 0 12px",
+    margin: "20px auto 12px",
     paddingBottom: 8,
     borderBottom: "1px solid rgba(255,255,255,0.05)",
+    textAlign: "center",
+    width: "100%",
   },
   row2: {
     display: "grid",
