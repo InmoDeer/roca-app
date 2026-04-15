@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
 /**
  * Gallery component for viewing property photos with navigation
@@ -30,7 +31,7 @@ export function Gallery({ fotos, onClose }) {
         onClick={(e) => e.stopPropagation()}
       >
         <button onClick={onClose} style={galleryStyles.closeBtn}>
-          ✕
+          <X size={20} strokeWidth={1.5} />
         </button>
         <img
           src={fotos[idx]}
@@ -47,13 +48,13 @@ export function Gallery({ fotos, onClose }) {
               onClick={() => setIdx((i) => (i - 1 + fotos.length) % fotos.length)}
               style={galleryStyles.arrow}
             >
-              ‹
+              <ChevronLeft size={24} strokeWidth={1.5} />
             </button>
             <button
               onClick={() => setIdx((i) => (i + 1) % fotos.length)}
               style={galleryStyles.arrow}
             >
-              ›
+              <ChevronRight size={24} strokeWidth={1.5} />
             </button>
           </div>
         )}

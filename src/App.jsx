@@ -6,6 +6,7 @@ import { PropertyDetail } from "./features/properties/PropertyDetail.jsx";
 import { PublicGallery } from "./features/properties/PublicGallery.jsx";
 import { buildOutputs } from "./utils/messageFormatter";
 import { ESTADO_COLORS, ESTADOS, OPERATIONS, PROPERTY_TYPES } from "./utils/constants";
+import { MoreVertical, PencilLine, Trash2 } from "lucide-react";
 
 const S = {
   app: { 
@@ -436,20 +437,22 @@ export default function ROCAApp() {
                   <button
                     style={S.menuDot}
                     onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === p.id ? null : p.id); }}
-                  >⋮</button>
+                  >
+                    <MoreVertical size={18} strokeWidth={1.5} />
+                  </button>
                 </div>
               </div>
 
               {openMenu === p.id && (
                 <div style={S.dropdown} onClick={(e) => e.stopPropagation()}>
                   <button style={S.dropItem} onClick={() => { setEdit(p); setShowForm(true); setOpenMenu(null); }}>
-                    ✎ Editar
+                    <PencilLine size={16} strokeWidth={1.5} style={{ marginRight: 8 }} /> Editar
                   </button>
                   <button
                     style={{ ...S.dropItem, color: "#ef4444" }}
                     onClick={() => { if (confirm("¿Eliminar este inmueble?")) removeProperty(p.id); }}
                   >
-                    🗑️ Eliminar
+                    <Trash2 size={16} strokeWidth={1.5} style={{ marginRight: 8 }} /> Eliminar
                   </button>
                 </div>
               )}

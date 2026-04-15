@@ -1,7 +1,7 @@
 /**
  * Checkbox component for forms
  */
-export function Checkbox({ label, k, form, setForm }) {
+export function Checkbox({ label, k, form, setForm, icon: Icon }) {
   const isChecked = !!form[k];
   
   return (
@@ -21,6 +21,11 @@ export function Checkbox({ label, k, form, setForm }) {
       }}>
         {isChecked && <span style={checkboxStyles.check}>✓</span>}
       </span>
+      {Icon && (
+        <span style={checkboxStyles.icon}>
+          <Icon size={16} strokeWidth={1.5} color={isChecked ? "#0a0a0a" : "#888888"} />
+        </span>
+      )}
       <span style={{
         ...checkboxStyles.label,
         color: isChecked ? "#ffffff" : "#cccccc",
@@ -56,6 +61,11 @@ const checkboxStyles = {
     color: "#0a0a0a",
     fontSize: 14,
     fontWeight: 700,
+  },
+  icon: {
+    marginRight: 8,
+    display: "flex",
+    alignItems: "center",
   },
   label: {
     flex: 1,

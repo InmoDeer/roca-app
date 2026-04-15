@@ -3,6 +3,7 @@ import { Field } from "../../components/formFields/Field";
 import { Select } from "../../components/formFields/Select";
 import { Checkbox } from "../../components/formFields/Checkbox";
 import { uploadToCloudinary } from "../../utils/cloudinary";
+import { ArrowUp, Armchair, Sparkles, PawPrint, Camera, X, Car } from "lucide-react";
 import {
   PROPERTY_TYPES,
   OPERATIONS,
@@ -165,7 +166,7 @@ export function PropertyForm({ initial, onSave, onClose }) {
             {initial ? "Editar propiedad" : "Nueva propiedad"}
           </span>
           <button onClick={onClose} style={formStyles.closeBtn}>
-            ✕
+            <X size={20} strokeWidth={1.5} />
           </button>
         </div>
         <div style={formStyles.body}>
@@ -194,7 +195,7 @@ export function PropertyForm({ initial, onSave, onClose }) {
             />
           </div>
 
-          <div style={formStyles.section}>📍 Ubicación</div>
+          <div style={formStyles.section}>Ubicacion</div>
           <div style={formStyles.row2}>
             <Field label="Distrito*" k="distrito" form={form} setForm={setForm} />
             <Field label="Dirección" k="direccion" form={form} setForm={setForm} />
@@ -286,13 +287,13 @@ export function PropertyForm({ initial, onSave, onClose }) {
 
           <div style={formStyles.section}>Extras</div>
           <div style={formStyles.checkGrid}>
-            <Checkbox label="🚗 Cochera" k="cochera" form={form} setForm={setForm} />
-            <Checkbox label="🛗 Ascensor" k="ascensor" form={form} setForm={setForm} />
-            <Checkbox label="🛋 Amoblado" k="amoblado" form={form} setForm={setForm} />
-            <Checkbox label="🧹 Área servicio" k="area_servicio" form={form} setForm={setForm} />
+            <Checkbox label="Cochera" k="cochera" form={form} setForm={setForm} icon={Car} />
+            <Checkbox label="Ascensor" k="ascensor" form={form} setForm={setForm} icon={ArrowUp} />
+            <Checkbox label="Amoblado" k="amoblado" form={form} setForm={setForm} icon={Armchair} />
+            <Checkbox label="Area servicio" k="area_servicio" form={form} setForm={setForm} icon={Sparkles} />
           </div>
           <Select
-            label="🐶 Mascotas"
+            label="Mascotas"
             k="mascotas"
             form={form}
             setForm={setForm}
@@ -323,7 +324,10 @@ export function PropertyForm({ initial, onSave, onClose }) {
                 Subiendo fotos...
               </span>
             ) : (
-              "📱 Seleccionar fotos"
+              <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                <Camera size={18} strokeWidth={1.5} />
+                Seleccionar fotos
+              </span>
             )}
           </button>
           {(form.fotos_urls || []).length > 0 && (
@@ -358,7 +362,7 @@ export function PropertyForm({ initial, onSave, onClose }) {
                     }}
                     style={formStyles.photoRemove}
                   >
-                    ✕
+                    <X size={12} strokeWidth={2} />
                   </button>
                   {i === 0 && <span style={formStyles.mainPhotoBadge}>Principal</span>}
                 </div>

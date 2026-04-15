@@ -4,6 +4,7 @@ import { ESTADO_COLORS } from "../../utils/constants";
 import { CopyShareBtns } from "../../components/ui/CopyShareBtns";
 import { Gallery } from "../../components/ui/Gallery";
 import { useSwipeBack } from "../../hooks/useSwipeBack";
+import { MapPin, Video, PencilLine, Trash2, X, ArrowLeft, Link, Play, Eye, Images, Globe } from "lucide-react";
 
 /**
  * Property detail component showing full information for admin
@@ -28,14 +29,14 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete }) {
     <div style={detailStyles.container}>
       <div style={detailStyles.header}>
         <button onClick={onBack} style={detailStyles.backBtn}>
-          ← Volver
+          <ArrowLeft size={20} strokeWidth={1.5} />
         </button>
         <div style={{ display: "flex", gap: 8 }}>
           <button onClick={handleDelete} style={detailStyles.iconBtn} title="Eliminar">
-            🗑️
+            <Trash2 size={18} strokeWidth={1.5} />
           </button>
           <button onClick={onEdit} style={detailStyles.iconBtn} title="Editar">
-            ✎
+            <PencilLine size={18} strokeWidth={1.5} />
           </button>
         </div>
       </div>
@@ -45,7 +46,7 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete }) {
           <img src={out.fotos[0]} alt="" style={detailStyles.heroImg} />
           {out.fotos.length > 1 && (
             <div style={detailStyles.heroBadge}>
-              📸 {out.fotos.length} fotos
+              <Eye size={14} strokeWidth={1.5} /> {out.fotos.length} fotos
             </div>
           )}
         </div>
@@ -119,26 +120,26 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete }) {
             onClick={() => setGallery(true)}
             style={{ ...detailStyles.actionBtn, cursor: "pointer" }}
           >
-            📸 Ver fotos ({out.fotos.length})
+            <Images size={16} strokeWidth={1.5} /> Ver fotos ({out.fotos.length})
           </button>
         )}
         {p.tour360_url && (
           <a href={p.tour360_url} target="_blank" rel="noreferrer" style={detailStyles.actionBtn}>
-            🌐 Tour 360
+            <Globe size={16} strokeWidth={1.5} /> Tour 360
           </a>
         )}
         {p.video_url && (
           <a href={p.video_url} target="_blank" rel="noreferrer" style={detailStyles.actionBtn}>
-            🎥 Video
+            <Video size={16} strokeWidth={1.5} /> Video
           </a>
         )}
         <a href={out.mapsLink} target="_blank" rel="noreferrer" style={detailStyles.actionBtn}>
-          🗺 Ver mapa
+          <MapPin size={16} strokeWidth={1.5} /> Ver mapa
         </a>
       </div>
 
       <div style={detailStyles.card}>
-        <div style={detailStyles.sectionTitle}>📍 Ubicación</div>
+        <div style={detailStyles.sectionTitle}>Ubicacion</div>
         <pre style={detailStyles.msgPreNoBox}>{out.ubicacion}</pre>
         <CopyShareBtns text={out.ubicacion} />
       </div>
@@ -341,6 +342,10 @@ const detailStyles = {
     fontWeight: 600,
     cursor: "pointer",
     transition: "all 0.3s ease",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
   },
   sectionTitle: {
     fontWeight: 700,
