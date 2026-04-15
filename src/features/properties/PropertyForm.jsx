@@ -50,6 +50,7 @@ export function PropertyForm({ initial, onSave, onClose }) {
   const [saving, setSaving] = useState(false);
   const [draggingIdx, setDraggingIdx] = useState(null);
   const [dragOverIdx, setDragOverIdx] = useState(null);
+  const [dragSourceIdx, setDragSourceIdx] = useState(null);
   const fileRef = useRef();
 
   const handlePhotos = async (e) => {
@@ -100,19 +101,20 @@ export function PropertyForm({ initial, onSave, onClose }) {
   };
 
   const handleDragEnd = () => {
-    if (draggingIdx !== null && dragOverIdx !== null && draggingIdx !== dragOverIdx) {
-      movePhoto(draggingIdx, dragOverIdx);
+    if (dragSourceIdx !== null && dragOverIdx !== null && dragSourceIdx !== dragOverIdx) {
+      movePhoto(dragSourceIdx, dragOverIdx);
     }
     setDraggingIdx(null);
     setDragOverIdx(null);
+    setDragSourceIdx(null);
   };
 
   const getVisibleFotos = () => {
-    if (draggingIdx === null || dragOverIdx === null || draggingIdx === dragOverIdx) {
+    if (draggingIdx === null || dragOverIdx === null) {
       return form.fotos_urls || [];
     }
     const newFotos = [...(form.fotos_urls || [])];
-    const [moved] = newFotos.splice(draggingIdx, 1);
+    const [moved] = newFotos.splice(dragSourceIdx, 1);
     newFotos.splice(dragOverIdx, 0, moved);
     return newFotos;
   };
@@ -152,7 +154,9 @@ export function PropertyForm({ initial, onSave, onClose }) {
         fotos_urls: form.fotos_urls || [],
         video_url: form.video_url || null,
         tour360_url: form.tour360_url || null,
-        frase_destacada: form.frase_destacada || null,
+        frase_destacada: form.frase_destacada 
+          ? form.frase_destacada.replace(/^_"|"_$/g, "").trim() 
+          : null,
       };
 
       await onSave(payload, initial?.id);
@@ -340,16 +344,17 @@ export function PropertyForm({ initial, onSave, onClose }) {
                 <div
                   key={i}
                   draggable
-                  onDragStart={() => setDraggingIdx(i)}
+                  onDragStart={() => { setDraggingIdx(i); setDragSourceIdx(i); }}
                   onDragOver={(e) => handleDragOver(e, i)}
                   onDragEnd={handleDragEnd}
                   style={{
                     ...formStyles.photoThumbWrap,
-                    visibility: draggingIdx !== null && i === draggingIdx ? 'hidden' : 'visible',
-                    transform: draggingIdx !== null && i === draggingIdx ? 'scale(1.05)' : 'scale(1)',
+                    transform: draggingIdx !== null && i === dragOverIdx ? 'scale(1.02)' : 'scale(1)',
                     cursor: 'grab',
-                    border: dragOverIdx !== null && i === dragOverIdx ? '2px dashed #e8ff4f' : 'none',
-                    padding: dragOverIdx !== null && i === dragOverIdx ? 2 : 0,
+                    border: draggingIdx !== null && i === dragOverIdx ? '2px dashed #e8ff4f' : 'none',
+                    backgroundColor: draggingIdx !== null && i === dragOverIdx ? 'rgba(232, 255, 79, 0.1)' : 'transparent',
+                    padding: draggingIdx !== null && i === dragOverIdx ? 2 : 0,
+                    marginLeft: draggingIdx !== null && i === dragOverIdx ? '10px' : '0',
                   }}
                 >
                   <span style={formStyles.dragHandle}>⇕</span>
@@ -525,7 +530,7 @@ const formStyles = {
   },
   photoThumbWrap: {
     position: "relative",
-    transition: "all 0.2s ease",
+    transition: "transform 0.2s ease, border 0.2s ease, background-color 0.2s ease",
     borderRadius: 10,
     overflow: "hidden",
     minWidth: 80,
