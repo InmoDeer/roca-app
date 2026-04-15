@@ -41,8 +41,23 @@ export function PropertyForm({ initial, onSave, onClose }) {
     fotos_urls: [],
     video_url: "",
     tour360_url: "",
-    frase_destacada: "",
     estado: "Disponible",
+    // NUEVOS CAMPOS
+    balcon: false,
+    ventanas_amplias: false,
+    vista: "",
+    cerca_a: "",
+    cocina_equipada: false,
+    closet: false,
+    recepcion: false,
+    areas_comunes: false,
+    piscina: false,
+    terraza: false,
+    jardin: false,
+    sum: false,
+    parrilla: false,
+    juegos_ninos: false,
+    gimnasio: false,
   };
 
   const [form, setForm] = useState(initial || blank);
@@ -137,9 +152,7 @@ export function PropertyForm({ initial, onSave, onClose }) {
         maps_url: form.maps_url || null,
         precio: Number(form.precio),
         moneda: form.moneda,
-        mantenimiento: form.mantenimiento
-          ? Number(form.mantenimiento)
-          : null,
+        mantenimiento: form.mantenimiento ? Number(form.mantenimiento) : null,
         dormitorios: form.dormitorios ? Number(form.dormitorios) : null,
         ambientes: form.ambientes ? Number(form.ambientes) : null,
         banos: form.banos ? Number(form.banos) : null,
@@ -154,9 +167,22 @@ export function PropertyForm({ initial, onSave, onClose }) {
         fotos_urls: form.fotos_urls || [],
         video_url: form.video_url || null,
         tour360_url: form.tour360_url || null,
-        frase_destacada: form.frase_destacada 
-          ? form.frase_destacada.replace(/^_"|"_$/g, "").trim() 
-          : null,
+        // NUEVOS
+        balcon: !!form.balcon,
+        ventanas_amplias: !!form.ventanas_amplias,
+        vista: form.vista || null,
+        cerca_a: form.cerca_a || null,
+        cocina_equipada: !!form.cocina_equipada,
+        closet: !!form.closet,
+        recepcion: !!form.recepcion,
+        areas_comunes: !!form.areas_comunes,
+        piscina: !!form.piscina,
+        terraza: !!form.terraza,
+        jardin: !!form.jardin,
+        sum: !!form.sum,
+        parrilla: !!form.parrilla,
+        juegos_ninos: !!form.juegos_ninos,
+        gimnasio: !!form.gimnasio,
       };
 
       await onSave(payload, initial?.id);
@@ -298,7 +324,7 @@ export function PropertyForm({ initial, onSave, onClose }) {
             <Checkbox label="Cochera" k="cochera" form={form} setForm={setForm} icon={Car} />
             <Checkbox label="Ascensor" k="ascensor" form={form} setForm={setForm} icon={ArrowUp} />
             <Checkbox label="Amoblado" k="amoblado" form={form} setForm={setForm} icon={Armchair} />
-            <Checkbox label="Area servicio" k="area_servicio" form={form} setForm={setForm} icon={Sparkles} />
+            <Checkbox label="Cuarto y baño de servicio" k="area_servicio" form={form} setForm={setForm} icon={Sparkles} />
           </div>
           <Select
             label="Mascotas"
@@ -307,6 +333,52 @@ export function PropertyForm({ initial, onSave, onClose }) {
             setForm={setForm}
             opts={MASCOTAS_OPTIONS}
           />
+
+          <div style={formStyles.section}>Características destacadas</div>
+          <div style={formStyles.checkGrid}>
+            <Checkbox label="Balcón" k="balcon" form={form} setForm={setForm} />
+            <Checkbox label="Ventanas amplias" k="ventanas_amplias" form={form} setForm={setForm} />
+            <Checkbox label="Closets empotrados" k="closet" form={form} setForm={setForm} />
+            <Checkbox label="Cocina equipada" k="cocina_equipada" form={form} setForm={setForm} />
+            <Checkbox label="Recepción / Seguridad 24h" k="recepcion" form={form} setForm={setForm} />
+          </div>
+
+          <Select
+            label="Vista"
+            k="vista"
+            form={form}
+            setForm={setForm}
+            opts={["", "Calle", "Avenida", "Parque", "Jardín interior", "Panorámica", "Mar"]}
+          />
+
+          <Field
+            label="Cerca de..."
+            k="cerca_a"
+            form={form}
+            setForm={setForm}
+            placeholder="Ej: Metro, Wong, Parque Kennedy"
+          />
+
+          <Checkbox
+            label="Áreas comunes"
+            k="areas_comunes"
+            form={form}
+            setForm={setForm}
+          />
+
+          {form.areas_comunes && (
+            <div style={{ marginTop: 8, paddingLeft: 16 }}>
+              <div style={formStyles.checkGrid}>
+                <Checkbox label="Piscina" k="piscina" form={form} setForm={setForm} />
+                <Checkbox label="Terraza común" k="terraza" form={form} setForm={setForm} />
+                <Checkbox label="Jardín" k="jardin" form={form} setForm={setForm} />
+                <Checkbox label="SUM" k="sum" form={form} setForm={setForm} />
+                <Checkbox label="Parrilla / BBQ" k="parrilla" form={form} setForm={setForm} />
+                <Checkbox label="Juegos infantiles" k="juegos_ninos" form={form} setForm={setForm} />
+                <Checkbox label="Gimnasio" k="gimnasio" form={form} setForm={setForm} />
+              </div>
+            </div>
+          )}
 
           <div style={formStyles.section}>Fotos</div>
           <input
@@ -385,15 +457,6 @@ export function PropertyForm({ initial, onSave, onClose }) {
           <Field
             label="Tour 360 URL"
             k="tour360_url"
-            form={form}
-            setForm={setForm}
-            placeholder="opcional"
-          />
-
-          <div style={formStyles.section}>Copywriting</div>
-          <Field
-            label="Frase destacada"
-            k="frase_destacada"
             form={form}
             setForm={setForm}
             placeholder="opcional"
