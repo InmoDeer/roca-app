@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { supabase } from '../../../config/supabase';
 import { buildOutputs } from '../../../utils/messageFormatter';
@@ -169,44 +169,141 @@ export function PublicPropertyPage({ id }) {
 }
 
 /**
- * Grid de fotos simple - sin recortes, respeta orientación original
+ * Collage inteligente - respetando orientación original
+ * - Primera foto más grande (principal)
+ * - Las demás en grid secundario
+ * - Mantiene proporciones sin recortes
  */
 function PhotoCollage({ fotos, onPhotoClick }) {
-  if (!fotos || fotos.length === 0) return null;
+  const [dimensions, setDimensions] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!fotos || fotos.length === 0) return;
+
+    const loadDimensions = async () => {
+      const dims = await Promise.all(
+        fotos.map((url) => loadImageDimensions(url))
+      );
+      setDimensions(dims);
+      setLoading(false);
+    };
+
+    loadDimensions();
+  }, [fotos]);
+
+  if (loading || dimensions.length === 0) {
+    return <div style={{ height: 280, background: '#111' }} />;
+  }
+
+  const mainPhoto = dimensiones[0];
+  const isLandscape = mainPhoto.width > mainPhoto.height;
+  const otherPhotos = dimensiones.slice(1);
 
   return (
-    <div style={collageGrid.container}>
-      {fotos.map((url, i) => (
-        <div 
-          key={i} 
-          style={collageGrid.item}
-          onClick={() => onPhotoClick(i)}
-        >
-          <img 
-            src={url} 
-            alt="" 
-            style={collageGrid.img}
-          />
+    <div style={collageStyles.container}>
+      {/* Foto principal - respetar orientación */}
+      <div 
+        style={collageStyles.mainPhoto}
+        onClick={() => onPhotoClick(0)}
+      >
+        <img 
+          src={fotos[0]} 
+          alt="" 
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: isLandscape ? 'contain' : 'cover',
+          }} 
+        />
+      </div>
+
+      {/* Grid de fotos secundarias */}
+      {otherPhotos.length > 0 && (
+        <div style={collageStyles.secondaryGrid}>
+          {otherPhotos.map((dims, i) => (
+            <div 
+              key={i + 1} 
+              style={collageStyles.secondaryItem}
+              onClick={() => onPhotoClick(i + 1)}
+            >
+              <img 
+                src={fotos[i + 1]} 
+                alt="" 
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: dims.width > dims.height ? 'contain' : 'cover',
+                }} 
+              />
+            </div>
+          ))}
+          
+          {/* Más fotos indicator */}
+          {fotos.length > 5 && (
+            <div style={collageStyles.moreBadge}>
+              +{fotos.length - 5}
+            </div>
+          )}
         </div>
-      ))}
+      )}
     </div>
   );
 }
 
-const collageGrid = {
+function loadImageDimensions(url) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve({ width: img.naturalWidth, height: img.naturalHeight });
+    img.onerror = () => resolve({ width: 800, height: 600 });
+    img.src = url;
+  });
+}
+
+function isMobile() {
+  if (typeof window === 'undefined') return false;
+  return window.innerWidth < 600;
+}
+
+const collageStyles = {
   container: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(2, 1fr)',
+    gridTemplateColumns: isMobile() ? '1fr' : '1.5fr 1fr',
+    gridTemplateRows: '1fr',
     gap: 4,
+    height: 320,
     width: '100%',
   },
-  item: {
+  mainPhoto: {
     position: 'relative',
-    aspectRatio: '1/1',
     overflow: 'hidden',
     cursor: 'pointer',
+    background: '#000',
   },
-  img: {
+  secondaryGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, 1fr)',
+    gridTemplateRows: 'repeat(2, 1fr)',
+    gap: 4,
+  },
+  secondaryItem: {
+    position: 'relative',
+    overflow: 'hidden',
+    cursor: 'pointer',
+    background: '#000',
+  },
+  moreBadge: {
+    position: 'absolute',
+    inset: 0,
+    background: 'rgba(0,0,0,0.7)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 700,
+  },
+};
     width: '100%',
     height: '100%',
     objectFit: 'cover',
