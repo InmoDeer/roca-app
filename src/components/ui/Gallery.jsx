@@ -4,8 +4,8 @@ import { X, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 /**
  * Gallery component for viewing property photos with navigation
  */
-export function Gallery({ fotos, onClose }) {
-  const [idx, setIdx] = useState(0);
+export function Gallery({ fotos, onClose, initialIndex = 0 }) {
+  const [idx, setIdx] = useState(initialIndex);
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(true);
 

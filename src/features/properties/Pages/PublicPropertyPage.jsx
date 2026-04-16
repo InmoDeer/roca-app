@@ -1,16 +1,17 @@
-import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { supabase } from '../../../config/supabase';
 import { buildOutputs } from '../../../utils/messageFormatter';
 import { Gallery } from '../../../components/ui/Gallery';
 import { BUSINESS_NAME } from '../../../config/environment';
-import { MapPin, Globe, Phone, Copy, ArrowLeft, Maximize, Bed, Bath } from 'lucide-react';
+import { MapPin, Globe, Phone, Copy, Check, Maximize, Bed, Bath, Building, Eye } from 'lucide-react';
 
 export function PublicPropertyPage({ id }) {
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showGallery, setShowGallery] = useState(false);
+  const [galleryIndex, setGalleryIndex] = useState(0);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const fetchProperty = async () => {
@@ -25,40 +26,81 @@ export function PublicPropertyPage({ id }) {
     fetchProperty();
   }, [id]);
 
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Error al copiar:', err);
+    }
+  };
+
+  const openGallery = (index = 0) => {
+    setGalleryIndex(index);
+    setShowGallery(true);
+  };
+
   if (loading) return <LoadingScreen />;
   if (!property) return <NotFound />;
 
   const out = buildOutputs(property);
-  const mainImage = property.fotos_urls?.[0];
-  const pageUrl = window.location.href;
+  const fotos = property.fotos_urls || [];
+  const mainImage = fotos[0];
+  const remainingImages = fotos.slice(1, 5);
   const highlightText = out.caracteristicasCompletas
     .split('\n')
     .filter(line => line.startsWith('•'))
-    .join(' · ');
+    .map(line => line.replace('• ', ''));
 
   return (
     <>
       <Helmet>
-        <title>{`${property.nombre} - ${property.distrito}`}</title>
-        <meta name="description" content={`${property.tipo} en ${property.distrito}. ${highlightText}`} />
+        <title>{`${property.nombre} - ${property.distrito} | ${BUSINESS_NAME}`}</title>
+        <meta name="description" content={`${property.tipo} en ${property.distrito}. ${out.specsLine}. ${highlightText.slice(0, 3).join('. ')}`} />
         <meta property="og:title" content={`${property.nombre} en ${property.distrito}`} />
-        <meta property="og:description" content={highlightText} />
+        <meta property="og:description" content={out.specsLine} />
         <meta property="og:image" content={mainImage} />
-        <meta property="og:url" content={pageUrl} />
+        <meta property="og:url" content={window.location.href} />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
 
       <div className="public-landing">
-        <header className="landing-header">
+        <header className="landing-header" style={{ justifyContent: 'space-between', padding: '12px 16px' }}>
+          <button onClick={handleCopyLink} className="copy-link-btn" title="Compartir">
+            {copied ? <Check size={20} /> : <Copy size={20} />}
+          </button>
           <span className="logo">{BUSINESS_NAME}</span>
+          <div style={{ width: 40 }} />
         </header>
 
-        {mainImage && (
-          <div className="hero" onClick={() => setShowGallery(true)}>
-            <img src={mainImage} alt={property.nombre} />
-            {property.fotos_urls?.length > 1 && (
-              <span className="photo-count">+{property.fotos_urls.length - 1}</span>
+        {/* Grid de fotos */}
+        {fotos.length > 0 && (
+          <div className="photo-grid">
+            {fotos.length === 1 ? (
+              <div className="hero" onClick={() => openGallery(0)}>
+                <img src={mainImage} alt={property.nombre} />
+              </div>
+            ) : (
+              <div className="photo-grid-container">
+                <div className="photo-main" onClick={() => openGallery(0)}>
+                  <img src={mainImage} alt={property.nombre} />
+                  <div className="photo-overlay">
+                    <Eye size={20} /> Ver fotos
+                  </div>
+                </div>
+                <div className="photo-thumbs">
+                  {remainingImages.map((url, i) => (
+                    <div key={i} className="photo-thumb" onClick={() => openGallery(i + 1)}>
+                      <img src={url} alt="" />
+                      {i === remainingImages.length - 1 && fotos.length > 5 && (
+                        <div className="photo-more">+{fotos.length - 5}</div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
         )}
@@ -79,14 +121,14 @@ export function PublicPropertyPage({ id }) {
 
           <div className="highlight-box">
             <span>✨</span>
-            <p>{highlightText}</p>
+            <p>{highlightText.slice(0, 5).join(' · ')}</p>
           </div>
 
           <div className="features-grid">
             {property.dormitorios && <div><Bed size={18} /> {property.dormitorios} dorm.</div>}
             {property.banos && <div><Bath size={18} /> {property.banos} baños</div>}
             {property.area_m2 && <div><Maximize size={18} /> {property.area_m2} m²</div>}
-            {property.piso && <div>🏢 Piso {property.piso}</div>}
+            {property.piso && <div><Building size={18} /> Piso {property.piso}</div>}
           </div>
 
           <div className="actions">
@@ -98,11 +140,8 @@ export function PublicPropertyPage({ id }) {
             >
               <Phone size={18} /> WhatsApp
             </a>
-            <button
-              onClick={() => { navigator.clipboard.writeText(pageUrl); alert('Enlace copiado'); }}
-              className="copy-btn"
-            >
-              <Copy size={18} />
+            <button onClick={() => openGallery(0)} className="gallery-btn">
+              <Eye size={18} /> Ver todas las fotos
             </button>
           </div>
 
@@ -121,14 +160,17 @@ export function PublicPropertyPage({ id }) {
         </div>
 
         {showGallery && (
-          <Gallery fotos={property.fotos_urls} onClose={() => setShowGallery(false)} />
+          <Gallery 
+            fotos={fotos} 
+            initialIndex={galleryIndex}
+            onClose={() => setShowGallery(false)} 
+          />
         )}
       </div>
     </>
   );
 }
 
-// Componentes auxiliares
 function LoadingScreen() {
   return <div className="loading-screen">Cargando...</div>;
 }
@@ -137,7 +179,6 @@ function NotFound() {
   return (
     <div className="not-found">
       <h2>Inmueble no encontrado</h2>
-      <Link to="/">Volver al inicio</Link>
     </div>
   );
 }
