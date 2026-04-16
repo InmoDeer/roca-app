@@ -95,7 +95,7 @@ export function buildOutputs(p) {
 
     // ----- ANTIGÜEDAD / ESTADO -----
     const antiguedad = prop.antiguedad || "";
-    if (antiguedad === "Estreno") {
+    if (antiguedad === "A estrenar") {
       highlights.push("✨ A estrenar, acabados de lujo");
     } else if (antiguedad === "1-5 años") {
       highlights.push("🆕 Como nuevo, muy bien conservado");
