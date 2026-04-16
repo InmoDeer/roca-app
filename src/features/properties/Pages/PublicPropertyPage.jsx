@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { supabase } from '../../../config/supabase';
 import { buildOutputs } from '../../../utils/messageFormatter';
 import { Gallery } from '../../../components/ui/Gallery';
+import { BUSINESS_NAME } from '../../../config/environment';
 import { MapPin, Globe, Phone, Copy, ArrowLeft, Maximize, Bed, Bath } from 'lucide-react';
 
 export function PublicPropertyPage({ id }) {
@@ -50,10 +51,10 @@ export function PublicPropertyPage({ id }) {
 
       <div className="public-landing">
         <header className="landing-header">
-          <Link to="/" className="back-link">
+          <button onClick={() => window.history.back()} className="back-link">
             <ArrowLeft size={20} />
-          </Link>
-          <span className="logo">ROCA</span>
+          </button>
+          <span className="logo">{BUSINESS_NAME}</span>
           <div style={{ width: 40 }} />
         </header>
 
