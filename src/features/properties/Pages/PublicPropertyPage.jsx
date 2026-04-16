@@ -4,7 +4,7 @@ import { supabase } from '../../../config/supabase';
 import { buildOutputs } from '../../../utils/messageFormatter';
 import { Gallery } from '../../../components/ui/Gallery';
 import { BUSINESS_NAME } from '../../../config/environment';
-import { MapPin, Globe, Phone, Copy, Check, Maximize, Bed, Bath, Building, Eye } from 'lucide-react';
+import { MapPin, Globe, Phone, Share, Check, Maximize, Bed, Bath, Building, Eye, Square, ArrowUp, ArrowDown, LayoutGrid } from 'lucide-react';
 
 export function PublicPropertyPage({ id }) {
   const [property, setProperty] = useState(null);
@@ -25,6 +25,24 @@ export function PublicPropertyPage({ id }) {
     };
     fetchProperty();
   }, [id]);
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `${property.nombre} - ${property.distrito}`,
+          text: `Mira este inmueble: ${property.nombre} en ${property.distrito}`,
+          url: window.location.href,
+        });
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          handleCopyLink();
+        }
+      }
+    } else {
+      handleCopyLink();
+    }
+  };
 
   const handleCopyLink = async () => {
     try {
@@ -47,7 +65,6 @@ export function PublicPropertyPage({ id }) {
   const out = buildOutputs(property);
   const fotos = property.fotos_urls || [];
   const mainImage = fotos[0];
-  const remainingImages = fotos.slice(1, 5);
   const highlightText = out.caracteristicasCompletas
     .split('\n')
     .filter(line => line.startsWith('•'))
@@ -68,39 +85,43 @@ export function PublicPropertyPage({ id }) {
 
       <div className="public-landing">
         <header className="landing-header" style={{ justifyContent: 'space-between', padding: '12px 16px' }}>
-          <button onClick={handleCopyLink} className="copy-link-btn" title="Compartir">
-            {copied ? <Check size={20} /> : <Copy size={20} />}
+          <button onClick={handleShare} className="share-btn" title="Compartir">
+            {copied ? <Check size={20} /> : <Share size={20} />}
           </button>
           <span className="logo">{BUSINESS_NAME}</span>
-          <div style={{ width: 40 }} />
+          <button onClick={() => setShowGallery(true)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+            <LayoutGrid size={20} style={{ color: '#fff' }} />
+          </button>
         </header>
 
-        {/* Grid de fotos */}
+        {/* Fotos - collage según cantidad */}
         {fotos.length > 0 && (
-          <div className="photo-grid">
-            {fotos.length === 1 ? (
-              <div className="hero" onClick={() => openGallery(0)}>
-                <img src={mainImage} alt={property.nombre} />
-              </div>
-            ) : (
-              <div className="photo-grid-container">
-                <div className="photo-main" onClick={() => openGallery(0)}>
-                  <img src={mainImage} alt={property.nombre} />
-                  <div className="photo-overlay">
-                    <Eye size={20} /> Ver fotos
-                  </div>
+          <div className="photo-collage" onClick={() => openGallery(0)}>
+            {fotos.length === 1 && (
+              <img src={fotos[0]} alt={property.nombre} className="photo-full" />
+            )}
+            {fotos.length === 2 && (
+              <>
+                <img src={fotos[0]} alt="" />
+                <img src={fotos[1]} alt="" />
+              </>
+            )}
+            {fotos.length === 3 && (
+              <>
+                <img src={fotos[0]} alt="" className="photo-main-col" />
+                <img src={fotos[1]} alt="" />
+                <img src={fotos[2]} alt="" />
+              </>
+            )}
+            {fotos.length >= 4 && (
+              <>
+                <img src={fotos[0]} alt="" className="photo-main-col" />
+                <img src={fotos[1]} alt="" />
+                <img src={fotos[2]} alt="" />
+                <div className="photo-more-grid" onClick={(e) => { e.stopPropagation(); openGallery(3) }}>
+                  +{fotos.length - 3}
                 </div>
-                <div className="photo-thumbs">
-                  {remainingImages.map((url, i) => (
-                    <div key={i} className="photo-thumb" onClick={() => openGallery(i + 1)}>
-                      <img src={url} alt="" />
-                      {i === remainingImages.length - 1 && fotos.length > 5 && (
-                        <div className="photo-more">+{fotos.length - 5}</div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
+              </>
             )}
           </div>
         )}
@@ -120,7 +141,6 @@ export function PublicPropertyPage({ id }) {
           </div>
 
           <div className="highlight-box">
-            <span>✨</span>
             <p>{highlightText.slice(0, 5).join(' · ')}</p>
           </div>
 
