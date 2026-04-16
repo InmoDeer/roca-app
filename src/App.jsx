@@ -4,7 +4,7 @@ import { useProperties } from "./hooks/useProperties";
 import { PropertyForm } from "./features/properties/PropertyForm.jsx";
 import { PropertyDetail } from "./features/properties/PropertyDetail.jsx";
 import { PublicGallery } from "./features/properties/PublicGallery.jsx";
-import { PublicPropertyPage } from "./features/properties/pages/PublicPropertyPage.jsx";
+import { PublicPropertyPage } from "./features/properties/Pages/PublicPropertyPage.jsx";
 import { buildOutputs } from "./utils/messageFormatter";
 import { ESTADO_COLORS, ESTADOS } from "./utils/constants";
 import { PropertyCard } from "./components/PropertyCard.jsx";
@@ -240,9 +240,11 @@ const S = {
 };
 
 export default function App() {
+  const path = window.location.pathname;
   // Si la URL es /p/xxxxx, mostrar la landing page pública
-  if (window.location.pathname.startsWith('/p/')) {
-    return <PublicPropertyPage />;
+  if (path.startsWith('/p/')) {
+    const id = path.split('/p/')[1];
+    return <PublicPropertyPage id={id} />;
   }
 
   // En cualquier otro caso, mostrar la app de administración
