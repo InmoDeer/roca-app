@@ -73,11 +73,6 @@ export function buildOutputs(p) {
       highlights.push(vistaMap[prop.vista] || `👀 Vista a ${prop.vista.toLowerCase()}`);
     }
 
-    // ----- CERCA DE (nuevo campo) -----
-    if (prop.cerca_a) {
-      highlights.push(`🚶 A pasos de ${prop.cerca_a}`);
-    }
-
     // ----- COCINA EQUIPADA (nuevo campo) -----
     if (prop.cocina_equipada) {
       highlights.push("🍳 Cocina completamente equipada");
@@ -103,10 +98,18 @@ export function buildOutputs(p) {
       highlights.push("🏗 Buen estado general");
     }
 
-    // ----- AMENITIES DESTACABLES (existentes) -----
+    // ----- AMOBLADO (infiere cocina y closets si no están explícitos) -----
     if (prop.amoblado) {
       highlights.push("🛋️ Totalmente amoblado y equipado");
+      if (!prop.cocina_equipada) {
+        highlights.push("🍳 Cocina equipada");
+      }
+      if (!prop.closet) {
+        highlights.push("🚪 Closets empotrados");
+      }
     }
+
+    // ----- COCHERA -----
     if (prop.cochera) {
       highlights.push("🚗 Estacionamiento privado incluido");
     }
@@ -141,27 +144,49 @@ export function buildOutputs(p) {
       highlights.push("🛏 Ideal para familias o roommates");
     }
 
+    // ----- IDEAL PARA FAMILIAS (combinación) -----
+    if (area >= 80 && prop.dormitorios >= 3 && prop.banos >= 2) {
+      if (!highlights.includes("🛏 Ideal para familias o roommates")) {
+        highlights.push("👨‍👩‍👧‍👦 Perfecto para familias");
+      }
+    }
+
     // Evitar duplicados y limitar
     const unique = [...new Set(highlights)];
     return unique.slice(0, 8);
   }
 
   function getLocationHighlight(prop) {
+    const lines = [];
+    
+    // Destacado según tipo de vía
     if (prop.direccion) {
       const dir = prop.direccion.toLowerCase();
       if (dir.includes("av.")) {
-        return "📍 Sobre avenida principal, excelente conectividad";
+        lines.push("🛣️ Sobre avenida principal, excelente conectividad");
       } else if (dir.includes("jr.") || dir.includes("calle")) {
-        return "📍 Zona residencial tranquila y segura";
+        lines.push("🏘️ Zona residencial tranquila y segura");
       } else if (dir.includes("parque") || dir.includes("plaza")) {
-        return "🌳 Frente a área verde";
+        lines.push("🌳 Frente a área verde");
       }
     }
-    const distritosTop = ["Miraflores", "San Isidro", "Barranco", "Surco", "La Molina"];
-    if (distritosTop.includes(prop.distrito)) {
-      return `📍 Ubicación privilegiada en ${prop.distrito}`;
+
+    // Cerca de...
+    if (prop.cerca_a) {
+      lines.push(`🚶 A pasos de ${prop.cerca_a}`);
     }
-    return `📍 Céntrico en ${prop.distrito}, cerca a todo`;
+
+    // Si no hay líneas adicionales, destacar distrito top
+    if (lines.length === 0) {
+      const distritosTop = ["Miraflores", "San Isidro", "Barranco", "Surco", "La Molina"];
+      if (distritosTop.includes(prop.distrito)) {
+        lines.push(`📍 Ubicación privilegiada en ${prop.distrito}`);
+      } else {
+        lines.push(`📍 Céntrico en ${prop.distrito}, cerca a todo`);
+      }
+    }
+
+    return lines.join("\n");
   }
 
   const autoHighlights = generateAutoHighlights(p);
