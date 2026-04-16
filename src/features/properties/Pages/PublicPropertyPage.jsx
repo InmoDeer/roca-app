@@ -4,8 +4,10 @@ import { supabase } from '../../../config/supabase';
 import { buildOutputs } from '../../../utils/messageFormatter';
 import { Gallery } from '../../../components/ui/Gallery';
 import { BUSINESS_NAME } from '../../../config/environment';
+import { RowsPhotoAlbum } from 'react-photo-album';
+import 'react-photo-album/rows.css';
 import { 
-  MapPin, Globe, Phone, Share2, Check, 
+  Globe, Phone, Share2, Check, 
   Bed, Bath, Maximize, Building 
 } from 'lucide-react';
 
@@ -169,82 +171,28 @@ export function PublicPropertyPage({ id }) {
 }
 
 /**
- * Collage de fotos corregido:
- * - Usa object-fit: cover para llenar el espacio sin dejar bordes.
- * - Mantiene proporciones con un contenedor de altura fija.
- * - La primera foto siempre es la más grande (principal).
+ * Collage de fotos usando react-photo-album
  */
 function PhotoCollage({ fotos, onPhotoClick }) {
-  const count = fotos.length;
-  if (count === 0) return null;
+  if (!fotos || fotos.length === 0) return null;
 
-  const handleClick = (index) => () => onPhotoClick(index);
+  const photos = fotos.map((src) => ({ src, width: 800, height: 600 }));
 
-  if (count === 1) {
-    return (
-      <div style={collageStyles.single} onClick={handleClick(0)}>
-        <img src={fotos[0]} alt="" style={collageStyles.imgCover} />
-      </div>
-    );
-  }
+  const handleImageClick = ({ index }) => {
+    onPhotoClick(index);
+  };
 
-  if (count === 2) {
-    return (
-      <div style={collageStyles.grid2}>
-        <img src={fotos[0]} alt="" style={collageStyles.imgCover} onClick={handleClick(0)} />
-        <img src={fotos[1]} alt="" style={collageStyles.imgCover} onClick={handleClick(1)} />
-      </div>
-    );
-  }
-
-  if (count === 3) {
-    return (
-      <div style={collageStyles.grid3}>
-        <img src={fotos[0]} alt="" style={{ ...collageStyles.imgCover, gridColumn: '1 / 2', gridRow: '1 / 3' }} onClick={handleClick(0)} />
-        <img src={fotos[1]} alt="" style={collageStyles.imgCover} onClick={handleClick(1)} />
-        <img src={fotos[2]} alt="" style={collageStyles.imgCover} onClick={handleClick(2)} />
-      </div>
-    );
-  }
-
-  // 4+ fotos
   return (
-    <div style={collageStyles.grid4}>
-      <img src={fotos[0]} alt="" style={{ ...collageStyles.imgCover, gridColumn: '1 / 2', gridRow: '1 / 3' }} onClick={handleClick(0)} />
-      <img src={fotos[1]} alt="" style={collageStyles.imgCover} onClick={handleClick(1)} />
-      <img src={fotos[2]} alt="" style={collageStyles.imgCover} onClick={handleClick(2)} />
-      <div style={{ position: 'relative' }} onClick={handleClick(3)}>
-        <img src={fotos[3]} alt="" style={collageStyles.imgCover} />
-        {count > 4 && (
-          <div style={collageStyles.moreBadge}>
-            +{count - 4}
-          </div>
-        )}
-      </div>
+    <div style={{ width: '100%', cursor: 'pointer' }}>
+      <RowsPhotoAlbum
+        photos={photos}
+        onClick={handleImageClick}
+        targetRowHeight={200}
+        spacing={4}
+      />
     </div>
   );
 }
-
-// Estilos del collage
-const collageStyles = {
-  single: {
-    width: '100%',
-    height: 280,
-    cursor: 'pointer',
-  },
-  grid2: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: 4,
-    height: 280,
-  },
-  grid3: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gridTemplateRows: '1fr 1fr',
-    gap: 4,
-    height: 280,
-  },
   grid4: {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
