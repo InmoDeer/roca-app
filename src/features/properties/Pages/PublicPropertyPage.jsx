@@ -51,11 +51,7 @@ export function PublicPropertyPage({ id }) {
 
       <div className="public-landing">
         <header className="landing-header">
-          <button onClick={() => { try { window.close() } catch { window.location.href = "/" } }} className="back-link" title="Cerrar o volver al inicio">
-            <ArrowLeft size={20} />
-          </button>
           <span className="logo">{BUSINESS_NAME}</span>
-          <div style={{ width: 40 }} />
         </header>
 
         {mainImage && (
