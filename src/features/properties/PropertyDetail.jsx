@@ -32,6 +32,9 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete }) {
           <ArrowLeft size={20} strokeWidth={1.5} />
         </button>
         <div style={{ display: "flex", gap: 8 }}>
+          <button onClick={() => window.open(`/p/${p.id}`, "_blank")} style={detailStyles.iconBtn} title="Landing" style={{ color: "#d4af37" }}>
+            <Link size={18} strokeWidth={1.5} />
+          </button>
           <button onClick={handleDelete} style={detailStyles.iconBtn} title="Eliminar">
             <Trash2 size={18} strokeWidth={1.5} />
           </button>

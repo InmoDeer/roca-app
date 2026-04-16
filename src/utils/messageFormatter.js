@@ -169,7 +169,7 @@ export function buildOutputs(p) {
 
   // Multimedia
   const multimedia = [
-    fotos.length > 0 ? `📸 Galería (${fotos.length} fotos):\n${propiedadUrl}` : "",
+    fotos.length > 0 ? `📸 Galería:\n${propiedadUrl}` : "",
     p.tour360_url ? `🌐 Tour 360°:\n${p.tour360_url}` : "",
     p.video_url ? `🎥 Video:\n${p.video_url}` : "",
   ].filter(Boolean).join("\n");
