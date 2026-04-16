@@ -4,8 +4,6 @@ import { supabase } from '../../../config/supabase';
 import { buildOutputs } from '../../../utils/messageFormatter';
 import { Gallery } from '../../../components/ui/Gallery';
 import { BUSINESS_NAME } from '../../../config/environment';
-import { RowsPhotoAlbum } from 'react-photo-album';
-import 'react-photo-album/rows.css';
 import { 
   Globe, Phone, Share2, Check, 
   Bed, Bath, Maximize, Building 
@@ -171,28 +169,49 @@ export function PublicPropertyPage({ id }) {
 }
 
 /**
- * Collage de fotos usando react-photo-album
+ * Grid de fotos simple - sin recortes, respeta orientación original
  */
 function PhotoCollage({ fotos, onPhotoClick }) {
   if (!fotos || fotos.length === 0) return null;
 
-  const photos = fotos.map((src) => ({ src, width: 800, height: 600 }));
-
-  const handleImageClick = ({ index }) => {
-    onPhotoClick(index);
-  };
-
   return (
-    <div style={{ width: '100%', cursor: 'pointer' }}>
-      <RowsPhotoAlbum
-        photos={photos}
-        onClick={handleImageClick}
-        targetRowHeight={200}
-        spacing={4}
-      />
+    <div style={collageGrid.container}>
+      {fotos.map((url, i) => (
+        <div 
+          key={i} 
+          style={collageGrid.item}
+          onClick={() => onPhotoClick(i)}
+        >
+          <img 
+            src={url} 
+            alt="" 
+            style={collageGrid.img}
+          />
+        </div>
+      ))}
     </div>
   );
 }
+
+const collageGrid = {
+  container: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, 1fr)',
+    gap: 4,
+    width: '100%',
+  },
+  item: {
+    position: 'relative',
+    aspectRatio: '1/1',
+    overflow: 'hidden',
+    cursor: 'pointer',
+  },
+  img: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+  },
+};
   grid4: {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
