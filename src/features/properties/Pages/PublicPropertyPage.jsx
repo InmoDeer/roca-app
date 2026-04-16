@@ -14,7 +14,7 @@ export function PublicPropertyPage({ id }) {
   useEffect(() => {
     const fetchProperty = async () => {
       const { data, error } = await supabase
-        .from('properties')
+        .from('propiedades')
         .select('*')
         .eq('id', id)
         .single();
