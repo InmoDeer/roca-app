@@ -3,7 +3,7 @@ import { useState } from "react";
 /**
  * Button component for copying/sharing text (for WhatsApp messages)
  */
-export function CopyShareBtns({ text, propertyId }) {
+export function CopyShareBtns({ text }) {
   const [copied, setCopied] = useState(false);
 
   const copy = () => {
@@ -20,12 +20,6 @@ export function CopyShareBtns({ text, propertyId }) {
     }
   };
 
-  const openLanding = () => {
-    const baseUrl = window.location.origin;
-    const landingUrl = `${baseUrl}/p/${propertyId}`;
-    window.open(landingUrl, "_blank");
-  };
-
   return (
     <div style={copyShareStyles.container}>
       <button onClick={copy} style={copyShareStyles.copyBtn}>
@@ -34,11 +28,6 @@ export function CopyShareBtns({ text, propertyId }) {
       <button onClick={share} style={copyShareStyles.shareBtn}>
         Compartir
       </button>
-      {propertyId && (
-        <button onClick={openLanding} style={copyShareStyles.landingBtn}>
-          Landing
-        </button>
-      )}
     </div>
   );
 }

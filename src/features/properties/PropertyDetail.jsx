@@ -114,7 +114,7 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete }) {
         <pre style={detailStyles.msgPre}>
           {tab === "corto" ? out.mensajeCorto : out.mensajeLargo}
         </pre>
-        <CopyShareBtns text={tab === "corto" ? out.mensajeCorto : out.mensajeLargo} propertyId={p.id} />
+        <CopyShareBtns text={tab === "corto" ? out.mensajeCorto : out.mensajeLargo} />
       </div>
 
       <div style={detailStyles.actionGrid}>
