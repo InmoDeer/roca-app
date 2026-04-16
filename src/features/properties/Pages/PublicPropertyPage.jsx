@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { supabase } from '../../../utils/api';
+import { supabase } from '../../../config/supabase';
 import { buildOutputs } from '../../../utils/messageFormatter';
 import { Gallery } from '../../../components/ui/Gallery';
 import { MapPin, Globe, Phone, Copy, ArrowLeft, Maximize, Bed, Bath } from 'lucide-react';
