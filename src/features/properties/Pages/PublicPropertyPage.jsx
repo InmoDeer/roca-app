@@ -6,7 +6,7 @@ import { Gallery } from '../../../components/ui/Gallery';
 import { BUSINESS_NAME } from '../../../config/environment';
 import { 
   MapPin, Globe, Phone, Share2, Check, 
-  Bed, Bath, Maximize, Building, Grid3x3 
+  Bed, Bath, Maximize, Building 
 } from 'lucide-react';
 
 export function PublicPropertyPage({ id }) {
@@ -97,7 +97,7 @@ export function PublicPropertyPage({ id }) {
           </button>
         </header>
 
-        {/* Collage de fotos sin recortes */}
+        {/* Collage de fotos corregido */}
         {fotos.length > 0 && (
           <PhotoCollage fotos={fotos} onPhotoClick={openGallery} />
         )}
@@ -148,19 +148,10 @@ export function PublicPropertyPage({ id }) {
                 <Globe size={18} /> Tour 360°
               </a>
             )}
-            
-            {/* Mapa: vista previa + enlace */}
             {out.mapsLink && (
-              <div style={{ marginTop: 12 }}>
-                <MapPreview 
-                  address={property.direccion} 
-                  district={property.distrito}
-                  mapsLink={out.mapsLink}
-                />
-                <a href={out.mapsLink} target="_blank" rel="noopener noreferrer" style={{ ...styles.linkItem, marginTop: 8 }}>
-                  <MapPin size={18} /> Ver ubicación en Maps
-                </a>
-              </div>
+              <a href={out.mapsLink} target="_blank" rel="noopener noreferrer" style={styles.linkItem}>
+                <MapPin size={18} /> Ver ubicación en Maps
+              </a>
             )}
           </div>
         </div>
@@ -178,23 +169,21 @@ export function PublicPropertyPage({ id }) {
 }
 
 /**
- * Collage de fotos que respeta orientación (sin recortes)
- * Usa CSS Grid con altura fija y object-fit: contain sobre fondo negro.
+ * Collage de fotos corregido:
+ * - Usa object-fit: cover para llenar el espacio sin dejar bordes.
+ * - Mantiene proporciones con un contenedor de altura fija.
+ * - La primera foto siempre es la más grande (principal).
  */
 function PhotoCollage({ fotos, onPhotoClick }) {
   const count = fotos.length;
   if (count === 0) return null;
 
-  const handleClick = (index) => (e) => {
-    e.stopPropagation();
-    onPhotoClick(index);
-  };
+  const handleClick = (index) => () => onPhotoClick(index);
 
-  // Renderizado según cantidad
   if (count === 1) {
     return (
       <div style={collageStyles.single} onClick={handleClick(0)}>
-        <img src={fotos[0]} alt="" style={{ ...collageStyles.img, objectFit: 'contain', background: '#000' }} />
+        <img src={fotos[0]} alt="" style={collageStyles.imgCover} />
       </div>
     );
   }
@@ -202,12 +191,8 @@ function PhotoCollage({ fotos, onPhotoClick }) {
   if (count === 2) {
     return (
       <div style={collageStyles.grid2}>
-        <div style={collageStyles.cell} onClick={handleClick(0)}>
-          <img src={fotos[0]} alt="" style={{ ...collageStyles.img, objectFit: 'contain', background: '#000' }} />
-        </div>
-        <div style={collageStyles.cell} onClick={handleClick(1)}>
-          <img src={fotos[1]} alt="" style={{ ...collageStyles.img, objectFit: 'contain', background: '#000' }} />
-        </div>
+        <img src={fotos[0]} alt="" style={collageStyles.imgCover} onClick={handleClick(0)} />
+        <img src={fotos[1]} alt="" style={collageStyles.imgCover} onClick={handleClick(1)} />
       </div>
     );
   }
@@ -215,15 +200,9 @@ function PhotoCollage({ fotos, onPhotoClick }) {
   if (count === 3) {
     return (
       <div style={collageStyles.grid3}>
-        <div style={{ ...collageStyles.cell, gridColumn: '1 / 2', gridRow: '1 / 3' }} onClick={handleClick(0)}>
-          <img src={fotos[0]} alt="" style={{ ...collageStyles.img, objectFit: 'contain', background: '#000' }} />
-        </div>
-        <div style={collageStyles.cell} onClick={handleClick(1)}>
-          <img src={fotos[1]} alt="" style={{ ...collageStyles.img, objectFit: 'contain', background: '#000' }} />
-        </div>
-        <div style={collageStyles.cell} onClick={handleClick(2)}>
-          <img src={fotos[2]} alt="" style={{ ...collageStyles.img, objectFit: 'contain', background: '#000' }} />
-        </div>
+        <img src={fotos[0]} alt="" style={{ ...collageStyles.imgCover, gridColumn: '1 / 2', gridRow: '1 / 3' }} onClick={handleClick(0)} />
+        <img src={fotos[1]} alt="" style={collageStyles.imgCover} onClick={handleClick(1)} />
+        <img src={fotos[2]} alt="" style={collageStyles.imgCover} onClick={handleClick(2)} />
       </div>
     );
   }
@@ -231,23 +210,14 @@ function PhotoCollage({ fotos, onPhotoClick }) {
   // 4+ fotos
   return (
     <div style={collageStyles.grid4}>
-      <div style={{ ...collageStyles.cell, gridColumn: '1 / 2', gridRow: '1 / 3' }} onClick={handleClick(0)}>
-        <img src={fotos[0]} alt="" style={{ ...collageStyles.img, objectFit: 'contain', background: '#000' }} />
-      </div>
-      <div style={collageStyles.cell} onClick={handleClick(1)}>
-        <img src={fotos[1]} alt="" style={{ ...collageStyles.img, objectFit: 'contain', background: '#000' }} />
-      </div>
-      <div style={collageStyles.cell} onClick={handleClick(2)}>
-        <img src={fotos[2]} alt="" style={{ ...collageStyles.img, objectFit: 'contain', background: '#000' }} />
-      </div>
-      <div 
-        style={{ ...collageStyles.cell, position: 'relative' }} 
-        onClick={handleClick(3)}
-      >
-        <img src={fotos[3]} alt="" style={{ ...collageStyles.img, objectFit: 'contain', background: '#000' }} />
+      <img src={fotos[0]} alt="" style={{ ...collageStyles.imgCover, gridColumn: '1 / 2', gridRow: '1 / 3' }} onClick={handleClick(0)} />
+      <img src={fotos[1]} alt="" style={collageStyles.imgCover} onClick={handleClick(1)} />
+      <img src={fotos[2]} alt="" style={collageStyles.imgCover} onClick={handleClick(2)} />
+      <div style={{ position: 'relative' }} onClick={handleClick(3)}>
+        <img src={fotos[3]} alt="" style={collageStyles.imgCover} />
         {count > 4 && (
           <div style={collageStyles.moreBadge}>
-            <Grid3x3 size={18} /> +{count - 4}
+            +{count - 4}
           </div>
         )}
       </div>
@@ -255,37 +225,12 @@ function PhotoCollage({ fotos, onPhotoClick }) {
   );
 }
 
-/**
- * Vista previa del mapa estático usando OpenStreetMap (gratis)
- */
-function MapPreview({ address, district, mapsLink }) {
-  // Construir consulta para OpenStreetMap static image
-  const query = encodeURIComponent(`${address || ''} ${district || ''} Lima Peru`);
-  const staticMapUrl = `https://staticmap.openstreetmap.de/staticmap.php?center=${query}&zoom=15&size=400x200&maptype=mapnik&markers=${query},red-pushpin`;
-
-  return (
-    <div style={mapStyles.container}>
-      <img 
-        src={staticMapUrl} 
-        alt="Vista previa del mapa" 
-        style={mapStyles.image}
-        onError={(e) => { e.target.style.display = 'none'; }}
-      />
-      <div style={mapStyles.overlay} />
-    </div>
-  );
-}
-
-// Estilos
+// Estilos del collage
 const collageStyles = {
   single: {
     width: '100%',
     height: 280,
     cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    background: '#000',
   },
   grid2: {
     display: 'grid',
@@ -307,18 +252,12 @@ const collageStyles = {
     gap: 4,
     height: 280,
   },
-  cell: {
-    overflow: 'hidden',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    background: '#111',
-    cursor: 'pointer',
-  },
-  img: {
+  imgCover: {
     width: '100%',
     height: '100%',
+    objectFit: 'cover',
     display: 'block',
+    cursor: 'pointer',
   },
   moreBadge: {
     position: 'absolute',
@@ -327,42 +266,15 @@ const collageStyles = {
     background: 'rgba(0,0,0,0.7)',
     backdropFilter: 'blur(4px)',
     color: '#fff',
-    padding: '6px 10px',
+    padding: '4px 10px',
     borderRadius: 20,
-    display: 'flex',
-    alignItems: 'center',
-    gap: 6,
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: 600,
     border: '1px solid rgba(255,255,255,0.2)',
   },
 };
 
-const mapStyles = {
-  container: {
-    position: 'relative',
-    borderRadius: 12,
-    overflow: 'hidden',
-    marginBottom: 8,
-    border: '1px solid rgba(255,255,255,0.1)',
-  },
-  image: {
-    width: '100%',
-    height: 160,
-    objectFit: 'cover',
-    display: 'block',
-  },
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    background: 'transparent',
-    pointerEvents: 'none',
-  },
-};
-
+// Estilos generales
 const styles = {
   container: {
     minHeight: '100vh',
