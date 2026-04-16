@@ -4,6 +4,7 @@ import { useProperties } from "./hooks/useProperties";
 import { PropertyForm } from "./features/properties/PropertyForm.jsx";
 import { PropertyDetail } from "./features/properties/PropertyDetail.jsx";
 import { PublicGallery } from "./features/properties/PublicGallery.jsx";
+import { PublicPropertyPage } from "./features/properties/pages/PublicPropertyPage.jsx";
 import { buildOutputs } from "./utils/messageFormatter";
 import { ESTADO_COLORS, ESTADOS } from "./utils/constants";
 import { PropertyCard } from "./components/PropertyCard.jsx";
@@ -238,7 +239,17 @@ const S = {
   },
 };
 
-export default function ROCAApp() {
+export default function App() {
+  // Si la URL es /p/xxxxx, mostrar la landing page pública
+  if (window.location.pathname.startsWith('/p/')) {
+    return <PublicPropertyPage />;
+  }
+
+  // En cualquier otro caso, mostrar la app de administración
+  return <ROCAApp />;
+}
+
+function ROCAApp() {
   const { user, loading: authLoading, email, setEmail, password, setPassword, login, logout } = useAuth();
   const { properties, loading, saveProperty, removeProperty, changeStatus } = useProperties(user?.id);
   
