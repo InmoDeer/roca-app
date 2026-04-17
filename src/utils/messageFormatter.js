@@ -276,5 +276,27 @@ export function buildOutputs(p) {
     fotos,
     mapsLink,
     propiedadUrl,
+    tituloDinamico: buildTituloDinamico(p),
   };
+}
+
+function buildTituloDinamico(p) {
+  const highlights = [];
+  
+  if (p.amoblado) highlights.push("amoblado");
+  if (p.antiguedad === "A estrenar") highlights.push("estreno");
+  if (p.gas_natural) highlights.push("gas natural");
+  if (p.tendal) highlights.push("tendal");
+  if ((p.area_m2 || 0) > 100) highlights.push("amplio");
+  if (p.cochera) highlights.push("cochera");
+  if (p.piscina) highlights.push("piscina");
+  if (p.gimnasio) highlights.push("gimnasio");
+  
+  if (highlights.length === 0) {
+    return `🏠 ${p.tipo} en ${p.distrito}`;
+  }
+  
+  const topHighlights = highlights.slice(0, 2);
+  const joined = topHighlights.join(" y ");
+  return `🏠 ${p.tipo} con ${joined} en ${p.distrito}`;
 }
