@@ -3,7 +3,7 @@ import { Field } from "../../components/formFields/Field";
 import { Select } from "../../components/formFields/Select";
 import { Checkbox } from "../../components/formFields/Checkbox";
 import { uploadToCloudinary, deleteCloudinaryImage } from "../../utils/cloudinary";
-import { ArrowUp, Armchair, Sparkles, PawPrint, Camera, X, Car } from "lucide-react";
+import { ArrowUp, Armchair, Sparkles, PawPrint, Camera, X, Car, Flame } from "lucide-react";
 import {
   PROPERTY_TYPES,
   OPERATIONS,
@@ -58,6 +58,8 @@ export function PropertyForm({ initial, onSave, onClose }) {
     parrilla: false,
     juegos_ninos: false,
     gimnasio: false,
+    gas_natural: false,
+    tendal: false,
   };
 
   const [form, setForm] = useState(initial || blank);
@@ -183,6 +185,8 @@ export function PropertyForm({ initial, onSave, onClose }) {
         parrilla: !!form.parrilla,
         juegos_ninos: !!form.juegos_ninos,
         gimnasio: !!form.gimnasio,
+        gas_natural: !!form.gas_natural,
+        tendal: !!form.tendal,
       };
 
       await onSave(payload, initial?.id);
@@ -325,6 +329,8 @@ export function PropertyForm({ initial, onSave, onClose }) {
             <Checkbox label="Ascensor" k="ascensor" form={form} setForm={setForm} icon={ArrowUp} />
             <Checkbox label="Amoblado" k="amoblado" form={form} setForm={setForm} icon={Armchair} />
             <Checkbox label="Cuarto y baño de servicio" k="area_servicio" form={form} setForm={setForm} icon={Sparkles} />
+            <Checkbox label="Gas natural" k="gas_natural" form={form} setForm={setForm} icon={Flame} />
+            <Checkbox label="Tendal" k="tendal" form={form} setForm={setForm} />
           </div>
           <Select
             label="Mascotas"
