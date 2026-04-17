@@ -238,6 +238,93 @@ const S = {
   },
 };
 
+const lightTheme = {
+  bg: "#ffffff",
+  bgSecondary: "#f5f5f5",
+  text: "#1a1a1a",
+  textSecondary: "#666666",
+  border: "#e0e0e0",
+};
+
+const darkTheme = {
+  bg: "#0a0a0a",
+  bgSecondary: "#1a1a1a",
+  text: "#ffffff",
+  textSecondary: "#888888",
+  border: "#333333",
+};
+
+const profileMenuStyles = {
+  overlay: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: "rgba(0,0,0,0.5)",
+    zIndex: 99,
+  },
+  drawer: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: 280,
+    height: "100%",
+    background: "#1a1a1a",
+    boxShadow: "4px 0 20px rgba(0,0,0,0.5)",
+    zIndex: 100,
+    padding: "20px 0",
+    display: "flex",
+    flexDirection: "column",
+  },
+  header: {
+    padding: "0 20px 20px",
+    borderBottom: "1px solid rgba(255,255,255,0.08)",
+    marginBottom: 20,
+  },
+  userInfo: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: 600,
+    marginBottom: 4,
+  },
+  userEmail: {
+    color: "#888",
+    fontSize: 12,
+  },
+  closeBtn: {
+    position: "absolute",
+    top: 16,
+    right: 16,
+    background: "none",
+    border: "none",
+    color: "#fff",
+    fontSize: 24,
+    cursor: "pointer",
+  },
+  item: {
+    display: "flex",
+    alignItems: "center",
+    gap: 12,
+    width: "100%",
+    padding: "14px 20px",
+    background: "none",
+    border: "none",
+    color: "#fff",
+    fontSize: 15,
+    cursor: "pointer",
+    textAlign: "left",
+  },
+  itemDanger: {
+    color: "#ff4444",
+  },
+  divider: {
+    height: 1,
+    background: "rgba(255,255,255,0.08)",
+    margin: "12px 0",
+  },
+};
+
 export default function App() {
   // Landing page archivada - ruta /p/ deshabilitada
   // Ver docs/landing-archived/ para referencia futura
@@ -252,6 +339,8 @@ function ROCAApp() {
   const [showForm, setShowForm] = useState(false);
   const [editTarget, setEdit] = useState(null);
   const [openMenu, setOpenMenu] = useState(null);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "system");
   const [filters, setFilters] = useState({ q: "", operacion: "", tipo: "", estado: "" });
 
   const handleDuplicate = (original) => {
@@ -268,6 +357,22 @@ function ROCAApp() {
     };
     setEdit(duplicate);
     setShowForm(true);
+  };
+
+  const cycleTheme = () => {
+    const themes = ["light", "dark", "system"];
+    const currentIndex = themes.indexOf(theme);
+    const nextTheme = themes[(currentIndex + 1) % themes.length];
+    setTheme(nextTheme);
+    localStorage.setItem("theme", nextTheme);
+  };
+
+  const getThemeColors = () => {
+    if (theme === "system") {
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      return prefersDark ? darkTheme : lightTheme;
+    }
+    return theme === "dark" ? darkTheme : lightTheme;
   };
 
   const filtered = useMemo(() => {
@@ -379,13 +484,40 @@ function ROCAApp() {
   }
 
   return (
-    <div style={S.app} onClick={() => setOpenMenu(null)}>
+    <div style={S.app} onClick={() => { setOpenMenu(null); setProfileMenuOpen(false); }}>
+      {profileMenuOpen && (
+        <>
+          <div style={profileMenuStyles.overlay} onClick={() => setProfileMenuOpen(false)} />
+          <div style={profileMenuStyles.drawer}>
+            <button style={profileMenuStyles.closeBtn} onClick={() => setProfileMenuOpen(false)}>×</button>
+            <div style={profileMenuStyles.header}>
+              <div style={profileMenuStyles.userInfo}>{user.email?.split('@')[0]}</div>
+              <div style={profileMenuStyles.userEmail}>{user.email}</div>
+            </div>
+            <button style={profileMenuStyles.item} onClick={cycleTheme}>
+              {theme === "light" ? "☀️ Claro" : theme === "dark" ? "🌙 Oscuro" : "⚙️ Sistema"}
+            </button>
+            <div style={profileMenuStyles.divider} />
+            <button style={{...profileMenuStyles.item, ...profileMenuStyles.itemDanger}} onClick={() => { if(confirm("¿Eliminar cuenta? Esta acción es irreversible.")) { logout(); } }}>
+              🗑️ Eliminar cuenta
+            </button>
+            <button style={profileMenuStyles.item} onClick={logout}>
+              🚪 Cerrar sesión
+            </button>
+          </div>
+        </>
+      )}
+      
       <div style={S.topBar}>
-        <div style={S.logo}>ROCA</div>
+        <button 
+          onClick={() => setProfileMenuOpen(true)}
+          style={{ ...S.logo, background: 'none', border: 'none', cursor: 'pointer' }}
+        >
+          ROCA
+        </button>
         <div style={{ display: "flex", alignItems: "center" }}>
           <span style={S.userTag}>{user.email?.split('@')[0]}</span>
           <div style={{ display: "flex", gap: 10 }}>
-            <button onClick={logout} style={S.signOutBtn}>Salir</button>
             <button onClick={() => { setEdit(null); setShowForm(true); }} style={S.newBtn}>+ Nuevo</button>
           </div>
         </div>
