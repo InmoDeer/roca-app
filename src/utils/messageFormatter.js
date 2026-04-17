@@ -328,6 +328,7 @@ const HIGHLIGHT_LABELS = {
   area_servicio: "cuarto de servicio",
   mascotas: "pet friendly",
   gas_natural: "gas natural",
+  lavanderia: "lavanderia",
   tendal: "tendal",
   terraza: "terraza",
   jardin: "jardin",

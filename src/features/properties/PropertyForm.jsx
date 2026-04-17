@@ -58,8 +58,9 @@ export function PropertyForm({ initial, onSave, onClose }) {
     parrilla: false,
     juegos_ninos: false,
     gimnasio: false,
-    gas_natural: false,
     tendal: false,
+    gas_natural: false,
+    lavanderia: false,
     destacados_manuales: [],
   };
 
@@ -187,6 +188,7 @@ export function PropertyForm({ initial, onSave, onClose }) {
         juegos_ninos: !!form.juegos_ninos,
         gimnasio: !!form.gimnasio,
         gas_natural: !!form.gas_natural,
+        lavanderia: !!form.lavanderia,
         tendal: !!form.tendal,
         destacados_manuales: form.destacados_manuales || [],
       };
@@ -235,7 +237,7 @@ export function PropertyForm({ initial, onSave, onClose }) {
             />
           </div>
 
-          <div style={formStyles.section}>Ubicacion</div>
+          <div style={formStyles.section}>Ubicación</div>
           <div style={formStyles.row2}>
             <Field label="Distrito*" k="distrito" form={form} setForm={setForm} />
             <Field label="Dirección" k="direccion" form={form} setForm={setForm} />
@@ -246,6 +248,13 @@ export function PropertyForm({ initial, onSave, onClose }) {
             form={form}
             setForm={setForm}
             placeholder="Se genera automático"
+          />
+          <Field
+            label="Cerca de..."
+            k="cerca_a"
+            form={form}
+            setForm={setForm}
+            placeholder="Ej: Metro, Wong, Parque Kennedy"
           />
 
           <div style={formStyles.section}>Precio</div>
@@ -274,7 +283,7 @@ export function PropertyForm({ initial, onSave, onClose }) {
             placeholder="opcional"
           />
 
-          <div style={formStyles.section}>Características</div>
+          <div style={formStyles.section}>Características físicas</div>
           <div style={formStyles.row2}>
             <Field
               label="Dormitorios"
@@ -325,14 +334,14 @@ export function PropertyForm({ initial, onSave, onClose }) {
             />
           </div>
 
-          <div style={formStyles.section}>Extras</div>
+          <div style={formStyles.section}>Amenities y extras</div>
           <div style={formStyles.checkGrid}>
             <Checkbox label="Cochera" k="cochera" form={form} setForm={setForm} icon={Car} />
             <Checkbox label="Ascensor" k="ascensor" form={form} setForm={setForm} icon={ArrowUp} />
             <Checkbox label="Amoblado" k="amoblado" form={form} setForm={setForm} icon={Armchair} />
             <Checkbox label="Cuarto y baño de servicio" k="area_servicio" form={form} setForm={setForm} icon={Sparkles} />
             <Checkbox label="Gas natural" k="gas_natural" form={form} setForm={setForm} icon={Flame} />
-            <Checkbox label="Tendal" k="tendal" form={form} setForm={setForm} />
+            <Checkbox label="Lavandería" k="lavanderia" form={form} setForm={setForm} />
           </div>
           <Select
             label="Mascotas"
@@ -342,7 +351,7 @@ export function PropertyForm({ initial, onSave, onClose }) {
             opts={MASCOTAS_OPTIONS}
           />
 
-          <div style={formStyles.section}>Características destacadas</div>
+          <div style={formStyles.section}>Calidad y confort</div>
           <div style={formStyles.checkGrid}>
             <Checkbox label="Balcón" k="balcon" form={form} setForm={setForm} />
             <Checkbox label="Ventanas amplias" k="ventanas_amplias" form={form} setForm={setForm} />
@@ -359,14 +368,6 @@ export function PropertyForm({ initial, onSave, onClose }) {
             opts={["", "Calle", "Avenida", "Parque", "Jardín interior", "Panorámica", "Mar"]}
           />
 
-          <Field
-            label="Cerca de..."
-            k="cerca_a"
-            form={form}
-            setForm={setForm}
-            placeholder="Ej: Metro, Wong, Parque Kennedy"
-          />
-
           <Checkbox
             label="Áreas comunes"
             k="areas_comunes"
@@ -378,12 +379,13 @@ export function PropertyForm({ initial, onSave, onClose }) {
             <div style={{ marginTop: 8, paddingLeft: 16 }}>
               <div style={formStyles.checkGrid}>
                 <Checkbox label="Piscina" k="piscina" form={form} setForm={setForm} />
-                <Checkbox label="Terraza común" k="terraza" form={form} setForm={setForm} />
+                <Checkbox label="Terraza" k="terraza" form={form} setForm={setForm} />
                 <Checkbox label="Jardín" k="jardin" form={form} setForm={setForm} />
                 <Checkbox label="SUM" k="sum" form={form} setForm={setForm} />
-                <Checkbox label="Parrilla / BBQ" k="parrilla" form={form} setForm={setForm} />
+                <Checkbox label="Parrilla" k="parrilla" form={form} setForm={setForm} />
                 <Checkbox label="Juegos infantiles" k="juegos_ninos" form={form} setForm={setForm} />
                 <Checkbox label="Gimnasio" k="gimnasio" form={form} setForm={setForm} />
+                <Checkbox label="Tendal" k="tendal" form={form} setForm={setForm} />
               </div>
             </div>
           )}
@@ -692,9 +694,10 @@ function ManualHighlightsSelector({ form, setForm }) {
     if (p.area_servicio) options.push({ key: 'area_servicio', label: '🧺 Cuarto de servicio' });
     if (p.mascotas === 'Sí') options.push({ key: 'mascotas', label: '🐾 Pet friendly' });
     if (p.gas_natural) options.push({ key: 'gas_natural', label: '🔥 Gas natural' });
-    if (p.tendal) options.push({ key: 'tendal', label: '🧺 Tendal' });
+    if (p.lavanderia) options.push({ key: 'lavanderia', label: '🧺 Lavandería' });
     if (p.piscina) options.push({ key: 'piscina', label: '🏊 Piscina' });
     if (p.gimnasio) options.push({ key: 'gimnasio', label: '💪 Gimnasio' });
+    if (p.tendal) options.push({ key: 'tendal', label: '🧺 Tendal' });
     if (p.terraza) options.push({ key: 'terraza', label: '🌇 Terraza' });
     if (p.jardin) options.push({ key: 'jardin', label: '🌳 Jardín' });
     if (p.parrilla) options.push({ key: 'parrilla', label: '🔥 Parrilla' });
