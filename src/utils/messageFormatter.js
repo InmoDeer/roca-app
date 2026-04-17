@@ -316,20 +316,46 @@ export function buildOutputs(p) {
   };
 }
 
+const HIGHLIGHT_LABELS = {
+  amoblado: "amoblado",
+  piscina: "piscina",
+  gimnasio: "gimnasio",
+  cochera: "cochera",
+  cocina_equipada: "cocina equipada",
+  closet: "closets",
+  recepcion: "recepcion 24h",
+  ascensor: "ascensor",
+  area_servicio: "cuarto de servicio",
+  mascotas: "pet friendly",
+  gas_natural: "gas natural",
+  tendal: "tendal",
+  terraza: "terraza",
+  jardin: "jardin",
+  parrilla: "parrilla",
+  juegos_ninos: "juegos infantiles",
+};
+
 function buildTituloDinamico(p) {
-  const highlights = [];
-  
-  if (p.amoblado) highlights.push("amoblado");
-  if (p.antiguedad === "A estrenar") highlights.push("estreno");
-  if ((p.area_m2 || 0) > 100) highlights.push("amplio");
-  if (p.cochera) highlights.push("cochera");
-  if (p.piscina) highlights.push("piscina");
-  if (p.gimnasio) highlights.push("gimnasio");
-  
+  let highlights = [];
+
+  if (p.destacados_manuales?.length > 0) {
+    highlights = p.destacados_manuales.map(k => {
+      if (k.startsWith("vista_")) return k.replace("vista_", "vista ");
+      return HIGHLIGHT_LABELS[k] || k;
+    });
+  } else {
+    if (p.amoblado) highlights.push("amoblado");
+    if (p.antiguedad === "A estrenar") highlights.push("estreno");
+    if ((p.area_m2 || 0) > 100) highlights.push("amplio");
+    if (p.cochera) highlights.push("cochera");
+    if (p.piscina) highlights.push("piscina");
+    if (p.gimnasio) highlights.push("gimnasio");
+  }
+
   if (highlights.length === 0) {
     return `🏠 ${p.tipo} en ${p.distrito}`;
   }
-  
+
   const topHighlights = highlights.slice(0, 2);
   const joined = topHighlights.join(" y ");
   return `🏠 ${p.tipo} con ${joined} en ${p.distrito}`;
