@@ -1,0 +1,303 @@
+[
+  {
+    "column_name": "id",
+    "data_type": "uuid",
+    "ordinal_position": 1,
+    "is_nullable": "NO",
+    "column_default": "uuid_generate_v4()"
+  },
+  {
+    "column_name": "nombre",
+    "data_type": "text",
+    "ordinal_position": 2,
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "column_name": "tipo",
+    "data_type": "text",
+    "ordinal_position": 3,
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "column_name": "operacion",
+    "data_type": "text",
+    "ordinal_position": 4,
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "column_name": "estado",
+    "data_type": "text",
+    "ordinal_position": 5,
+    "is_nullable": "NO",
+    "column_default": "'Disponible'::text"
+  },
+  {
+    "column_name": "distrito",
+    "data_type": "text",
+    "ordinal_position": 6,
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "column_name": "direccion",
+    "data_type": "text",
+    "ordinal_position": 7,
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "column_name": "maps_url",
+    "data_type": "text",
+    "ordinal_position": 8,
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "column_name": "precio",
+    "data_type": "numeric",
+    "ordinal_position": 9,
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "column_name": "moneda",
+    "data_type": "text",
+    "ordinal_position": 10,
+    "is_nullable": "NO",
+    "column_default": "'PEN'::text"
+  },
+  {
+    "column_name": "mantenimiento",
+    "data_type": "numeric",
+    "ordinal_position": 11,
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "column_name": "dormitorios",
+    "data_type": "integer",
+    "ordinal_position": 12,
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "column_name": "ambientes",
+    "data_type": "integer",
+    "ordinal_position": 13,
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "column_name": "banos",
+    "data_type": "integer",
+    "ordinal_position": 14,
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "column_name": "area_m2",
+    "data_type": "numeric",
+    "ordinal_position": 15,
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "column_name": "cochera",
+    "data_type": "boolean",
+    "ordinal_position": 16,
+    "is_nullable": "YES",
+    "column_default": "false"
+  },
+  {
+    "column_name": "ascensor",
+    "data_type": "boolean",
+    "ordinal_position": 17,
+    "is_nullable": "YES",
+    "column_default": "false"
+  },
+  {
+    "column_name": "amoblado",
+    "data_type": "boolean",
+    "ordinal_position": 18,
+    "is_nullable": "YES",
+    "column_default": "false"
+  },
+  {
+    "column_name": "area_servicio",
+    "data_type": "boolean",
+    "ordinal_position": 19,
+    "is_nullable": "YES",
+    "column_default": "false"
+  },
+  {
+    "column_name": "mascotas",
+    "data_type": "text",
+    "ordinal_position": 20,
+    "is_nullable": "YES",
+    "column_default": "'No'::text"
+  },
+  {
+    "column_name": "fotos_urls",
+    "data_type": "ARRAY",
+    "ordinal_position": 21,
+    "is_nullable": "YES",
+    "column_default": "'{}'::text[]"
+  },
+  {
+    "column_name": "video_url",
+    "data_type": "text",
+    "ordinal_position": 22,
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "column_name": "tour360_url",
+    "data_type": "text",
+    "ordinal_position": 23,
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "column_name": "created_at",
+    "data_type": "timestamp with time zone",
+    "ordinal_position": 25,
+    "is_nullable": "YES",
+    "column_default": "now()"
+  },
+  {
+    "column_name": "updated_at",
+    "data_type": "timestamp with time zone",
+    "ordinal_position": 26,
+    "is_nullable": "YES",
+    "column_default": "now()"
+  },
+  {
+    "column_name": "piso",
+    "data_type": "integer",
+    "ordinal_position": 32,
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "column_name": "antiguedad",
+    "data_type": "character varying",
+    "ordinal_position": 33,
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "column_name": "user_id",
+    "data_type": "uuid",
+    "ordinal_position": 34,
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "column_name": "balcon",
+    "data_type": "boolean",
+    "ordinal_position": 35,
+    "is_nullable": "YES",
+    "column_default": "false"
+  },
+  {
+    "column_name": "ventanas_amplias",
+    "data_type": "boolean",
+    "ordinal_position": 36,
+    "is_nullable": "YES",
+    "column_default": "false"
+  },
+  {
+    "column_name": "vista",
+    "data_type": "text",
+    "ordinal_position": 37,
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "column_name": "cerca_a",
+    "data_type": "text",
+    "ordinal_position": 38,
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "column_name": "cocina_equipada",
+    "data_type": "boolean",
+    "ordinal_position": 39,
+    "is_nullable": "YES",
+    "column_default": "false"
+  },
+  {
+    "column_name": "closet",
+    "data_type": "boolean",
+    "ordinal_position": 40,
+    "is_nullable": "YES",
+    "column_default": "false"
+  },
+  {
+    "column_name": "recepcion",
+    "data_type": "boolean",
+    "ordinal_position": 41,
+    "is_nullable": "YES",
+    "column_default": "false"
+  },
+  {
+    "column_name": "areas_comunes",
+    "data_type": "boolean",
+    "ordinal_position": 42,
+    "is_nullable": "YES",
+    "column_default": "false"
+  },
+  {
+    "column_name": "piscina",
+    "data_type": "boolean",
+    "ordinal_position": 43,
+    "is_nullable": "YES",
+    "column_default": "false"
+  },
+  {
+    "column_name": "terraza",
+    "data_type": "boolean",
+    "ordinal_position": 44,
+    "is_nullable": "YES",
+    "column_default": "false"
+  },
+  {
+    "column_name": "jardin",
+    "data_type": "boolean",
+    "ordinal_position": 45,
+    "is_nullable": "YES",
+    "column_default": "false"
+  },
+  {
+    "column_name": "sum",
+    "data_type": "boolean",
+    "ordinal_position": 46,
+    "is_nullable": "YES",
+    "column_default": "false"
+  },
+  {
+    "column_name": "parrilla",
+    "data_type": "boolean",
+    "ordinal_position": 47,
+    "is_nullable": "YES",
+    "column_default": "false"
+  },
+  {
+    "column_name": "juegos_ninos",
+    "data_type": "boolean",
+    "ordinal_position": 48,
+    "is_nullable": "YES",
+    "column_default": "false"
+  },
+  {
+    "column_name": "gimnasio",
+    "data_type": "boolean",
+    "ordinal_position": 49,
+    "is_nullable": "YES",
+    "column_default": "false"
+  }
+]
