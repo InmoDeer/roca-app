@@ -385,6 +385,13 @@ function ROCAApp() {
     const nextTheme = themes[(currentIndex + 1) % themes.length];
     setTheme(nextTheme);
     localStorage.setItem("theme", nextTheme);
+    const root = document.documentElement;
+    if (nextTheme === "system") {
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      root.setAttribute("data-theme", prefersDark ? "dark" : "light");
+    } else {
+      root.setAttribute("data-theme", nextTheme);
+    }
   };
 
   const getThemeColors = () => {
@@ -509,7 +516,7 @@ function ROCAApp() {
         <>
           <div style={profileMenuStyles.overlay} onClick={() => setProfileMenuOpen(false)} />
           <div style={profileMenuStyles.drawer}>
-            <button style={profileMenuStyles.closeBtn} onClick={() => setProfileMenuOpen(false)}>×</button>
+            
             <div style={profileMenuStyles.header}>
               <div style={profileMenuStyles.userInfo}>{user.email?.split('@')[0]}</div>
               <div style={profileMenuStyles.userEmail}>{user.email}</div>
