@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { Field } from "../../components/formFields/Field";
 import { Select } from "../../components/formFields/Select";
 import { Checkbox } from "../../components/formFields/Checkbox";
-import { uploadToCloudinary, deleteCloudinaryImage } from "../../utils/cloudinary";
+import { uploadToCloudinary, deleteCloudinaryImages } from "../../utils/cloudinary";
 import { ArrowUp, Armchair, Sparkles, PawPrint, Camera, X, Car, Flame } from "lucide-react";
 import {
   PROPERTY_TYPES,
@@ -89,7 +89,7 @@ export function PropertyForm({ initial, onSave, onClose }) {
   const removePhoto = (i) => {
     const fotoUrl = form.fotos_urls[i];
     if (fotoUrl) {
-      deleteCloudinaryImage(fotoUrl);
+      deleteCloudinaryImages(fotoUrl);
     }
     setForm((f) => {
       const arr = [...f.fotos_urls];

@@ -76,3 +76,33 @@ async function generateSignature(publicId, timestamp) {
   const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
   return hashHex;
 }
+
+/**
+ * Elimina múltiples imágenes de Cloudinary de forma segura.
+ * @param {string|string[]} urls - URL o array de URLs de Cloudinary.
+ * @returns {Promise<{deleted: string[], failed: string[]}>}
+ */
+export async function deleteCloudinaryImages(urls) {
+  const urlArray = Array.isArray(urls) ? urls : [urls];
+  const validUrls = urlArray.filter(url => url && typeof url === 'string' && url.includes('cloudinary'));
+  
+  if (validUrls.length === 0) {
+    return { deleted: [], failed: [] };
+  }
+  
+  const results = { deleted: [], failed: [] };
+  
+  await Promise.all(
+    validUrls.map(async (url) => {
+      try {
+        await deleteCloudinaryImage(url);
+        results.deleted.push(url);
+      } catch (err) {
+        console.error(`Error eliminando ${url}:`, err);
+        results.failed.push(url);
+      }
+    })
+  );
+  
+  return results;
+}
