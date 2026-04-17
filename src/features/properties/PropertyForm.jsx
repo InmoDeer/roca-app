@@ -391,12 +391,13 @@ export function PropertyForm({ initial, onSave, onClose }) {
           )}
 
           <div style={formStyles.section}>Destacar en el mensaje</div>
-          <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 8 }}>
+          <p style={{ fontSize: 12, color: '#888888', marginBottom: 8 }}>
             Elige hasta 3 características que quieras resaltar primero en WhatsApp.
           </p>
           <ManualHighlightsSelector form={form} setForm={setForm} />
 
-          <div style={formStyles.section}>Fotos</div>
+          {/* MULTIMEDIA (Fotos + Video + Tour 360) */}
+          <div style={formStyles.section}>Multimedia</div>
           <input
             ref={fileRef}
             type="file"
@@ -462,7 +463,6 @@ export function PropertyForm({ initial, onSave, onClose }) {
             </div>
           )}
 
-          <div style={formStyles.section}>Media</div>
           <Field
             label="Video (YouTube URL)"
             k="video_url"
@@ -723,18 +723,18 @@ function ManualHighlightsSelector({ form, setForm }) {
   };
 
   if (availableOptions.length === 0) {
-    return <p style={{ color: 'var(--text-muted)', fontSize: 13, marginBottom: 16 }}>Completa las características del inmueble para poder destacarlas.</p>;
+    return <p style={{ color: '#888888', fontSize: 13, marginBottom: 16 }}>Completa las características del inmueble para poder destacarlas.</p>;
   }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
       {availableOptions.map(opt => (
-        <label key={opt.key} style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-primary)', fontSize: 14 }}>
+        <label key={opt.key} style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#ffffff', fontSize: 14 }}>
           <input
             type="checkbox"
             checked={selected.includes(opt.key)}
             onChange={() => toggleOption(opt.key)}
-            style={{ accentColor: 'var(--accent-gold)' }}
+            style={{ accentColor: '#d4af37' }}
           />
           {opt.label}
         </label>
