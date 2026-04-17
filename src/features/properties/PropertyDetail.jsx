@@ -4,7 +4,7 @@ import { ESTADO_COLORS } from "../../utils/constants";
 import { CopyShareBtns } from "../../components/ui/CopyShareBtns";
 import { Gallery } from "../../components/ui/Gallery";
 import { useSwipeBack } from "../../hooks/useSwipeBack";
-import { MapPin, Video, PencilLine, Trash2, X, ArrowLeft, Link, Play, Eye, Images, Globe, DollarSign, FileText } from "lucide-react";
+import { MapPin, Video, PencilLine, Trash2, X, ArrowLeft, Play, Eye, Images, Globe, DollarSign, FileText } from "lucide-react";
 
 /**
  * Property detail component showing full information for admin
@@ -32,9 +32,7 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete }) {
           <ArrowLeft size={20} strokeWidth={1.5} />
         </button>
         <div style={{ display: "flex", gap: 8 }}>
-          <button onClick={() => window.open(`/p/${p.id}`, "_blank")} style={detailStyles.iconBtn} title="Landing" style={{ color: "#d4af37" }}>
-            <Link size={18} strokeWidth={1.5} />
-          </button>
+          {/* Landing archivada - descomenta cuando retomes: window.open(`/p/${p.id}`, "_blank") */}
           <button onClick={handleDelete} style={detailStyles.iconBtn} title="Eliminar">
             <Trash2 size={18} strokeWidth={1.5} />
           </button>
