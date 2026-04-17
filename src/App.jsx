@@ -504,7 +504,7 @@ function ROCAApp() {
   }
 
   return (
-    <div style={S.app} onClick={() => { setOpenMenu(null); setProfileMenuOpen(false); }}>
+    <div style={S.app} onClick={(e) => { if (e.target === e.currentTarget) { setOpenMenu(null); setProfileMenuOpen(false); } }}>
       {profileMenuOpen && (
         <>
           <div style={profileMenuStyles.overlay} onClick={() => setProfileMenuOpen(false)} />
