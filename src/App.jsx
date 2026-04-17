@@ -254,6 +254,22 @@ function ROCAApp() {
   const [openMenu, setOpenMenu] = useState(null);
   const [filters, setFilters] = useState({ q: "", operacion: "", tipo: "", estado: "" });
 
+  const handleDuplicate = (original) => {
+    const { id, created_at, updated_at, ...rest } = original;
+    const duplicate = {
+      ...rest,
+      nombre: `${original.nombre} (copia)`,
+      estado: "Disponible",
+      fotos_urls: [],
+      direccion: "",
+      maps_url: "",
+      video_url: "",
+      tour360_url: "",
+    };
+    setEdit(duplicate);
+    setShowForm(true);
+  };
+
   const filtered = useMemo(() => {
     return properties.filter((p) => {
       const q = filters.q.toLowerCase();
@@ -400,6 +416,7 @@ function ROCAApp() {
               onClick={() => setSelected(p)}
               onEdit={() => { setEdit(p); setShowForm(true); }}
               onDelete={() => removeProperty(p.id)}
+              onDuplicate={() => handleDuplicate(p)}
               openMenu={openMenu}
               setOpenMenu={setOpenMenu}
             />

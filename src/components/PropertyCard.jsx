@@ -1,4 +1,4 @@
-import { MoreVertical, PencilLine, Trash2 } from "lucide-react";
+import { MoreVertical, PencilLine, Trash2, Copy } from "lucide-react";
 
 /**
  * PropertyCard - Tarjeta individual de propiedad en la lista
@@ -10,6 +10,7 @@ export function PropertyCard({
   onClick, 
   onEdit, 
   onDelete, 
+  onDuplicate,
   openMenu, 
   setOpenMenu 
 }) {
@@ -41,6 +42,13 @@ export function PropertyCard({
               >
                 <PencilLine size={16} strokeWidth={1.5} style={{ marginRight: 8 }} /> 
                 Editar
+              </button>
+              <button 
+                style={styles.dropItem} 
+                onClick={() => { onDuplicate(); setOpenMenu(null); }}
+              >
+                <Copy size={16} strokeWidth={1.5} style={{ marginRight: 8 }} /> 
+                Duplicar
               </button>
               <button
                 style={styles.dropItemDanger}
