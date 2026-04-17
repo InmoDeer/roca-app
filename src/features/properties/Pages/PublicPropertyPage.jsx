@@ -33,8 +33,8 @@ export function PublicPropertyPage({ id }) {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `${property.nombre} - ${property.distrito}`,
-          text: `Mira este inmueble: ${property.nombre} en ${property.distrito}`,
+          title: out.tituloDinamico,
+          text: `Mira este inmueble: ${out.tituloDinamico}`,
           url: window.location.href,
         });
       } catch (err) {
@@ -78,9 +78,9 @@ export function PublicPropertyPage({ id }) {
   return (
     <>
       <Helmet>
-        <title>{`${property.nombre} - ${property.distrito} | ${BUSINESS_NAME}`}</title>
+        <title>{out.tituloDinamico} | {BUSINESS_NAME}</title>
         <meta name="description" content={`${property.tipo} en ${property.distrito}. ${out.specsLine}`} />
-        <meta property="og:title" content={`${property.nombre} en ${property.distrito}`} />
+        <meta property="og:title" content={out.tituloDinamico} />
         <meta property="og:description" content={out.specsLine} />
         <meta property="og:image" content={mainImage} />
         <meta property="og:url" content={window.location.href} />
@@ -103,8 +103,8 @@ export function PublicPropertyPage({ id }) {
         )}
 
         <div style={styles.content}>
-          <h1 style={styles.title}>{property.nombre}</h1>
-          <p style={styles.subtitle}>{property.tipo} · {property.distrito}</p>
+          <h1 style={styles.title}>{out.tituloDinamico}</h1>
+          <p style={styles.subtitle}>{property.nombre} · {property.tipo} · {property.distrito}</p>
           
           <div style={styles.price}>
             {property.moneda === 'USD' ? 'US$ ' : 'S/ '}

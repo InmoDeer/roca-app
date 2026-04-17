@@ -65,9 +65,9 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete }) {
           }}
         >
           <div>
-            <div style={detailStyles.name}>{p.nombre}</div>
+            <div style={detailStyles.name}>{out.tituloDinamico}</div>
             <div style={detailStyles.sub}>
-              {p.tipo} · {p.distrito}
+              {p.nombre} · {p.tipo} · {p.distrito}
             </div>
           </div>
           <select
