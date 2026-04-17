@@ -285,8 +285,6 @@ function buildTituloDinamico(p) {
   
   if (p.amoblado) highlights.push("amoblado");
   if (p.antiguedad === "A estrenar") highlights.push("estreno");
-  if (p.gas_natural) highlights.push("gas natural");
-  if (p.tendal) highlights.push("tendal");
   if ((p.area_m2 || 0) > 100) highlights.push("amplio");
   if (p.cochera) highlights.push("cochera");
   if (p.piscina) highlights.push("piscina");
