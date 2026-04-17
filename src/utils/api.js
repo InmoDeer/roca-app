@@ -1,8 +1,5 @@
-import { createClient } from "@supabase/supabase-js";
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from "../config/environment";
+import { supabase } from "../config/supabase";
 import { deleteCloudinaryImages } from "./cloudinary";
-
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export async function fetchProperties() {
   const { data, error } = await supabase
