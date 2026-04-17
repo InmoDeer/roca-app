@@ -22,8 +22,44 @@ export function buildOutputs(p) {
 
   // ---------- GENERACIÓN AUTOMÁTICA DE FRASES CUALITATIVAS ----------
 
+  function mapKeyToPhrase(key, prop) {
+  const map = {
+    balcon: '🌿 Balcón privado',
+    ventanas_amplias: '🪟 Ventanas amplias',
+    [`vista_${prop.vista}`]: `🏞️ Vista ${prop.vista?.toLowerCase()}`,
+    cocina_equipada: '🍳 Cocina equipada',
+    closet: '🚪 Closets empotrados',
+    recepcion: '🛎️ Recepción 24h',
+    cochera: '🚗 Estacionamiento incluido',
+    ascensor: '🛗 Edificio con ascensor',
+    amoblado: '🛋️ Totalmente amoblado',
+    area_servicio: '🧺 Cuarto y baño de servicio',
+    mascotas: '🐾 Pet friendly',
+    gas_natural: '🔥 Gas natural',
+    tendal: '🧺 Tendal',
+    piscina: '🏊 Piscina',
+    gimnasio: '💪 Gimnasio',
+    terraza: '🌇 Terraza común',
+    jardin: '🌳 Jardín',
+    parrilla: '🔥 Parrilla / BBQ',
+    juegos_ninos: '🧸 Juegos infantiles',
+  };
+  return map[key] || null;
+}
+
   function generateAutoHighlights(prop) {
     const highlights = [];
+
+    // 1. PRIORIZAR DESTACADOS MANUALES (hasta 3)
+    if (prop.destacados_manuales && prop.destacados_manuales.length > 0) {
+      prop.destacados_manuales.slice(0, 3).forEach(key => {
+        const phrase = mapKeyToPhrase(key, prop);
+        if (phrase) highlights.push(phrase);
+      });
+    }
+
+    // 2. COMPLETAR CON INFERENCIAS AUTOMÁTICAS
+    const autoHighlights = [];
 
     // ----- AMPLITUD -----
     const area = prop.area_m2 || 0;

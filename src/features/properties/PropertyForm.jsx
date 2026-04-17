@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import { Field } from "../../components/formFields/Field";
 import { Select } from "../../components/formFields/Select";
 import { Checkbox } from "../../components/formFields/Checkbox";
@@ -60,6 +60,7 @@ export function PropertyForm({ initial, onSave, onClose }) {
     gimnasio: false,
     gas_natural: false,
     tendal: false,
+    destacados_manuales: [],
   };
 
   const [form, setForm] = useState(initial || blank);
@@ -187,6 +188,7 @@ export function PropertyForm({ initial, onSave, onClose }) {
         gimnasio: !!form.gimnasio,
         gas_natural: !!form.gas_natural,
         tendal: !!form.tendal,
+        destacados_manuales: form.destacados_manuales || [],
       };
 
       await onSave(payload, initial?.id);
@@ -385,6 +387,12 @@ export function PropertyForm({ initial, onSave, onClose }) {
               </div>
             </div>
           )}
+
+          <div style={formStyles.section}>Destacar en el mensaje</div>
+          <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 8 }}>
+            Elige hasta 3 características que quieras resaltar primero en WhatsApp.
+          </p>
+          <ManualHighlightsSelector form={form} setForm={setForm} />
 
           <div style={formStyles.section}>Fotos</div>
           <input
@@ -666,3 +674,68 @@ const formStyles = {
     animation: "spin 0.8s linear infinite",
   },
 };
+
+function ManualHighlightsSelector({ form, setForm }) {
+  const availableOptions = useMemo(() => {
+    const options = [];
+    const p = form;
+
+    if (p.balcon) options.push({ key: 'balcon', label: '🌿 Balcón privado' });
+    if (p.ventanas_amplias) options.push({ key: 'ventanas_amplias', label: '🪟 Ventanas amplias' });
+    if (p.vista && p.vista !== '') options.push({ key: `vista_${p.vista}`, label: `🏞️ Vista ${p.vista.toLowerCase()}` });
+    if (p.cocina_equipada) options.push({ key: 'cocina_equipada', label: '🍳 Cocina equipada' });
+    if (p.closet) options.push({ key: 'closet', label: '🚪 Closets empotrados' });
+    if (p.recepcion) options.push({ key: 'recepcion', label: '🛎️ Recepción 24h' });
+    if (p.cochera) options.push({ key: 'cochera', label: '🚗 Estacionamiento' });
+    if (p.ascensor) options.push({ key: 'ascensor', label: '🛗 Ascensor' });
+    if (p.amoblado) options.push({ key: 'amoblado', label: '🛋️ Amoblado' });
+    if (p.area_servicio) options.push({ key: 'area_servicio', label: '🧺 Cuarto de servicio' });
+    if (p.mascotas === 'Sí') options.push({ key: 'mascotas', label: '🐾 Pet friendly' });
+    if (p.gas_natural) options.push({ key: 'gas_natural', label: '🔥 Gas natural' });
+    if (p.tendal) options.push({ key: 'tendal', label: '🧺 Tendal' });
+    if (p.piscina) options.push({ key: 'piscina', label: '🏊 Piscina' });
+    if (p.gimnasio) options.push({ key: 'gimnasio', label: '💪 Gimnasio' });
+    if (p.terraza) options.push({ key: 'terraza', label: '🌇 Terraza' });
+    if (p.jardin) options.push({ key: 'jardin', label: '🌳 Jardín' });
+    if (p.parrilla) options.push({ key: 'parrilla', label: '🔥 Parrilla' });
+    if (p.juegos_ninos) options.push({ key: 'juegos_ninos', label: '🧸 Juegos infantiles' });
+
+    return options;
+  }, [form]);
+
+  const selected = form.destacados_manuales || [];
+
+  const toggleOption = (key) => {
+    let newSelected = [...selected];
+    if (newSelected.includes(key)) {
+      newSelected = newSelected.filter(k => k !== key);
+    } else {
+      if (newSelected.length >= 3) {
+        alert('Puedes seleccionar máximo 3 destacados.');
+        return;
+      }
+      newSelected.push(key);
+    }
+    setForm({ ...form, destacados_manuales: newSelected });
+  };
+
+  if (availableOptions.length === 0) {
+    return <p style={{ color: 'var(--text-muted)', fontSize: 13, marginBottom: 16 }}>Completa las características del inmueble para poder destacarlas.</p>;
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
+      {availableOptions.map(opt => (
+        <label key={opt.key} style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-primary)', fontSize: 14 }}>
+          <input
+            type="checkbox"
+            checked={selected.includes(opt.key)}
+            onChange={() => toggleOption(opt.key)}
+            style={{ accentColor: 'var(--accent-gold)' }}
+          />
+          {opt.label}
+        </label>
+      ))}
+    </div>
+  );
+}
