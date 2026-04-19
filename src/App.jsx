@@ -8,6 +8,7 @@ import { buildOutputs } from "./utils/messageFormatter";
 import { ESTADO_COLORS, ESTADOS } from "./utils/constants";
 import { PropertyCard } from "./components/PropertyCard.jsx";
 import { PropertyFilters } from "./components/PropertyFilters.jsx";
+import { fetchUserProfile, updateUserProfile } from "./utils/api";
 
 const S = {
   app: { 
@@ -363,6 +364,17 @@ function ROCAApp() {
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, [theme]);
 
+  useEffect(() => {
+    if (!user?.id) return;
+    (async () => {
+      const profile = await fetchUserProfile(user.id);
+      if (profile?.theme) {
+        setTheme(profile.theme);
+        localStorage.setItem("theme", profile.theme);
+      }
+    })();
+  }, [user?.id]);
+
   const handleDuplicate = (original) => {
     const { id, created_at, updated_at, ...rest } = original;
     const duplicate = {
@@ -379,7 +391,7 @@ function ROCAApp() {
     setShowForm(true);
   };
 
-  const cycleTheme = () => {
+  const cycleTheme = async () => {
     const themes = ["light", "dark", "system"];
     const currentIndex = themes.indexOf(theme);
     const nextTheme = themes[(currentIndex + 1) % themes.length];
@@ -391,6 +403,9 @@ function ROCAApp() {
       root.setAttribute("data-theme", prefersDark ? "dark" : "light");
     } else {
       root.setAttribute("data-theme", nextTheme);
+    }
+    if (user?.id) {
+      await updateUserProfile(user.id, { theme: nextTheme });
     }
   };
 

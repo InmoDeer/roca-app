@@ -56,3 +56,23 @@ export async function updatePropertyStatus(id, estado) {
     .eq("id", id);
   if (error) console.error("Error updating status:", error);
 }
+
+export async function fetchUserProfile(userId) {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("theme")
+    .eq("id", userId)
+    .single();
+  if (error && error.code !== "PGRST116") {
+    console.error("Error fetching profile:", error);
+  }
+  return data;
+}
+
+export async function updateUserProfile(userId, updates) {
+  const { error } = await supabase
+    .from("profiles")
+    .update(updates)
+    .eq("id", userId);
+  if (error) console.error("Error updating profile:", error);
+}
