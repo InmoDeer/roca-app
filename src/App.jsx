@@ -341,27 +341,12 @@ function ROCAApp() {
   const [editTarget, setEdit] = useState(null);
   const [openMenu, setOpenMenu] = useState(null);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
-  const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "system");
+  const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "dark");
   const [filters, setFilters] = useState({ q: "", operacion: "", tipo: "", estado: "" });
 
   useEffect(() => {
-    const applyTheme = () => {
-      const root = document.documentElement;
-      if (theme === "system") {
-        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        root.setAttribute("data-theme", prefersDark ? "dark" : "light");
-      } else {
-        root.setAttribute("data-theme", theme);
-      }
-    };
-    applyTheme();
-    
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    const handleChange = () => {
-      if (theme === "system") applyTheme();
-    };
-    mediaQuery.addEventListener("change", handleChange);
-    return () => mediaQuery.removeEventListener("change", handleChange);
+    const root = document.documentElement;
+    root.setAttribute("data-theme", theme);
   }, [theme]);
 
   useEffect(() => {
@@ -392,7 +377,7 @@ function ROCAApp() {
   };
 
   const cycleTheme = async () => {
-    const themes = ["light", "dark", "system"];
+    const themes = ["light", "dark"];
     const currentIndex = themes.indexOf(theme);
     const nextTheme = themes[(currentIndex + 1) % themes.length];
     setTheme(nextTheme);
@@ -537,7 +522,7 @@ function ROCAApp() {
               <div style={profileMenuStyles.userEmail}>{user.email}</div>
             </div>
             <button style={profileMenuStyles.item} onClick={cycleTheme}>
-              {theme === "light" ? "☀️ Claro" : theme === "dark" ? "🌙 Oscuro" : "⚙️ Sistema"}
+              {theme === "light" ? "☀️ Claro" : "🌙 Oscuro"}
             </button>
             <div style={profileMenuStyles.divider} />
             <button style={{...profileMenuStyles.item, ...profileMenuStyles.itemDanger}} onClick={() => { if(confirm("¿Eliminar cuenta? Esta acción es irreversible.")) { logout(); } }}>
