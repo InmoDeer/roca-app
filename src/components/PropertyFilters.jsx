@@ -24,7 +24,7 @@ export function PropertyFilters({ filters, setFilters, loading, filteredCount })
         {[
           { k: "operacion", opts: ["", "Venta", "Alquiler"], label: "Operación" },
           { k: "tipo", opts: ["", "Departamento", "Casa", "Local", "Oficina", "Terreno"], label: "Tipo" },
-          { k: "estado", opts: ["", "Disponible", "Reservado", "Vendido", "Alquilado"], label: "Estado" },
+          { k: "estado", opts: ["", "Disponible", "Reservado", "Vendido/Alquilado"], label: "Estado" },
         ].map(({ k, opts, label }) => (
           <select
             key={k}
