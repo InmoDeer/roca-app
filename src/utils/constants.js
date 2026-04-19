@@ -1,5 +1,5 @@
 // Property states
-export const ESTADOS = ["Disponible", "Reservado", "Vendido/Alquilado"];
+export const ESTADOS = ["Disponible", "Reservado", "Cerrado"];
 
 // Estado color configuration
 export const ESTADO_COLORS = {
@@ -15,7 +15,7 @@ export const ESTADO_COLORS = {
     dot: "#f59e0b",
     border: "#fde68a",
   },
-  "Vendido/Alquilado": {
+  Cerrado: {
     bg: "#fee2e2",
     text: "#991b1b",
     dot: "#ef4444",
@@ -50,3 +50,9 @@ export const ANTIGUEDAD_OPTIONS = [
 
 // Pet options
 export const MASCOTAS_OPTIONS = ["Sí", "No", "A tratar"];
+
+// Helper to get display label for cerrado
+export function getEstadoDisplay(estado, operacion) {
+  if (estado !== "Cerrado") return estado;
+  return operacion === "Alquiler" ? "Alquilado" : "Vendido";
+}

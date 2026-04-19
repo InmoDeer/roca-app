@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { buildOutputs } from "../../utils/messageFormatter";
-import { ESTADO_COLORS } from "../../utils/constants";
+import { ESTADO_COLORS, getEstadoDisplay } from "../../utils/constants";
 import { CopyShareBtns } from "../../components/ui/CopyShareBtns";
 import { Gallery } from "../../components/ui/Gallery";
 import { useSwipeBack } from "../../hooks/useSwipeBack";
@@ -80,7 +80,7 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete }) {
           >
             {Object.keys(ESTADO_COLORS).map((s) => (
               <option key={s} value={s}>
-                {s}
+                {s === "Cerrado" ? getEstadoDisplay(s, p.operacion) : s}
               </option>
             ))}
           </select>

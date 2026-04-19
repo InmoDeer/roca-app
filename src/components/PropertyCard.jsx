@@ -1,4 +1,5 @@
 import { MoreVertical, PencilLine, Trash2, Copy } from "lucide-react";
+import { getEstadoDisplay } from "../utils/constants";
 
 /**
  * PropertyCard - Tarjeta individual de propiedad en la lista
@@ -31,7 +32,7 @@ export function PropertyCard({
         <div style={styles.cardRight} onClick={(e) => e.stopPropagation()}>
           <span style={styles.statusBadge(ec)}>
             <span style={styles.statusDot(ec)} />
-            {property.estado}
+            {getEstadoDisplay(property.estado, property.operacion)}
           </span>
           
           {isMenuOpen && (
