@@ -316,9 +316,6 @@ const profileMenuStyles = {
     cursor: "pointer",
     textAlign: "left",
   },
-  itemDanger: {
-    color: "#ff4444",
-  },
   divider: {
     height: 1,
     background: "rgba(255,255,255,0.08)",
@@ -408,7 +405,11 @@ function ROCAApp() {
       if (q && !p.nombre?.toLowerCase().includes(q) && !p.distrito?.toLowerCase().includes(q)) return false;
       if (filters.operacion && p.operacion !== filters.operacion) return false;
       if (filters.tipo && p.tipo !== filters.tipo) return false;
-      if (filters.estado && p.estado !== filters.estado) return false;
+      if (filters.estado === "Cerrado") {
+        if (p.estado !== "Cerrado") return false;
+      } else if (filters.estado && p.estado !== filters.estado) {
+        return false;
+      }
       return true;
     });
   }, [properties, filters]);
@@ -525,9 +526,6 @@ function ROCAApp() {
               {theme === "light" ? "☀️ Claro" : "🌙 Oscuro"}
             </button>
             <div style={profileMenuStyles.divider} />
-            <button style={{...profileMenuStyles.item, ...profileMenuStyles.itemDanger}} onClick={() => { if(confirm("¿Eliminar cuenta? Esta acción es irreversible.")) { logout(); } }}>
-              🗑️ Eliminar cuenta
-            </button>
             <button style={profileMenuStyles.item} onClick={logout}>
               🚪 Cerrar sesión
             </button>
