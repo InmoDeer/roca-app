@@ -240,36 +240,6 @@ const S = {
   },
 };
 
-const lightTheme = {
-  colors: {
-    primary: "#d4af37",
-    bg: "#ffffff",
-    bgSecondary: "#f5f5f5",
-    bgCard: "#ffffff",
-    text: "#1a1a1a",
-    textSecondary: "#666666",
-    textMuted: "#888888",
-    border: "rgba(0,0,0,0.08)",
-    danger: "#dc2626",
-    success: "#16a34a",
-  }
-};
-
-const darkTheme = {
-  colors: {
-    primary: "#d4af37",
-    bg: "#0a0a0a",
-    bgSecondary: "#1a1a1a",
-    bgCard: "#1a1a1a",
-    text: "#ffffff",
-    textSecondary: "#cccccc",
-    textMuted: "#888888",
-    border: "rgba(255,255,255,0.08)",
-    danger: "#ef4444",
-    success: "#22c55e",
-  }
-};
-
 const profileMenuStyles = {
   overlay: {
     position: "fixed",
