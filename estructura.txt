@@ -1,14 +1,6 @@
-# ROCA App - Sistema Inmobiliario
-
-Aplicación React para gestión de propiedades inmobiliarias con Supabase.
-
-## Estructura del Proyecto
-
-```
 roca-app/
 ├── AGENTS.md
 ├── README.md
-├── estructura.txt
 ├── eslint.config.js
 ├── index.html
 ├── package.json
@@ -63,37 +55,8 @@ roca-app/
 ├── docs/
 │   └── landing-archived/
 │       └── PublicPropertyPage.jsx
-└── graphify-out/
-    ├── graph.json
-    ├── GRAPH_REPORT.md
-    └── cache/
-```
-
-## Tecnologías
-
-- **Frontend**: React 19, Vite
-- **Backend**: Supabase (Auth + Database)
-- **Estilos**: CSS Variables para theming
-- **Linting**: ESLint
-- **Deployment**: Vercel
-
-## Getting Started
-
-```bash
-# Instalar dependencias
-npm install
-
-# Ejecutar en desarrollo
-npm run dev
-
-# Build para producción
-npm run build
-```
-
-## Características
-
-- Gestión de propiedades (CRUD)
-- Subida de fotos a Cloudinary
-- Estados: Disponible, Reservado, Cerrado
-- Temas: Claro / Oscuro
-- Perfil de usuario en Supabase
+├── graphify-out/
+│   ├── graph.json
+│   ├── GRAPH_REPORT.md
+│   └── cache/
+│       └── [27 archivos JSON]
