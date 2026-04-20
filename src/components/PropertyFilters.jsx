@@ -6,6 +6,67 @@ import { useTheme } from "../hooks/useTheme.jsx";
  */
 export function PropertyFilters({ filters, setFilters, loading, filteredCount }) {
   const { t } = useTheme();
+
+  // ⬇️ MOVER styles AQUÍ DENTRO para que tenga acceso a 't'
+  const styles = {
+    searchWrap: {
+      padding: "16px 20px 0",
+      background: t.colors.bg,
+      position: "sticky",
+      top: 60,
+      zIndex: 5,
+    },
+    searchInputWrap: {
+      position: "relative",
+      display: "flex",
+      alignItems: "center",
+    },
+    searchIcon: {
+      position: "absolute",
+      left: 14,
+      color: t.colors.textMuted,
+      pointerEvents: "none",
+    },
+    searchInput: {
+      width: "100%",
+      padding: "12px 16px 12px 44px",
+      border: `1px solid ${t.colors.border}`,
+      borderRadius: 12,
+      fontSize: 14,
+      outline: "none",
+      boxSizing: "border-box",
+      background: t.colors.bgSecondary,
+      color: t.colors.text,
+      transition: "all 0.3s ease",
+    },
+    filterRow: {
+      display: "flex",
+      gap: 10,
+      padding: "12px 20px",
+      overflowX: "auto",
+      background: t.colors.bg,
+    },
+    filterSelect: {
+      padding: "8px 12px",
+      borderRadius: 10,
+      border: `1px solid ${t.colors.border}`,
+      fontSize: 13,
+      background: t.colors.bgSecondary,
+      color: t.colors.text,
+      flexShrink: 0,
+      cursor: "pointer",
+      outline: "none",
+      minWidth: 100,
+    },
+    count: {
+      padding: "4px 20px 8px",
+      fontSize: 12,
+      color: t.colors.textMuted,
+      fontWeight: 600,
+      background: t.colors.bg,
+    },
+  };
+
   return (
     <>
       {/* Buscador */}
@@ -35,78 +96,21 @@ export function PropertyFilters({ filters, setFilters, loading, filteredCount })
             onChange={(e) => setFilters((f) => ({ ...f, [k]: e.target.value }))}
           >
             <option value="" style={{ color: "#666666" }}>{label}</option>
-            {opts.filter(Boolean).map((o) => (
+            {opts.map((o) => (
               <option key={o} value={o} style={{ color: "#fff" }}>{o}</option>
             ))}
           </select>
         ))}
       </div>
 
-      {/* Contador */}
-      <div style={styles.count}>
-        {loading ? "Cargando..." : `${filteredCount} inmueble${filteredCount !== 1 ? "s" : ""}`}
-      </div>
+      {/* Conteo de resultados */}
+      {!loading && (
+        <div style={styles.count}>
+          {filteredCount} {filteredCount === 1 ? "inmueble" : "inmuebles"}
+        </div>
+      )}
     </>
   );
 }
-
-const styles = {
-  searchWrap: {
-    padding: "16px 20px 0",
-    background: t.colors.bg,
-    position: "sticky",
-    top: 60,
-    zIndex: 5,
-  },
-  searchInputWrap: {
-    position: "relative",
-    display: "flex",
-    alignItems: "center",
-  },
-  searchIcon: {
-    position: "absolute",
-    left: 14,
-    color: t.colors.textMuted,
-    pointerEvents: "none",
-  },
-  searchInput: {
-    width: "100%",
-    padding: "12px 16px 12px 44px",
-    border: `1px solid ${t.colors.border}`,
-    borderRadius: 12,
-    fontSize: 14,
-    outline: "none",
-    boxSizing: "border-box",
-    background: t.colors.bgSecondary,
-    color: t.colors.text,
-    transition: "all 0.3s ease",
-  },
-  filterRow: {
-    display: "flex",
-    gap: 10,
-    padding: "12px 20px",
-    overflowX: "auto",
-    background: t.colors.bg,
-  },
-  filterSelect: {
-    padding: "8px 12px",
-    borderRadius: 10,
-    border: `1px solid ${t.colors.border}`,
-    fontSize: 13,
-    background: t.colors.bgSecondary,
-    color: t.colors.text,
-    flexShrink: 0,
-    cursor: "pointer",
-    outline: "none",
-    minWidth: 100,
-  },
-  count: {
-    padding: "4px 20px 8px",
-    fontSize: 12,
-    color: t.colors.textMuted,
-    fontWeight: 600,
-    background: t.colors.bg,
-  },
-};
 
 export default PropertyFilters;
