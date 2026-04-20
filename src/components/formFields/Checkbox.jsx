@@ -1,37 +1,41 @@
+import { useTheme } from "../../hooks/useTheme.jsx";
+
 /**
  * Checkbox component for forms
  */
 export function Checkbox({ label, k, form, setForm, icon: Icon }) {
+  const { t } = useTheme();
+  const styles = getCheckboxStyles(t);
   const isChecked = !!form[k];
   
   return (
-    <label style={checkboxStyles.container}>
+    <label style={styles.container}>
       <input
         type="checkbox"
         checked={isChecked}
         onChange={(e) =>
           setForm((f) => ({ ...f, [k]: e.target.checked }))
         }
-        style={checkboxStyles.input}
+        style={styles.input}
       />
       <span style={{
-        ...checkboxStyles.checkmark,
-        background: isChecked ? "linear-gradient(135deg, #d4af37 0%, #b8962e 100%)" : "rgba(255,255,255,0.03)",
-        borderColor: isChecked ? "#d4af37" : "rgba(255,255,255,0.2)",
+        ...styles.checkmark,
+        background: isChecked ? "linear-gradient(135deg, #d4af37 0%, #b8962e 100%)" : t.colors.bgSecondary,
+        borderColor: isChecked ? "#d4af37" : t.colors.border,
       }}>
-        {isChecked && <span style={checkboxStyles.check}>✓</span>}
+        {isChecked && <span style={styles.check}>✓</span>}
       </span>
       {Icon && (
-        <span style={checkboxStyles.icon}>
-          <Icon size={16} strokeWidth={1.5} color="#888888" />
+        <span style={styles.icon}>
+          <Icon size={16} strokeWidth={1.5} color={t.colors.textMuted} />
         </span>
       )}
-      <span style={checkboxStyles.label}>{label}</span>
+      <span style={styles.label}>{label}</span>
     </label>
   );
 }
 
-const checkboxStyles = {
+const getCheckboxStyles = (t) => ({
   container: {
     display: "flex",
     alignItems: "center",
@@ -46,7 +50,7 @@ const checkboxStyles = {
     width: 20,
     height: 20,
     borderRadius: 6,
-    border: "1px solid rgba(255,255,255,0.2)",
+    border: `1px solid ${t.colors.border}`,
     marginRight: 10,
     display: "flex",
     alignItems: "center",
@@ -66,6 +70,6 @@ const checkboxStyles = {
   },
   label: {
     flex: 1,
-    color: "#cccccc",
+    color: t.colors.textSecondary,
   },
-};
+});

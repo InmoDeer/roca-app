@@ -1,12 +1,17 @@
+import { useTheme } from "../../hooks/useTheme.jsx";
+
 /**
  * Text input field component used in forms
  */
 export function Field({ label, k, form, setForm, type = "text", placeholder = "" }) {
+  const { t } = useTheme();
+  const styles = getFieldStyles(t);
+  
   return (
-    <div style={fieldStyles.container}>
-      <label style={fieldStyles.label}>{label}</label>
+    <div style={styles.container}>
+      <label style={styles.label}>{label}</label>
       <input
-        style={fieldStyles.input}
+        style={styles.input}
         type={type}
         value={form[k] ?? ""}
         placeholder={placeholder}
@@ -26,7 +31,7 @@ export function Field({ label, k, form, setForm, type = "text", placeholder = ""
   );
 }
 
-const fieldStyles = {
+const getFieldStyles = (t) => ({
   container: {
     marginBottom: 14,
   },
@@ -34,7 +39,7 @@ const fieldStyles = {
     display: "block",
     fontSize: 12,
     fontWeight: 600,
-    color: "#888888",
+    color: t.colors.textMuted,
     marginBottom: 6,
     textTransform: "uppercase",
     letterSpacing: "0.5px",
@@ -43,12 +48,12 @@ const fieldStyles = {
     width: "100%",
     padding: "12px 14px",
     borderRadius: 12,
-    border: "1px solid rgba(255,255,255,0.1)",
+    border: `1px solid ${t.colors.border}`,
     fontSize: 15,
     boxSizing: "border-box",
     outline: "none",
-    background: "rgba(255,255,255,0.03)",
-    color: "#ffffff",
+    background: t.colors.bgSecondary,
+    color: t.colors.text,
     transition: "all 0.3s ease",
   },
-};
+});

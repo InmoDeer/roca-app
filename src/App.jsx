@@ -572,7 +572,7 @@ function ROCAApp() {
   };
 
   const filtered = useMemo(() => {
-    return properties.filter((p) => {
+    const result = properties.filter((p) => {
       const q = filters.q.toLowerCase();
       if (q && !p.nombre?.toLowerCase().includes(q) && !p.distrito?.toLowerCase().includes(q)) return false;
       if (filters.operacion && p.operacion !== filters.operacion) return false;
@@ -583,6 +583,22 @@ function ROCAApp() {
         return false;
       }
       return true;
+    });
+
+    const order = { "Disponible": 1, "Reservado": 2, "Cerrado": 3 };
+    
+    return result.sort((a, b) => {
+      const orderA = order[a.estado] || 99;
+      const orderB = order[b.estado] || 99;
+      
+      if (orderA !== orderB) {
+        return orderA - orderB;
+      }
+      
+      // Si tienen el mismo estado, ordenar por fecha más reciente
+      const dateA = new Date(a.created_at || 0);
+      const dateB = new Date(b.created_at || 0);
+      return dateB - dateA;
     });
   }, [properties, filters]);
 

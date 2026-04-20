@@ -94,7 +94,7 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete }) {
       right: 16,
       background: "rgba(0,0,0,0.7)",
       backdropFilter: "blur(10px)",
-      color: t.colors.text,
+      color: "#ffffff",
       borderRadius: 20,
       padding: "6px 12px",
       fontSize: 12,
