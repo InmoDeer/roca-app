@@ -9,8 +9,6 @@ import { buildOutputs } from "./utils/messageFormatter";
 import { ESTADO_COLORS, ESTADOS } from "./utils/constants";
 import { PropertyCard } from "./components/PropertyCard.jsx";
 import { PropertyFilters } from "./components/PropertyFilters.jsx";
-import { fetchUserProfile, updateUserProfile } from "./utils/api";
-
 const S = {
   app: { 
     minHeight: "100vh", 
@@ -557,16 +555,6 @@ function ROCAApp() {
     },
   };
 
-  useEffect(() => {
-    if (!user?.id) return;
-    (async () => {
-      const profile = await fetchUserProfile(user.id);
-      if (profile?.theme && profile.theme !== mode) {
-        cycleTheme();
-      }
-    })();
-  }, [user?.id]);
-
   const handleDuplicate = (original) => {
     const { id, created_at, updated_at, ...rest } = original;
     const duplicate = {
@@ -581,21 +569,6 @@ function ROCAApp() {
     };
     setEdit(duplicate);
     setShowForm(true);
-  };
-
-  const cycleThemeWrapper = async () => {
-    cycleTheme();
-    if (user?.id) {
-      await updateUserProfile(user.id, { theme: mode === "dark" ? "light" : "dark" });
-    }
-  };
-
-  const getThemeColors = () => {
-    if (theme === "system") {
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      return prefersDark ? darkTheme : lightTheme;
-    }
-    return theme === "dark" ? darkTheme : lightTheme;
   };
 
   const filtered = useMemo(() => {
