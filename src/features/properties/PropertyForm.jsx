@@ -4,7 +4,11 @@ import { Select } from "../../components/formFields/Select";
 import { Checkbox } from "../../components/formFields/Checkbox";
 import { uploadToCloudinary, deleteCloudinaryImages } from "../../utils/cloudinary";
 import { useTheme } from "../../hooks/useTheme.jsx";
-import { ArrowUp, Armchair, Sparkles, PawPrint, Camera, X, Car, Flame } from "lucide-react";
+import {
+  ArrowUp, Armchair, Sparkles, Camera, X, Car, Flame,
+  Waves, WashingMachine, DoorOpen, Sun, Box, CookingPot,
+  ShieldCheck, Building2, Trees, Users, Utensils, Baby, Dumbbell, Wind,
+} from "lucide-react";
 import {
   PROPERTY_TYPES,
   OPERATIONS,
@@ -44,7 +48,6 @@ export function PropertyForm({ initial, onSave, onClose }) {
     video_url: "",
     tour360_url: "",
     estado: "Disponible",
-    // NUEVOS CAMPOS
     balcon: false,
     ventanas_amplias: false,
     vista: "",
@@ -175,7 +178,6 @@ export function PropertyForm({ initial, onSave, onClose }) {
         fotos_urls: form.fotos_urls || [],
         video_url: form.video_url || null,
         tour360_url: form.tour360_url || null,
-        // NUEVOS
         balcon: !!form.balcon,
         ventanas_amplias: !!form.ventanas_amplias,
         vista: form.vista || null,
@@ -345,7 +347,7 @@ export function PropertyForm({ initial, onSave, onClose }) {
             <Checkbox label="Amoblado" k="amoblado" form={form} setForm={setForm} icon={Armchair} />
             <Checkbox label="Cuarto y baño de servicio" k="area_servicio" form={form} setForm={setForm} icon={Sparkles} />
             <Checkbox label="Gas natural" k="gas_natural" form={form} setForm={setForm} icon={Flame} />
-            <Checkbox label="Lavandería" k="lavanderia" form={form} setForm={setForm} />
+            <Checkbox label="Lavandería" k="lavanderia" form={form} setForm={setForm} icon={WashingMachine} />
           </div>
           <Select
             label="Mascotas"
@@ -357,11 +359,11 @@ export function PropertyForm({ initial, onSave, onClose }) {
 
           <div style={formStyles.section}>Calidad y confort</div>
           <div style={formStyles.checkGrid}>
-            <Checkbox label="Balcón" k="balcon" form={form} setForm={setForm} />
-            <Checkbox label="Ventanas amplias" k="ventanas_amplias" form={form} setForm={setForm} />
-            <Checkbox label="Closets empotrados" k="closet" form={form} setForm={setForm} />
-            <Checkbox label="Cocina equipada" k="cocina_equipada" form={form} setForm={setForm} />
-            <Checkbox label="Recepción / Seguridad 24h" k="recepcion" form={form} setForm={setForm} />
+            <Checkbox label="Balcón" k="balcon" form={form} setForm={setForm} icon={DoorOpen} />
+            <Checkbox label="Ventanas amplias" k="ventanas_amplias" form={form} setForm={setForm} icon={Sun} />
+            <Checkbox label="Closets empotrados" k="closet" form={form} setForm={setForm} icon={Box} />
+            <Checkbox label="Cocina equipada" k="cocina_equipada" form={form} setForm={setForm} icon={CookingPot} />
+            <Checkbox label="Recepción / Seguridad 24h" k="recepcion" form={form} setForm={setForm} icon={ShieldCheck} />
           </div>
 
           <Select
@@ -377,19 +379,20 @@ export function PropertyForm({ initial, onSave, onClose }) {
             k="areas_comunes"
             form={form}
             setForm={setForm}
+            icon={Building2}
           />
 
           {form.areas_comunes && (
             <div style={{ marginTop: 8, paddingLeft: 16 }}>
               <div style={formStyles.checkGrid}>
-                <Checkbox label="Piscina" k="piscina" form={form} setForm={setForm} />
-                <Checkbox label="Terraza" k="terraza" form={form} setForm={setForm} />
-                <Checkbox label="Jardín" k="jardin" form={form} setForm={setForm} />
-                <Checkbox label="SUM" k="sum" form={form} setForm={setForm} />
-                <Checkbox label="Parrilla" k="parrilla" form={form} setForm={setForm} />
-                <Checkbox label="Juegos infantiles" k="juegos_ninos" form={form} setForm={setForm} />
-                <Checkbox label="Gimnasio" k="gimnasio" form={form} setForm={setForm} />
-                <Checkbox label="Tendal" k="tendal" form={form} setForm={setForm} />
+                <Checkbox label="Piscina" k="piscina" form={form} setForm={setForm} icon={Waves} />
+                <Checkbox label="Terraza" k="terraza" form={form} setForm={setForm} icon={Sun} />
+                <Checkbox label="Jardín" k="jardin" form={form} setForm={setForm} icon={Trees} />
+                <Checkbox label="SUM" k="sum" form={form} setForm={setForm} icon={Users} />
+                <Checkbox label="Parrilla" k="parrilla" form={form} setForm={setForm} icon={Utensils} />
+                <Checkbox label="Juegos infantiles" k="juegos_ninos" form={form} setForm={setForm} icon={Baby} />
+                <Checkbox label="Gimnasio" k="gimnasio" form={form} setForm={setForm} icon={Dumbbell} />
+                <Checkbox label="Tendal" k="tendal" form={form} setForm={setForm} icon={Wind} />
               </div>
             </div>
           )}
