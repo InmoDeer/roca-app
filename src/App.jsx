@@ -240,7 +240,7 @@ const S = {
   },
 };
 
-const profileMenuStyles = {
+const getProfileMenuStyles = (theme) => ({
   overlay: {
     position: "fixed",
     top: 0,
@@ -256,7 +256,7 @@ const profileMenuStyles = {
     left: 0,
     width: 280,
     height: "100%",
-    background: "#1a1a1a",
+    background: theme.colors.bgSecondary,
     boxShadow: "4px 0 20px rgba(0,0,0,0.5)",
     zIndex: 100,
     padding: "20px 0",
@@ -265,17 +265,17 @@ const profileMenuStyles = {
   },
   header: {
     padding: "0 20px 20px",
-    borderBottom: "1px solid rgba(255,255,255,0.08)",
+    borderBottom: `1px solid ${theme.colors.border}`,
     marginBottom: 20,
   },
   userInfo: {
-    color: "#fff",
+    color: theme.colors.text,
     fontSize: 16,
     fontWeight: 600,
     marginBottom: 4,
   },
   userEmail: {
-    color: "#888",
+    color: theme.colors.textMuted,
     fontSize: 12,
   },
   closeBtn: {
@@ -284,7 +284,7 @@ const profileMenuStyles = {
     right: 16,
     background: "none",
     border: "none",
-    color: "#fff",
+    color: theme.colors.text,
     fontSize: 24,
     cursor: "pointer",
   },
@@ -296,17 +296,17 @@ const profileMenuStyles = {
     padding: "14px 20px",
     background: "none",
     border: "none",
-    color: "#fff",
+    color: theme.colors.text,
     fontSize: 15,
     cursor: "pointer",
     textAlign: "left",
   },
   divider: {
     height: 1,
-    background: "rgba(255,255,255,0.08)",
+    background: theme.colors.border,
     margin: "12px 0",
   },
-};
+});
 
 export default function App() {
   return (
@@ -714,18 +714,18 @@ function ROCAApp() {
     <div style={S.app} onClick={(e) => { if (e.target === e.currentTarget) { setOpenMenu(null); setProfileMenuOpen(false); } }}>
       {profileMenuOpen && (
         <>
-          <div style={profileMenuStyles.overlay} onClick={() => setProfileMenuOpen(false)} />
-          <div style={profileMenuStyles.drawer}>
+          <div style={getProfileMenuStyles(theme).overlay} onClick={() => setProfileMenuOpen(false)} />
+          <div style={getProfileMenuStyles(theme).drawer}>
             
-            <div style={profileMenuStyles.header}>
-              <div style={profileMenuStyles.userInfo}>{user.email?.split('@')[0]}</div>
-              <div style={profileMenuStyles.userEmail}>{user.email}</div>
+            <div style={getProfileMenuStyles(theme).header}>
+              <div style={getProfileMenuStyles(theme).userInfo}>{user.email?.split('@')[0]}</div>
+              <div style={getProfileMenuStyles(theme).userEmail}>{user.email}</div>
             </div>
-            <button style={profileMenuStyles.item} onClick={cycleTheme}>
+            <button style={getProfileMenuStyles(theme).item} onClick={cycleTheme}>
               {mode === "light" ? "☀️ Claro" : "🌙 Oscuro"}
             </button>
-            <div style={profileMenuStyles.divider} />
-            <button style={profileMenuStyles.item} onClick={logout}>
+            <div style={getProfileMenuStyles(theme).divider} />
+            <button style={getProfileMenuStyles(theme).item} onClick={logout}>
               🚪 Cerrar sesión
             </button>
           </div>

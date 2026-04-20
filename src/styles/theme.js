@@ -22,8 +22,8 @@ export const darkTheme = {
 export const lightTheme = {
   colors: {
     primary: "#d4af37",
-    bg: "#ffffff",
-    bgSecondary: "#f5f5f5",
+    bg: "#f5f5f5",
+    bgSecondary: "#ffffff",
     bgCard: "#ffffff",
     text: "#1a1a1a",
     textSecondary: "#666666",

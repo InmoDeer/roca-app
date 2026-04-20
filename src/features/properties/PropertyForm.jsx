@@ -66,6 +66,8 @@ export function PropertyForm({ initial, onSave, onClose }) {
     destacados_manuales: [],
   };
 
+  const formStyles = getFormStyles(t);
+
   const [form, setForm] = useState(initial || blank);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -494,7 +496,7 @@ export function PropertyForm({ initial, onSave, onClose }) {
   );
 }
 
-const formStyles = {
+const getFormStyles = (theme) => ({
   overlay: {
     position: "fixed",
     inset: 0,
@@ -505,7 +507,7 @@ const formStyles = {
     alignItems: "flex-end",
   },
   modal: {
-    background: "#121212",
+    background: theme.colors.bg,
     borderRadius: 0,
     width: "100%",
     maxHeight: "100vh",
@@ -518,20 +520,20 @@ const formStyles = {
     justifyContent: "space-between",
     alignItems: "center",
     padding: "20px 24px",
-    borderBottom: "1px solid rgba(255,255,255,0.08)",
+    borderBottom: `1px solid ${theme.colors.border}`,
     flexShrink: 0,
   },
   title: {
     fontWeight: 800,
     fontSize: 18,
-    color: "#ffffff",
+    color: theme.colors.text,
   },
   closeBtn: {
     background: "none",
     border: "none",
     fontSize: 22,
     cursor: "pointer",
-    color: "#666666",
+    color: theme.colors.textMuted,
     padding: 4,
   },
   body: {
@@ -543,19 +545,19 @@ const formStyles = {
     display: "flex",
     gap: 12,
     padding: "16px 24px",
-    borderTop: "1px solid rgba(255,255,255,0.08)",
+    borderTop: `1px solid ${theme.colors.border}`,
     flexShrink: 0,
   },
   cancelBtn: {
     flex: 1,
     padding: 14,
-    background: "rgba(255,255,255,0.08)",
-    border: "1px solid rgba(255,255,255,0.1)",
+    background: theme.colors.bgSecondary,
+    border: `1px solid ${theme.colors.border}`,
     borderRadius: 12,
     fontWeight: 700,
     fontSize: 15,
     cursor: "pointer",
-    color: "#ffffff",
+    color: theme.colors.text,
   },
   saveBtn: {
     flex: 2,
@@ -572,12 +574,12 @@ const formStyles = {
   section: {
     fontWeight: 800,
     fontSize: 11,
-    color: "#666666",
+    color: theme.colors.textMuted,
     textTransform: "uppercase",
     letterSpacing: "1px",
     margin: "20px 0 12px",
     paddingBottom: 8,
-    borderBottom: "1px solid rgba(255,255,255,0.05)",
+    borderBottom: `1px solid ${theme.colors.border}`,
   },
   row2: {
     display: "grid",
@@ -593,14 +595,14 @@ const formStyles = {
   uploadBtn: {
     width: "100%",
     padding: "14px",
-    background: "rgba(255,255,255,0.03)",
-    border: "1.5px dashed rgba(255,255,255,0.15)",
+    background: theme.colors.bgSecondary,
+    border: `1.5px dashed ${theme.colors.border}`,
     borderRadius: 12,
     fontSize: 14,
     fontWeight: 600,
     cursor: "pointer",
     marginBottom: 14,
-    color: "#ffffff",
+    color: theme.colors.text,
     transition: "all 0.3s ease",
   },
   photoGrid: {
@@ -677,9 +679,10 @@ const formStyles = {
     borderRadius: "50%",
     animation: "spin 0.8s linear infinite",
   },
-};
+});
 
 function ManualHighlightsSelector({ form, setForm }) {
+  const { t } = useTheme();
   const availableOptions = useMemo(() => {
     const options = [];
     const p = form;
@@ -725,13 +728,13 @@ function ManualHighlightsSelector({ form, setForm }) {
   };
 
   if (availableOptions.length === 0) {
-    return <p style={{ color: '#888888', fontSize: 13, marginBottom: 16 }}>Completa las características del inmueble para poder destacarlas.</p>;
+    return <p style={{ color: t.colors.textMuted, fontSize: 13, marginBottom: 16 }}>Completa las características del inmueble para poder destacarlas.</p>;
   }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
       {availableOptions.map(opt => (
-        <label key={opt.key} style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#ffffff', fontSize: 14 }}>
+        <label key={opt.key} style={{ display: 'flex', alignItems: 'center', gap: 8, color: t.colors.text, fontSize: 14 }}>
           <input
             type="checkbox"
             checked={selected.includes(opt.key)}
