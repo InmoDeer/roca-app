@@ -1,99 +1,37 @@
-# ROCA App - Sistema Inmobiliario
+# AGENTS.md - Reglas del Proyecto Roca App
 
-Aplicación React para gestión de propiedades inmobiliarias con Supabase.
+## Descripción del Proyecto
+- **Nombre**: Roca App
+- **Tipo**: Aplicación React con Supabase
+- **Propósito**: Gestión de propiedades inmobiliarias
+
+## Stack Tecnológico
+- React 19
+- Vite
+- Supabase (backend)
+- ESLint
 
 ## Estructura del Proyecto
-
 ```
-roca-app/
-├── AGENTS.md
-├── README.md
-├── estructura.txt
-├── eslint.config.js
-├── index.html
-├── package.json
-├── package-lock.json
-├── vercel.json
-├── vite.config.js
-├── .env.example
-├── .env.local
-├── .gitignore
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── App.css
-│   ├── App.jsx
-│   ├── main.jsx
-│   ├── index.css
-│   ├── assets/
-│   │   ├── hero.png
-│   │   ├── react.svg
-│   │   └── vite.svg
-│   ├── components/
-│   │   ├── PropertyCard.jsx
-│   │   ├── PropertyFilters.jsx
-│   │   ├── formFields/
-│   │   │   ├── Checkbox.jsx
-│   │   │   ├── Field.jsx
-│   │   │   └── Select.jsx
-│   │   └── ui/
-│   │       ├── CopyShareBtns.jsx
-│   │       └── Gallery.jsx
-│   ├── config/
-│   │   ├── environment.js
-│   │   └── supabase.js
-│   ├── features/
-│   │   └── properties/
-│   │       ├── PropertyDetail.jsx
-│   │       ├── PropertyForm.jsx
-│   │       └── PublicGallery.jsx
-│   ├── hooks/
-│   │   ├── useAuth.js
-│   │   ├── useProperties.js
-│   │   └── useSwipeBack.js
-│   ├── scripts/
-│   │   └── cleanupOrphanedPhotos.js
-│   ├── styles/
-│   │   └── theme.js
-│   └── utils/
-│       ├── api.js
-│       ├── cloudinary.js
-│       ├── constants.js
-│       └── messageFormatter.js
-├── docs/
-│   └── landing-archived/
-│       └── PublicPropertyPage.jsx
-└── graphify-out/
-    ├── graph.json
-    ├── GRAPH_REPORT.md
-    └── cache/
+src/
+├── components/     # Componentes reutilizables
+├── features/       # Funcionalidades por módulo
+├── hooks/          # Custom hooks (useAuth, useProperties)
+├── utils/          # Utilidades (api, constants, cloudinary)
+├── config/         # Configuración del entorno
+├── styles/         # Estilos
+├── App.jsx         # Componente principal
+├── main.jsx        # Entry point
+└── index.css       # Estilos globales
 ```
 
-## Tecnologías
+## Convenciones de Código
+- Componentes funcionales con Hooks
+- Nombres de archivos en PascalCase para componentes, camelCase para utils/hooks
+- Imports ordenados: externos, internos, relativos
 
-- **Frontend**: React 19, Vite
-- **Backend**: Supabase (Auth + Database)
-- **Estilos**: CSS Variables para theming
-- **Linting**: ESLint
-- **Deployment**: Vercel
-
-## Getting Started
-
-```bash
-# Instalar dependencias
-npm install
-
-# Ejecutar en desarrollo
-npm run dev
-
-# Build para producción
-npm run build
-```
-
-## Características
-
-- Gestión de propiedades (CRUD)
-- Subida de fotos a Cloudinary
-- Estados: Disponible, Reservado, Cerrado
-- Temas: Claro / Oscuro
-- Perfil de usuario en Supabase
+## Patrones Comunes
+- useAuth hook para autenticación
+- useProperties hook para gestión de propiedades
+- API utilities para comunicación con Supabase
+- StatusBadge para estados
