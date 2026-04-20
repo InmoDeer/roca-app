@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useAuth } from "./hooks/useAuth";
 import { useProperties } from "./hooks/useProperties";
+import { ThemeProvider, useTheme } from "./hooks/useTheme.jsx";
 import { PropertyForm } from "./features/properties/PropertyForm.jsx";
 import { PropertyDetail } from "./features/properties/PropertyDetail.jsx";
 import { PublicGallery } from "./features/properties/PublicGallery.jsx";
@@ -324,35 +325,31 @@ const profileMenuStyles = {
 };
 
 export default function App() {
-  // Landing page archivada - ruta /p/ deshabilitada
-  // Ver docs/landing-archived/ para referencia futura
-  return <ROCAApp />;
+  return (
+    <ThemeProvider>
+      <ROCAApp />
+    </ThemeProvider>
+  );
 }
 
 function ROCAApp() {
   const { user, loading: authLoading, email, setEmail, password, setPassword, login, logout } = useAuth();
   const { properties, loading, saveProperty, removeProperty, changeStatus } = useProperties(user?.id);
+  const { t: theme, mode, toggle: cycleTheme } = useTheme();
   
   const [selected, setSelected] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editTarget, setEdit] = useState(null);
   const [openMenu, setOpenMenu] = useState(null);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
-  const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "dark");
   const [filters, setFilters] = useState({ q: "", operacion: "", tipo: "", estado: "" });
-
-  useEffect(() => {
-    const root = document.documentElement;
-    root.setAttribute("data-theme", theme);
-  }, [theme]);
 
   useEffect(() => {
     if (!user?.id) return;
     (async () => {
       const profile = await fetchUserProfile(user.id);
-      if (profile?.theme) {
-        setTheme(profile.theme);
-        localStorage.setItem("theme", profile.theme);
+      if (profile?.theme && profile.theme !== mode) {
+        cycleTheme();
       }
     })();
   }, [user?.id]);
@@ -373,21 +370,10 @@ function ROCAApp() {
     setShowForm(true);
   };
 
-  const cycleTheme = async () => {
-    const themes = ["light", "dark"];
-    const currentIndex = themes.indexOf(theme);
-    const nextTheme = themes[(currentIndex + 1) % themes.length];
-    setTheme(nextTheme);
-    localStorage.setItem("theme", nextTheme);
-    const root = document.documentElement;
-    if (nextTheme === "system") {
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      root.setAttribute("data-theme", prefersDark ? "dark" : "light");
-    } else {
-      root.setAttribute("data-theme", nextTheme);
-    }
+  const cycleThemeWrapper = async () => {
+    cycleTheme();
     if (user?.id) {
-      await updateUserProfile(user.id, { theme: nextTheme });
+      await updateUserProfile(user.id, { theme: mode === "dark" ? "light" : "dark" });
     }
   };
 
@@ -523,7 +509,7 @@ function ROCAApp() {
               <div style={profileMenuStyles.userEmail}>{user.email}</div>
             </div>
             <button style={profileMenuStyles.item} onClick={cycleTheme}>
-              {theme === "light" ? "☀️ Claro" : "🌙 Oscuro"}
+              {mode === "light" ? "☀️ Claro" : "🌙 Oscuro"}
             </button>
             <div style={profileMenuStyles.divider} />
             <button style={profileMenuStyles.item} onClick={logout}>

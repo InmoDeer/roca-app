@@ -3,6 +3,7 @@ import { Field } from "../../components/formFields/Field";
 import { Select } from "../../components/formFields/Select";
 import { Checkbox } from "../../components/formFields/Checkbox";
 import { uploadToCloudinary, deleteCloudinaryImages } from "../../utils/cloudinary";
+import { useTheme } from "../../hooks/useTheme.jsx";
 import { ArrowUp, Armchair, Sparkles, PawPrint, Camera, X, Car, Flame } from "lucide-react";
 import {
   PROPERTY_TYPES,
@@ -17,6 +18,7 @@ import {
  * Handles photo uploads to Cloudinary, form validation and submission
  */
 export function PropertyForm({ initial, onSave, onClose }) {
+  const { t } = useTheme();
   const blank = {
     nombre: "",
     tipo: "Departamento",

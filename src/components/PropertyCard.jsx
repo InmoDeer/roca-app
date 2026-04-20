@@ -1,5 +1,6 @@
 import { MoreVertical, PencilLine, Trash2, Copy } from "lucide-react";
 import { getEstadoDisplay } from "../utils/constants";
+import { useTheme } from "../hooks/useTheme.jsx";
 
 /**
  * PropertyCard - Tarjeta individual de propiedad en la lista
@@ -15,6 +16,7 @@ export function PropertyCard({
   openMenu, 
   setOpenMenu 
 }) {
+  const { t } = useTheme();
   const isMenuOpen = openMenu === property.id;
 
   return (
@@ -75,9 +77,9 @@ export function PropertyCard({
 
 const styles = {
   card: {
-    background: "#1a1a1a",
+    background: t.colors.bgCard,
     borderRadius: 16,
-    border: "1px solid rgba(255,255,255,0.06)",
+    border: `1px solid ${t.colors.border}`,
     position: "relative",
     transition: "all 0.2s ease",
     cursor: "pointer",
@@ -96,18 +98,18 @@ const styles = {
   cardName: {
     fontWeight: 700,
     fontSize: 15,
-    color: "#ffffff",
+    color: t.colors.text,
     marginBottom: 4,
   },
   cardSub: {
     fontSize: 12,
-    color: "#666666",
+    color: t.colors.textMuted,
     marginBottom: 4,
   },
   cardPrice: {
     fontWeight: 700,
     fontSize: 14,
-    color: "#d4af37",
+    color: t.colors.primary,
   },
   cardRight: {
     display: "flex",
@@ -124,19 +126,19 @@ const styles = {
     display: "flex",
     alignItems: "center",
     whiteSpace: "nowrap",
-    backgroundColor: ec?.bg || "#22c55e",
-    color: ec?.text || "#ffffff",
+    backgroundColor: ec?.bg || t.colors.success,
+    color: t.colors.text,
   }),
   statusDot: (ec) => ({
     width: 6,
     height: 6,
     borderRadius: "50%",
-    background: ec?.dot || "#ffffff",
+    background: ec?.dot || t.colors.text,
     display: "inline-block",
     marginRight: 4,
   }),
   dropdown: {
-    background: "#1a1a1a",
+    background: t.colors.bgCard,
     borderRadius: 12,
     padding: 8,
     boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
@@ -146,7 +148,7 @@ const styles = {
     top: "50%",
     transform: "translateY(-50%)",
     zIndex: 50,
-    border: "1px solid rgba(255,255,255,0.08)",
+    border: `1px solid ${t.colors.border}`,
     minWidth: 140,
   },
   dropItem: {
@@ -159,7 +161,7 @@ const styles = {
     fontSize: 14,
     cursor: "pointer",
     borderRadius: 8,
-    color: "#ffffff",
+    color: t.colors.text,
   },
   dropItemDanger: {
     display: "block",
@@ -171,14 +173,14 @@ const styles = {
     fontSize: 14,
     cursor: "pointer",
     borderRadius: 8,
-    color: "#ef4444",
+    color: t.colors.danger,
   },
   menuDot: {
     background: "none",
     border: "none",
     fontSize: 22,
     cursor: "pointer",
-    color: "#888888",
+    color: t.colors.textMuted,
     padding: 8,
     zIndex: 10,
     position: "relative",

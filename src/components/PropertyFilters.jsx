@@ -1,9 +1,11 @@
 import { Search } from "lucide-react";
+import { useTheme } from "../hooks/useTheme.jsx";
 
 /**
  * PropertyFilters - Componente de búsqueda y filtros
  */
 export function PropertyFilters({ filters, setFilters, loading, filteredCount }) {
+  const { t } = useTheme();
   return (
     <>
       {/* Buscador */}
@@ -51,7 +53,7 @@ export function PropertyFilters({ filters, setFilters, loading, filteredCount })
 const styles = {
   searchWrap: {
     padding: "16px 20px 0",
-    background: "#0a0a0a",
+    background: t.colors.bg,
     position: "sticky",
     top: 60,
     zIndex: 5,
@@ -64,19 +66,19 @@ const styles = {
   searchIcon: {
     position: "absolute",
     left: 14,
-    color: "#666666",
+    color: t.colors.textMuted,
     pointerEvents: "none",
   },
   searchInput: {
     width: "100%",
     padding: "12px 16px 12px 44px",
-    border: "1px solid rgba(255,255,255,0.08)",
+    border: `1px solid ${t.colors.border}`,
     borderRadius: 12,
     fontSize: 14,
     outline: "none",
     boxSizing: "border-box",
-    background: "rgba(255,255,255,0.05)",
-    color: "#ffffff",
+    background: t.colors.bgSecondary,
+    color: t.colors.text,
     transition: "all 0.3s ease",
   },
   filterRow: {
@@ -84,15 +86,15 @@ const styles = {
     gap: 10,
     padding: "12px 20px",
     overflowX: "auto",
-    background: "#0a0a0a",
+    background: t.colors.bg,
   },
   filterSelect: {
     padding: "8px 12px",
     borderRadius: 10,
-    border: "1px solid rgba(255,255,255,0.08)",
+    border: `1px solid ${t.colors.border}`,
     fontSize: 13,
-    background: "rgba(255,255,255,0.05)",
-    color: "#ffffff",
+    background: t.colors.bgSecondary,
+    color: t.colors.text,
     flexShrink: 0,
     cursor: "pointer",
     outline: "none",
@@ -101,9 +103,9 @@ const styles = {
   count: {
     padding: "4px 20px 8px",
     fontSize: 12,
-    color: "#666666",
+    color: t.colors.textMuted,
     fontWeight: 600,
-    background: "#0a0a0a",
+    background: t.colors.bg,
   },
 };
 

@@ -4,6 +4,7 @@ import { ESTADO_COLORS, getEstadoDisplay } from "../../utils/constants";
 import { CopyShareBtns } from "../../components/ui/CopyShareBtns";
 import { Gallery } from "../../components/ui/Gallery";
 import { useSwipeBack } from "../../hooks/useSwipeBack";
+import { useTheme } from "../../hooks/useTheme.jsx";
 import { MapPin, Video, PencilLine, Trash2, X, ArrowLeft, Play, Eye, Images, Globe, DollarSign, FileText } from "lucide-react";
 
 /**
@@ -11,6 +12,7 @@ import { MapPin, Video, PencilLine, Trash2, X, ArrowLeft, Play, Eye, Images, Glo
  * Displays messages, photos, location, and status management
  */
 export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete }) {
+  const { t } = useTheme();
   const out = buildOutputs(p);
   const ec = ESTADO_COLORS[p.estado] || ESTADO_COLORS.Disponible;
   const [tab, setTab] = useState("corto");
@@ -163,7 +165,7 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete }) {
 const detailStyles = {
   container: {
     padding: "0 0 80px",
-    background: "#0a0a0a",
+    background: t.colors.bg,
     minHeight: "100vh",
   },
   header: {
@@ -176,21 +178,21 @@ const detailStyles = {
     position: "sticky",
     top: 0,
     zIndex: 10,
-    borderBottom: "1px solid rgba(255,255,255,0.05)",
+    borderBottom: `1px solid ${t.colors.border}`,
   },
   backBtn: {
     background: "none",
     border: "none",
-    color: "#d4af37",
+    color: t.colors.primary,
     fontWeight: 700,
     fontSize: 15,
     cursor: "pointer",
     padding: 0,
   },
   editBtn: {
-    background: "rgba(255,255,255,0.08)",
-    border: "1px solid rgba(255,255,255,0.1)",
-    color: "#fff",
+    background: t.colors.bgSecondary,
+    border: `1px solid ${t.colors.border}`,
+    color: t.colors.text,
     borderRadius: 10,
     padding: "8px 16px",
     fontSize: 13,
@@ -198,9 +200,9 @@ const detailStyles = {
     cursor: "pointer",
   },
   iconBtn: {
-    background: "rgba(255,255,255,0.08)",
-    border: "1px solid rgba(255,255,255,0.1)",
-    color: "#fff",
+    background: t.colors.bgSecondary,
+    border: `1px solid ${t.colors.border}`,
+    color: t.colors.text,
     borderRadius: 10,
     padding: "8px 12px",
     fontSize: 14,
@@ -226,29 +228,29 @@ const detailStyles = {
     right: 16,
     background: "rgba(0,0,0,0.7)",
     backdropFilter: "blur(10px)",
-    color: "#fff",
+    color: t.colors.text,
     borderRadius: 20,
     padding: "6px 12px",
     fontSize: 12,
     fontWeight: 700,
   },
   card: {
-    background: "rgba(255,255,255,0.03)",
+    background: t.colors.bgSecondary,
     borderRadius: 16,
     margin: "16px 20px 0",
     padding: 20,
     boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
-    border: "1px solid rgba(255,255,255,0.05)",
+    border: `1px solid ${t.colors.border}`,
   },
   name: {
     fontWeight: 800,
     fontSize: 20,
-    color: "#ffffff",
+    color: t.colors.text,
     marginBottom: 6,
   },
   sub: {
     fontSize: 14,
-    color: "#666666",
+    color: t.colors.textMuted,
     marginBottom: 12,
   },
   estadoSelect: {
@@ -258,19 +260,19 @@ const detailStyles = {
     padding: "4px 10px",
     cursor: "pointer",
     outline: "none",
-    background: "rgba(255,255,255,0.08)",
-    border: "1px solid rgba(255,255,255,0.1)",
-    color: "#fff",
+    background: t.colors.bgSecondary,
+    border: `1px solid ${t.colors.border}`,
+    color: t.colors.text,
   },
   precioBlock: {
     fontSize: 18,
     fontWeight: 700,
-    color: "#d4af37",
+    color: t.colors.primary,
     marginTop: 8,
   },
   mantBlock: {
     fontSize: 13,
-    color: "#666666",
+    color: t.colors.textMuted,
     marginTop: 6,
   },
   tabRow: {
@@ -282,12 +284,12 @@ const detailStyles = {
     flex: 1,
     padding: "10px 0",
     borderRadius: 12,
-    border: "1px solid rgba(255,255,255,0.1)",
-    background: "rgba(255,255,255,0.03)",
+    border: `1px solid ${t.colors.border}`,
+    background: t.colors.bgSecondary,
     fontSize: 13,
     fontWeight: 600,
     cursor: "pointer",
-    color: "#666666",
+    color: t.colors.textMuted,
     transition: "all 0.3s ease",
   },
   tabActive: {
@@ -298,17 +300,17 @@ const detailStyles = {
   },
   msgBox: {
     margin: "12px 20px 0",
-    background: "rgba(255,255,255,0.03)",
+    background: t.colors.bgSecondary,
     borderRadius: 16,
     padding: 16,
-    border: "1px solid rgba(255,255,255,0.05)",
+    border: `1px solid ${t.colors.border}`,
   },
   msgPre: {
     fontFamily: "'Outfit',sans-serif",
     fontSize: 14,
     whiteSpace: "pre-wrap",
     wordBreak: "break-word",
-    color: "#cccccc",
+    color: t.colors.textSecondary,
     margin: "0 0 16px",
     lineHeight: 1.7,
   },
@@ -317,7 +319,7 @@ const detailStyles = {
     fontSize: 14,
     whiteSpace: "pre-wrap",
     wordBreak: "break-word",
-    color: "#cccccc",
+    color: t.colors.textSecondary,
     background: "none",
     border: "none",
     padding: 0,
@@ -333,12 +335,12 @@ const detailStyles = {
   actionBtn: {
     flex: "1 1 calc(50% - 5px)",
     padding: "14px 0",
-    background: "rgba(255,255,255,0.03)",
-    border: "1px solid rgba(255,255,255,0.08)",
+    background: t.colors.bgSecondary,
+    border: `1px solid ${t.colors.border}`,
     borderRadius: 12,
     textAlign: "center",
     textDecoration: "none",
-    color: "#ffffff",
+    color: t.colors.text,
     fontSize: 13,
     fontWeight: 600,
     cursor: "pointer",
@@ -351,7 +353,7 @@ const detailStyles = {
   sectionTitle: {
     fontWeight: 700,
     fontSize: 12,
-    color: "#666666",
+    color: t.colors.textMuted,
     marginBottom: 12,
     textTransform: "uppercase",
     letterSpacing: "1px",
