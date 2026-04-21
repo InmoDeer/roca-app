@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useTheme } from "../../hooks/useTheme.jsx";
 
 /**
  * Button component for copying/sharing text (for WhatsApp messages)
  */
 export function CopyShareBtns({ text }) {
+  const { t, mode } = useTheme();
   const [copied, setCopied] = useState(false);
 
   const copy = () => {
@@ -20,6 +22,46 @@ export function CopyShareBtns({ text }) {
     }
   };
 
+  const copyShareStyles = {
+    container: {
+      display: "flex",
+      gap: 10,
+    },
+    copyBtn: {
+      flex: 1,
+      padding: "12px",
+      background: t.colors.primary,
+      color: "#0a0a0a",
+      border: "none",
+      borderRadius: 12,
+      fontWeight: 700,
+      fontSize: 14,
+      cursor: "pointer",
+      boxShadow: "0 4px 15px rgba(212,175,55,0.3)",
+    },
+    shareBtn: {
+      flex: 1,
+      padding: "12px",
+      background: t.colors.bgSecondary,
+      color: t.colors.text,
+      border: `1px solid ${t.colors.border}`,
+      borderRadius: 12,
+      fontWeight: 600,
+      fontSize: 14,
+      cursor: "pointer",
+    },
+    landingBtn: {
+      padding: "12px",
+      background: "transparent",
+      color: t.colors.primary,
+      border: `1px solid ${t.colors.primary}`,
+      borderRadius: 12,
+      fontWeight: 600,
+      fontSize: 14,
+      cursor: "pointer",
+    },
+  };
+
   return (
     <div style={copyShareStyles.container}>
       <button onClick={copy} style={copyShareStyles.copyBtn}>
@@ -32,42 +74,3 @@ export function CopyShareBtns({ text }) {
   );
 }
 
-const copyShareStyles = {
-  container: {
-    display: "flex",
-    gap: 10,
-  },
-  copyBtn: {
-    flex: 1,
-    padding: "12px",
-    background: "linear-gradient(135deg, #d4af37 0%, #b8962e 100%)",
-    color: "#0a0a0a",
-    border: "none",
-    borderRadius: 12,
-    fontWeight: 700,
-    fontSize: 14,
-    cursor: "pointer",
-    boxShadow: "0 4px 15px rgba(212,175,55,0.3)",
-  },
-  shareBtn: {
-    flex: 1,
-    padding: "12px",
-    background: "rgba(255,255,255,0.08)",
-    color: "#ffffff",
-    border: "1px solid rgba(255,255,255,0.1)",
-    borderRadius: 12,
-    fontWeight: 600,
-    fontSize: 14,
-    cursor: "pointer",
-  },
-  landingBtn: {
-    padding: "12px",
-    background: "transparent",
-    color: "#d4af37",
-    border: "1px solid #d4af37",
-    borderRadius: 12,
-    fontWeight: 600,
-    fontSize: 14,
-    cursor: "pointer",
-  },
-};
