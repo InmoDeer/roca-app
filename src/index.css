@@ -513,3 +513,8 @@ body {
   font-weight: 700;
   cursor: pointer;
 }
+
+/* Eliminar outline azul por defecto en todos los elementos */
+*:focus {
+  outline: none !important;
+}
