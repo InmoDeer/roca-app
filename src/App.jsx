@@ -8,6 +8,7 @@ import { PublicGallery } from "./features/properties/PublicGallery.jsx";
 import { ClientsView } from "./features/clients/clientsview.jsx";
 import { buildOutputs } from "./utils/messageFormatter";
 import { ESTADO_COLORS, ESTADOS } from "./utils/constants";
+import { fetchPropertyById } from "./utils/api";
 import { PropertyCard } from "./components/PropertyCard.jsx";
 import { PropertyFilters } from "./components/PropertyFilters.jsx";
 const S = {
@@ -328,6 +329,8 @@ function ROCAApp() {
   const [filters, setFilters] = useState({ q: "", operacion: "", tipo: "", estado: "" });
   const [showCRM, setShowCRM] = useState(false);
   const [crmPropertyFilter, setCrmPropertyFilter] = useState(null);
+  const [publicProperty, setPublicProperty] = useState(null);
+  const [publicLoading, setPublicLoading] = useState(false);
 
   const S = {
     app: { 
@@ -607,19 +610,20 @@ function ROCAApp() {
 
   const urlParams = new URLSearchParams(window.location.search);
   const galleryId = urlParams.get('id');
-  
-  // Galería pública - no requiere auth
+
+  // Galería pública - llamada directa a Supabase
+  useEffect(() => {
+    if (!galleryId) return;
+    setPublicLoading(true);
+    fetchPropertyById(galleryId).then((data) => {
+      setPublicProperty(data);
+      setPublicLoading(false);
+    });
+  }, [galleryId]);
+
   if (galleryId) {
-    const property = properties.find(p => String(p.id) === String(galleryId));
-    
-    if (property) {
-      return <PublicGallery property={property} onClose={() => window.close()} />;
-    }
-    
-    if (loading) {
-      return <div style={S.loadingWrap}>Cargando...</div>;
-    }
-    
+    if (publicLoading) return <div style={S.loadingWrap}>Cargando...</div>;
+    if (publicProperty) return <PublicGallery property={publicProperty} onClose={() => window.close()} />;
     return (
       <div style={{...S.loadingWrap, background: '#000', color: '#fff'}}>
         <div style={{fontSize: 48, marginBottom: 16}}>📷</div>
