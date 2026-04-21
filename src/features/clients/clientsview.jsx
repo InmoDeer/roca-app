@@ -66,6 +66,12 @@ export function ClientsView({ onBack, theme, mode, propertyId = null, propertyNa
   const text = theme.colors.text;
   const muted = theme.colors.textMuted;
   const primary = theme.colors.primary;
+  const primaryDark = "#0a0a0a";
+  const waColor = "#25D366";
+  const telColor = "#3b82f6";
+  const dangerBg = "rgba(239,68,68,0.1)";
+  const dangerBorder = "rgba(239,68,68,0.2)";
+  const dangerText = "#ef4444";
 
   return (
     <div style={{ minHeight: "100vh", background: bg, color: text, fontFamily: "'Outfit', sans-serif", paddingBottom: 80 }}>
@@ -85,7 +91,7 @@ export function ClientsView({ onBack, theme, mode, propertyId = null, propertyNa
         </div>
         <button
           onClick={() => { setEditTarget(null); setShowForm(true); }}
-          style={{ background: "linear-gradient(135deg, #d4af37 0%, #b8962e 100%)", color: "#0a0a0a", border: "none", borderRadius: 10, padding: "8px 14px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}
+          style={{ background: primary, color: primaryDark, border: "none", borderRadius: 10, padding: "8px 14px", fontSize: 13, fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 15px rgba(212,175,55,0.3)" }}
         >
           + Lead
         </button>
@@ -100,8 +106,8 @@ export function ClientsView({ onBack, theme, mode, propertyId = null, propertyNa
             style={{
               flexShrink: 0, padding: "6px 14px", borderRadius: 20, border: "none",
               fontSize: 12, fontWeight: 700, cursor: "pointer",
-              background: filterEstado === e ? "linear-gradient(135deg, #d4af37, #b8962e)" : bgSecondary,
-              color: filterEstado === e ? "#0a0a0a" : muted,
+              background: filterEstado === e ? primary : bgSecondary,
+              color: filterEstado === e ? primaryDark : muted,
             }}
           >
             {e || "Todos"}
@@ -165,13 +171,13 @@ export function ClientsView({ onBack, theme, mode, propertyId = null, propertyNa
                         href={`https://wa.me/${c.telefono.replace(/\D/g, "")}`}
                         target="_blank"
                         rel="noreferrer"
-                        style={{ background: "#25D366", color: "#fff", border: "none", borderRadius: 10, padding: "8px 10px", display: "flex", alignItems: "center", justifyContent: "center", textDecoration: "none" }}
+                        style={{ background: waColor, color: "#fff", border: "none", borderRadius: 10, padding: "8px 10px", display: "flex", alignItems: "center", justifyContent: "center", textDecoration: "none" }}
                       >
                         <MessageCircle size={16} strokeWidth={1.5} />
                       </a>
                       <a
                         href={`tel:${c.telefono.replace(/\D/g, "")}`}
-                        style={{ background: "#3b82f6", color: "#fff", border: "none", borderRadius: 10, padding: "8px 10px", display: "flex", alignItems: "center", justifyContent: "center", textDecoration: "none" }}
+                        style={{ background: telColor, color: "#fff", border: "none", borderRadius: 10, padding: "8px 10px", display: "flex", alignItems: "center", justifyContent: "center", textDecoration: "none" }}
                       >
                         <Phone size={16} strokeWidth={1.5} />
                       </a>
@@ -185,7 +191,7 @@ export function ClientsView({ onBack, theme, mode, propertyId = null, propertyNa
                   </button>
                   <button
                     onClick={() => handleDelete(c.id)}
-                    style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", borderRadius: 10, padding: "8px 10px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+                    style={{ background: dangerBg, border: `1px solid ${dangerBorder}`, color: dangerText, borderRadius: 10, padding: "8px 10px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
                   >
                     <X size={14} strokeWidth={2} />
                   </button>
@@ -285,7 +291,7 @@ function ClientForm({ initial, propertyId, onSave, onClose, theme, mode }) {
           <button onClick={onClose} style={{ flex: 1, padding: 14, background: "rgba(255,255,255,0.08)", border: `1px solid ${border}`, borderRadius: 12, fontWeight: 700, fontSize: 15, cursor: "pointer", color: text }}>
             Cancelar
           </button>
-          <button onClick={handleSave} disabled={saving} style={{ flex: 2, padding: 14, background: "linear-gradient(135deg, #d4af37 0%, #b8962e 100%)", color: "#0a0a0a", border: "none", borderRadius: 12, fontWeight: 700, fontSize: 15, cursor: "pointer" }}>
+          <button onClick={handleSave} disabled={saving} style={{ flex: 2, padding: 14, background: primary, color: primaryDark, border: "none", borderRadius: 12, fontWeight: 700, fontSize: 15, cursor: "pointer", boxShadow: "0 4px 15px rgba(212,175,55,0.3)" }}>
             {saving ? "Guardando..." : initial ? "Guardar cambios" : "Crear lead"}
           </button>
         </div>
