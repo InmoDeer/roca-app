@@ -5,13 +5,13 @@ import { CopyShareBtns } from "../../components/ui/CopyShareBtns";
 import { Gallery } from "../../components/ui/Gallery";
 import { useSwipeBack } from "../../hooks/useSwipeBack";
 import { useTheme } from "../../hooks/useTheme.jsx";
-import { MapPin, Video, PencilLine, Trash2, X, ArrowLeft, Play, Eye, Images, Globe, DollarSign, FileText } from "lucide-react";
+import { MapPin, Video, PencilLine, Trash2, X, ArrowLeft, Play, Eye, Images, Globe, DollarSign, FileText, Users } from "lucide-react";
 
 /**
  * Property detail component showing full information for admin
  * Displays messages, photos, location, and status management
  */
-export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete }) {
+export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete, onLeads }) {
   const { t, mode } = useTheme(); // ← Obtenemos también 'mode' para fondos adaptables
   const out = buildOutputs(p);
   const ec = ESTADO_COLORS[p.estado] || ESTADO_COLORS.Disponible;
@@ -241,6 +241,11 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete }) {
           <button onClick={onEdit} style={detailStyles.iconBtn} title="Editar">
             <PencilLine size={18} strokeWidth={1.5} />
           </button>
+          {onLeads && (
+            <button onClick={onLeads} style={detailStyles.iconBtn} title="Ver Leads">
+              <Users size={18} strokeWidth={1.5} />
+            </button>
+          )}
         </div>
       </div>
 

@@ -5,6 +5,7 @@ import { ThemeProvider, useTheme } from "./hooks/useTheme.jsx";
 import { PropertyForm } from "./features/properties/PropertyForm.jsx";
 import { PropertyDetail } from "./features/properties/PropertyDetail.jsx";
 import { PublicGallery } from "./features/properties/PublicGallery.jsx";
+import { ClientsView } from "./features/clients/clientsview.jsx";
 import { buildOutputs } from "./utils/messageFormatter";
 import { ESTADO_COLORS, ESTADOS } from "./utils/constants";
 import { PropertyCard } from "./components/PropertyCard.jsx";
@@ -325,6 +326,8 @@ function ROCAApp() {
   const [openMenu, setOpenMenu] = useState(null);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [filters, setFilters] = useState({ q: "", operacion: "", tipo: "", estado: "" });
+  const [showCRM, setShowCRM] = useState(false);
+  const [crmPropertyFilter, setCrmPropertyFilter] = useState(null);
 
   const S = {
     app: { 
@@ -676,6 +679,21 @@ function ROCAApp() {
     );
   }
 
+  // CRM View
+  if (showCRM) {
+    return (
+      <div style={S.app}>
+        <ClientsView
+          onBack={() => { setShowCRM(false); setCrmPropertyFilter(null); }}
+          theme={theme}
+          mode={mode}
+          propertyId={crmPropertyFilter?.id || null}
+          propertyName={crmPropertyFilter?.nombre || null}
+        />
+      </div>
+    );
+  }
+
   // App principal
   if (selected) {
     const current = properties.find((p) => p.id === selected.id) || selected;
@@ -687,6 +705,10 @@ function ROCAApp() {
           onEdit={() => { setEdit(current); setShowForm(true); }}
           onEstado={changeStatus}
           onDelete={(id) => { removeProperty(id); setSelected(null); }}
+          onLeads={() => {
+            setCrmPropertyFilter(current);
+            setShowCRM(true);
+          }}
         />
         {showForm && (
           <PropertyForm
@@ -712,6 +734,9 @@ function ROCAApp() {
             </div>
             <button style={getProfileMenuStyles(theme).item} onClick={cycleTheme}>
               {mode === "light" ? "☀️ Claro" : "🌙 Oscuro"}
+            </button>
+            <button style={getProfileMenuStyles(theme).item} onClick={() => { setShowCRM(true); setProfileMenuOpen(false); }}>
+              👥 CRM · Leads
             </button>
             <div style={getProfileMenuStyles(theme).divider} />
             <button style={getProfileMenuStyles(theme).item} onClick={logout}>
