@@ -6,7 +6,7 @@ import {
   createClient,
   updateClient,
   deleteClient,
-} from "../../utils/clientsApi";
+} from "../../utils/clientsApi.js";
 
 const ESTADOS_LEAD = ["Nuevo", "Contactado", "Visita agendada", "Negociando", "Cerrado"];
 
