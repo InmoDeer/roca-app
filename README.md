@@ -11,14 +11,14 @@ ROCA te permite gestionar tus propiedades, generar mensajes profesionales para W
 - **📋 Gestionar inmuebles**: Agrega, edita y organiza todas tus propiedades (departamentos, casas, oficinas).
 - **⚡ Generar mensajes listos para WhatsApp**: Con un solo toque, copia un mensaje atractivo con fotos, características destacadas y ubicación.
 - **🎯 Personalizar automáticamente**: El sistema detecta si el inmueble es familiar, ejecutivo o de lujo y adapta el tono del mensaje.
-- **👥 Seguimiento de clientes (próximamente)**: Registra quién preguntó por cada propiedad y en qué estado está la negociación.
+- **👥 Seguimiento de contactos: Registra leads interesados y propietarios. Haz seguimiento del estado (Nuevo, Contactado, Visita, Cerrado) y contacta por WhatsApp o llamada con un solo toque.
 - **🌓 Modo claro / oscuro**: Trabaja cómodo a cualquier hora.
 
 ---
 
 ## 📱 ¿Cómo empezar?
 
-1. **Accede a la app**: [URL de tu despliegue en Vercel]
+1. **Accede a la app**: https://roca-app-tau.vercel.app/
 2. **Inicia sesión** con tu email y contraseña.
 3. **Agrega tu primer inmueble** con el botón **"+ Nuevo"**.
 4. Completa los datos (nombre, distrito, precio, fotos, etc.).
