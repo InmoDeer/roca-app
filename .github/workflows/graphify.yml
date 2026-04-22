@@ -1,0 +1,26 @@
+name: Graphify + Cleanup
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # permite ejecutar manualmente
+
+jobs:
+  graphify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install Graphify
+        run: pip install graphify-ai
+      - name: Run Graphify
+        run: graphify . --output ./graphify-output
+      - name: Commit output
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          git add graphify-output/
+          git commit -m "chore: update graphify index" || exit 0
+          git push
