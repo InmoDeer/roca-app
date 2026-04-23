@@ -8,6 +8,8 @@ import {
   deleteContact,
 } from "../../utils/contactsApi.js";
 
+import { getClientsViewStyles } from "../../styles/componentStyles.js";
+
 const ESTADOS_LEAD = ["Nuevo", "Contactado", "Visita agendada", "Negociando", "Cerrado"];
 
 const ESTADO_COLORS = {
@@ -60,56 +62,33 @@ export function ContactsView({ onBack, theme, mode, user, propertyId = null, pro
     ? contacts.filter((c) => c.estado === filterEstado)
     : contacts;
 
-  const bg = theme.colors.bg;
-  const bgCard = theme.colors.bgCard;
-  const bgSecondary = theme.colors.bgSecondary;
-  const border = theme.colors.border;
-  const text = theme.colors.text;
-  const muted = theme.colors.textMuted;
-  const primary = theme.colors.primary;
-  const primaryDark = "#0a0a0a";
-  const waColor = "#25D366";
-  const telColor = "#3b82f6";
-  const dangerBg = "rgba(239,68,68,0.1)";
-  const dangerBorder = "rgba(239,68,68,0.2)";
-  const dangerText = "#ef4444";
+  const styles = getClientsViewStyles(theme, mode);
 
   return (
-    <div style={{ minHeight: "100vh", background: bg, color: text, fontFamily: "'Outfit', sans-serif", paddingBottom: 80 }}>
+    <div style={styles.container}>
       {/* Header */}
-      <div style={{
-        display: "flex", justifyContent: "space-between", alignItems: "center",
-        padding: "16px 20px",
-        background: mode === "dark" ? "rgba(10,10,10,0.85)" : "rgba(255,255,255,0.85)",
-        backdropFilter: "blur(10px)", position: "sticky", top: 0, zIndex: 10,
-        borderBottom: `1px solid ${border}`
-      }}>
-        <button onClick={onBack} style={{ background: "none", border: "none", color: primary, cursor: "pointer", display: "flex", alignItems: "center", gap: 6, fontSize: 15, fontWeight: 700 }}>
+      <div style={styles.header}>
+        <button onClick={onBack} style={styles.backBtn}>
           <ArrowLeft size={20} strokeWidth={1.5} />
         </button>
-        <div style={{ fontWeight: 800, fontSize: 17, color: text }}>
+        <div style={styles.headerTitle}>
           {propertyName ? `Leads · ${propertyName}` : "CRM · Leads"}
         </div>
         <button
           onClick={() => { setEditTarget(null); setShowForm(true); }}
-          style={{ background: primary, color: primaryDark, border: "none", borderRadius: 10, padding: "8px 14px", fontSize: 13, fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 15px rgba(212,175,55,0.3)" }}
+          style={styles.addBtn}
         >
           + Lead
         </button>
       </div>
 
       {/* Filtro por estado */}
-      <div style={{ display: "flex", gap: 8, padding: "12px 20px", overflowX: "auto" }}>
+      <div style={styles.filterContainer}>
         {["", ...ESTADOS_LEAD].map((e) => (
           <button
             key={e}
             onClick={() => setFilterEstado(e)}
-            style={{
-              flexShrink: 0, padding: "6px 14px", borderRadius: 20, border: "none",
-              fontSize: 12, fontWeight: 700, cursor: "pointer",
-              background: filterEstado === e ? primary : bgSecondary,
-              color: filterEstado === e ? primaryDark : muted,
-            }}
+            style={styles.filterBtn(filterEstado === e)}
           >
             {e || "Todos"}
           </button>
@@ -117,34 +96,34 @@ export function ContactsView({ onBack, theme, mode, user, propertyId = null, pro
       </div>
 
       {/* Contador */}
-      <div style={{ padding: "0 20px 8px", fontSize: 12, color: muted, fontWeight: 600 }}>
+      <div style={styles.counter}>
         {loading ? "Cargando..." : `${filtered.length} lead${filtered.length !== 1 ? "s" : ""}`}
       </div>
 
       {/* Lista */}
-      <div style={{ padding: "0 20px", display: "flex", flexDirection: "column", gap: 12 }}>
+      <div style={styles.list}>
         {!loading && filtered.length === 0 && (
-          <div style={{ textAlign: "center", padding: "60px 0", color: muted, fontSize: 14 }}>
+          <div style={styles.empty}>
             Sin leads todavía. Toca + Lead para agregar.
           </div>
         )}
         {filtered.map((c) => {
           const ec = ESTADO_COLORS[c.estado] || ESTADO_COLORS.Nuevo;
           return (
-            <div key={c.id} style={{ background: bgCard, borderRadius: 16, border: `1px solid ${border}`, padding: 16 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontWeight: 700, fontSize: 15, color: text, marginBottom: 2 }}>{c.nombre}</div>
+            <div key={c.id} style={styles.leadCard}>
+              <div style={styles.leadRow}>
+                <div style={styles.leadInfo}>
+                  <div style={styles.leadName}>{c.nombre}</div>
                   {c.telefono && (
-                    <div style={{ fontSize: 13, color: muted, marginBottom: 4 }}>{c.telefono}</div>
+                    <div style={styles.leadPhone}>{c.telefono}</div>
                   )}
                   {c.propiedades && (
-                    <div style={{ fontSize: 12, color: muted, marginBottom: 8 }}>
+                    <div style={styles.leadProperty}>
                       🏠 {c.propiedades.tipo} · {c.propiedades.distrito}
                     </div>
                   )}
                   {c.nota && (
-                    <div style={{ fontSize: 13, color: muted, background: bgSecondary, borderRadius: 8, padding: "6px 10px", marginBottom: 8 }}>
+                    <div style={styles.leadNote}>
                       {c.nota}
                     </div>
                   )}
@@ -152,11 +131,7 @@ export function ContactsView({ onBack, theme, mode, user, propertyId = null, pro
                   <select
                     value={c.estado}
                     onChange={(e) => handleChangeEstado(c.id, e.target.value)}
-                    style={{
-                      fontSize: 11, fontWeight: 700, borderRadius: 20, padding: "4px 10px",
-                      cursor: "pointer", outline: "none", border: "none",
-                      backgroundColor: ec.bg, color: ec.text,
-                    }}
+                    style={styles.estadoSelect(ec)}
                   >
                     {ESTADOS_LEAD.map((s) => (
                       <option key={s} value={s} style={{ background: "#1a1a1a", color: "#fff" }}>{s}</option>
@@ -165,20 +140,20 @@ export function ContactsView({ onBack, theme, mode, user, propertyId = null, pro
                 </div>
 
                 {/* Acciones */}
-                <div style={{ display: "flex", flexDirection: "column", gap: 8, marginLeft: 12 }}>
+                <div style={styles.actions}>
                   {c.telefono && (
                     <>
                       <a
                         href={`https://wa.me/${c.telefono.replace(/\D/g, "")}`}
                         target="_blank"
                         rel="noreferrer"
-                        style={{ background: waColor, color: "#fff", border: "none", borderRadius: 10, padding: "8px 10px", display: "flex", alignItems: "center", justifyContent: "center", textDecoration: "none" }}
+                        style={styles.waBtn}
                       >
                         <MessageCircle size={16} strokeWidth={1.5} />
                       </a>
                       <a
                         href={`tel:${c.telefono.replace(/\D/g, "")}`}
-                        style={{ background: telColor, color: "#fff", border: "none", borderRadius: 10, padding: "8px 10px", display: "flex", alignItems: "center", justifyContent: "center", textDecoration: "none" }}
+                        style={styles.telBtn}
                       >
                         <Phone size={16} strokeWidth={1.5} />
                       </a>
@@ -186,13 +161,13 @@ export function ContactsView({ onBack, theme, mode, user, propertyId = null, pro
                   )}
                   <button
                     onClick={() => { setEditTarget(c); setShowForm(true); }}
-                    style={{ background: bgSecondary, border: `1px solid ${border}`, color: text, borderRadius: 10, padding: "8px 10px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+                    style={styles.actionBtn}
                   >
                     ✏️
                   </button>
                   <button
                     onClick={() => handleDelete(c.id)}
-                    style={{ background: dangerBg, border: `1px solid ${dangerBorder}`, color: dangerText, borderRadius: 10, padding: "8px 10px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+                    style={styles.deleteBtn}
                   >
                     <X size={14} strokeWidth={2} />
                   </button>
@@ -217,6 +192,7 @@ export function ContactsView({ onBack, theme, mode, user, propertyId = null, pro
     </div>
   );
 }
+
 
 function ContactForm({ initial, propertyId, onSave, onClose, theme, mode }) {
   const [form, setForm] = useState({
