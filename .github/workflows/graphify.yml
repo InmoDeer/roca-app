@@ -14,19 +14,13 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install Graphify
+        run: pip install graphifyy
+      - name: Run Graphify on src directory
         run: |
-          pip install graphifyy
-          pip show graphifyy
-      - name: Check graphify help
-        run: graphify --help || python -m graphify --help
-      - name: Run Graphify
-        run: |
-          echo "Current directory:"
-          ls -la
-          echo "Running graphify..."
-          graphify . || python -m graphify . || graphify
+          ls -la src/
+          graphify ./src --output ./graphify-out
       - name: List output
-        run: ls -la graphify-out/ || echo "No graphify-out folder created"
+        run: ls -la graphify-out/ || echo "No graphify-out folder"
       - name: Commit output
         run: |
           git config --global user.name "github-actions[bot]"
