@@ -14,11 +14,17 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install Graphify
-        run: pip install graphifyy
-      - name: Check graphify version
-        run: graphify --version
+        run: |
+          pip install graphifyy
+          pip show graphifyy
+      - name: Check graphify help
+        run: graphify --help || python -m graphify --help
       - name: Run Graphify
-        run: graphify .
+        run: |
+          echo "Current directory:"
+          ls -la
+          echo "Running graphify..."
+          graphify . || python -m graphify . || graphify
       - name: List output
         run: ls -la graphify-out/ || echo "No graphify-out folder created"
       - name: Commit output
