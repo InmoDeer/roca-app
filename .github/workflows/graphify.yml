@@ -15,10 +15,10 @@ jobs:
           python-version: '3.11'
       - name: Install Graphify
         run: pip install graphifyy
-      - name: Run Graphify on src directory
-        run: |
-          ls -la src/
-          graphify ./src --output ./graphify-out
+      - name: Check graphify help
+        run: graphify --help
+      - name: Run Graphify
+        run: graphify . --no-viz
       - name: List output
         run: ls -la graphify-out/ || echo "No graphify-out folder"
       - name: Commit output
