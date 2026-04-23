@@ -235,22 +235,27 @@ function ClientForm({ initial, propertyId, onSave, onClose, theme, mode }) {
   };
 
   const bg = theme.colors.bgSecondary;
+  const bgSecondary = theme.colors.bgSecondary;
   const border = theme.colors.border;
   const text = theme.colors.text;
   const muted = theme.colors.textMuted;
+  const primary = theme.colors.primary;
+  const primaryDark = mode === "dark" ? "#0a0a0a" : "#ffffff";
 
   const inputStyle = {
     width: "100%", padding: "12px 14px", borderRadius: 12,
     border: `1px solid ${border}`, fontSize: 15, boxSizing: "border-box",
-    outline: "none", background: "rgba(255,255,255,0.03)", color: text,
+    outline: "none", background: bgSecondary, color: text,
   };
   const labelStyle = {
     display: "block", fontSize: 12, fontWeight: 600, color: muted,
     marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.5px",
   };
 
+  const overlayBg = mode === "dark" ? "rgba(0,0,0,0.8)" : "rgba(0,0,0,0.5)";
+
   return (
-    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", backdropFilter: "blur(10px)", zIndex: 100, display: "flex", alignItems: "flex-end" }}>
+    <div style={{ position: "fixed", inset: 0, background: overlayBg, backdropFilter: "blur(10px)", zIndex: 100, display: "flex", alignItems: "flex-end" }}>
       <div style={{ background: bg, width: "100%", maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "20px 20px 0 0" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 24px", borderBottom: `1px solid ${border}` }}>
           <span style={{ fontWeight: 800, fontSize: 18, color: text }}>
@@ -288,7 +293,7 @@ function ClientForm({ initial, propertyId, onSave, onClose, theme, mode }) {
         </div>
 
         <div style={{ display: "flex", gap: 12, padding: "16px 24px", borderTop: `1px solid ${border}` }}>
-          <button onClick={onClose} style={{ flex: 1, padding: 14, background: "rgba(255,255,255,0.08)", border: `1px solid ${border}`, borderRadius: 12, fontWeight: 700, fontSize: 15, cursor: "pointer", color: text }}>
+          <button onClick={onClose} style={{ flex: 1, padding: 14, background: bgSecondary, border: `1px solid ${border}`, borderRadius: 12, fontWeight: 700, fontSize: 15, cursor: "pointer", color: text }}>
             Cancelar
           </button>
           <button onClick={handleSave} disabled={saving} style={{ flex: 2, padding: 14, background: primary, color: primaryDark, border: "none", borderRadius: 12, fontWeight: 700, fontSize: 15, cursor: "pointer", boxShadow: "0 4px 15px rgba(212,175,55,0.3)" }}>
