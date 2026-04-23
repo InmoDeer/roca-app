@@ -1,4 +1,4 @@
-name: Graphify + Cleanup
+name: Build Knowledge Graph
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  graphify:
+  generate-graph:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
