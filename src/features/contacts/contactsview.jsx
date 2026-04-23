@@ -18,7 +18,7 @@ const ESTADO_COLORS = {
   Cerrado: { bg: "#2e1e1e", text: "#f87171", dot: "#ef4444" },
 };
 
-export function ContactsView({ onBack, theme, mode, propertyId = null, propertyName = null }) {
+export function ContactsView({ onBack, theme, mode, user, propertyId = null, propertyName = null }) {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -28,17 +28,18 @@ export function ContactsView({ onBack, theme, mode, propertyId = null, propertyN
   const load = async () => {
     setLoading(true);
     const data = propertyId
-      ? await fetchContactsByProperty(propertyId)
-      : await fetchContacts();
+      ? await fetchContactsByProperty(propertyId, user?.id)
+      : await fetchContacts(user?.id);
     setContacts(data);
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, [propertyId]);
+  useEffect(() => { load(); }, [propertyId, user?.id]);
 
   const handleSave = async (payload, id) => {
-    if (id) await updateContact(id, payload);
-    else await createContact(payload);
+    const enriched = { ...payload, user_id: user?.id };
+    if (id) await updateContact(id, enriched);
+    else await createContact(enriched);
     await load();
     setShowForm(false);
     setEditTarget(null);

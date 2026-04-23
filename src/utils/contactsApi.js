@@ -1,19 +1,21 @@
 import { supabase } from "../config/supabase";
 
-export async function fetchContacts() {
+export async function fetchContacts(userId) {
   const { data, error } = await supabase
     .from("contactos")
     .select("*, propiedades(nombre, distrito, tipo)")
+    .eq("user_id", userId)
     .order("created_at", { ascending: false });
   if (error) console.error("Error fetching contacts:", error);
   return data || [];
 }
 
-export async function fetchContactsByProperty(propertyId) {
+export async function fetchContactsByProperty(propertyId, userId) {
   const { data, error } = await supabase
     .from("contactos")
     .select("*")
     .eq("propiedad_id", propertyId)
+    .eq("user_id", userId)
     .order("created_at", { ascending: false });
   if (error) console.error("Error fetching contacts by property:", error);
   return data || [];

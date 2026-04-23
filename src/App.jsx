@@ -691,6 +691,7 @@ function ROCAApp() {
           onBack={() => { setShowCRM(false); setCrmPropertyFilter(null); }}
           theme={theme}
           mode={mode}
+          user={user}
           propertyId={crmPropertyFilter?.id || null}
           propertyName={crmPropertyFilter?.nombre || null}
         />
