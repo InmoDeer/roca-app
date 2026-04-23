@@ -1,25 +1,25 @@
 import { useState, useEffect } from "react";
 import { ArrowLeft, Plus, X, Phone, MessageCircle } from "lucide-react";
 import {
-  fetchClients,
-  fetchClientsByProperty,
-  createClient,
-  updateClient,
-  deleteClient,
-} from "../../utils/clientsApi.js";
+  fetchContacts,
+  fetchContactsByProperty,
+  createContact,
+  updateContact,
+  deleteContact,
+} from "../../utils/contactsApi.js";
 
 const ESTADOS_LEAD = ["Nuevo", "Contactado", "Visita agendada", "Negociando", "Cerrado"];
 
 const ESTADO_COLORS = {
-  Nuevo:            { bg: "#1e3a5f", text: "#60a5fa", dot: "#3b82f6" },
-  Contactado:       { bg: "#1e3a2e", text: "#4ade80", dot: "#22c55e" },
-  "Visita agendada":{ bg: "#3a2e1e", text: "#fbbf24", dot: "#f59e0b" },
-  Negociando:       { bg: "#3a1e2e", text: "#f472b6", dot: "#ec4899" },
-  Cerrado:          { bg: "#2e1e1e", text: "#f87171", dot: "#ef4444" },
+  Nuevo: { bg: "#1e3a5f", text: "#60a5fa", dot: "#3b82f6" },
+  Contactado: { bg: "#1e3a2e", text: "#4ade80", dot: "#22c55e" },
+  "Visita agendada": { bg: "#3a2e1e", text: "#fbbf24", dot: "#f59e0b" },
+  Negociando: { bg: "#3a1e2e", text: "#f472b6", dot: "#ec4899" },
+  Cerrado: { bg: "#2e1e1e", text: "#f87171", dot: "#ef4444" },
 };
 
-export function ClientsView({ onBack, theme, mode, propertyId = null, propertyName = null }) {
-  const [clients, setClients] = useState([]);
+export function ContactsView({ onBack, theme, mode, propertyId = null, propertyName = null }) {
+  const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
@@ -28,17 +28,17 @@ export function ClientsView({ onBack, theme, mode, propertyId = null, propertyNa
   const load = async () => {
     setLoading(true);
     const data = propertyId
-      ? await fetchClientsByProperty(propertyId)
-      : await fetchClients();
-    setClients(data);
+      ? await fetchContactsByProperty(propertyId)
+      : await fetchContacts();
+    setContacts(data);
     setLoading(false);
   };
 
   useEffect(() => { load(); }, [propertyId]);
 
   const handleSave = async (payload, id) => {
-    if (id) await updateClient(id, payload);
-    else await createClient(payload);
+    if (id) await updateContact(id, payload);
+    else await createContact(payload);
     await load();
     setShowForm(false);
     setEditTarget(null);
@@ -46,18 +46,18 @@ export function ClientsView({ onBack, theme, mode, propertyId = null, propertyNa
 
   const handleDelete = async (id) => {
     if (!confirm("¿Eliminar este lead?")) return;
-    await deleteClient(id);
-    setClients((c) => c.filter((x) => x.id !== id));
+    await deleteContact(id);
+    setContacts((c) => c.filter((x) => x.id !== id));
   };
 
   const handleChangeEstado = async (id, estado) => {
-    await updateClient(id, { estado });
-    setClients((c) => c.map((x) => x.id === id ? { ...x, estado } : x));
+    await updateContact(id, { estado });
+    setContacts((c) => c.map((x) => x.id === id ? { ...x, estado } : x));
   };
 
   const filtered = filterEstado
-    ? clients.filter((c) => c.estado === filterEstado)
-    : clients;
+    ? contacts.filter((c) => c.estado === filterEstado)
+    : contacts;
 
   const bg = theme.colors.bg;
   const bgCard = theme.colors.bgCard;
@@ -204,7 +204,7 @@ export function ClientsView({ onBack, theme, mode, propertyId = null, propertyNa
 
       {/* Form modal */}
       {showForm && (
-        <ClientForm
+        <ContactForm
           initial={editTarget}
           propertyId={propertyId}
           onSave={handleSave}
@@ -217,7 +217,7 @@ export function ClientsView({ onBack, theme, mode, propertyId = null, propertyNa
   );
 }
 
-function ClientForm({ initial, propertyId, onSave, onClose, theme, mode }) {
+function ContactForm({ initial, propertyId, onSave, onClose, theme, mode }) {
   const [form, setForm] = useState({
     nombre: initial?.nombre || "",
     telefono: initial?.telefono || "",
@@ -269,7 +269,7 @@ function ClientForm({ initial, propertyId, onSave, onClose, theme, mode }) {
         <div style={{ overflowY: "auto", padding: "20px 24px", flex: 1, display: "flex", flexDirection: "column", gap: 14 }}>
           <div>
             <label style={labelStyle}>Nombre *</label>
-            <input style={inputStyle} value={form.nombre} placeholder="Nombre del cliente" onChange={(e) => setForm(f => ({ ...f, nombre: e.target.value }))} />
+            <input style={inputStyle} value={form.nombre} placeholder="Nombre del contacto" onChange={(e) => setForm(f => ({ ...f, nombre: e.target.value }))} />
           </div>
           <div>
             <label style={labelStyle}>Teléfono / WhatsApp</label>

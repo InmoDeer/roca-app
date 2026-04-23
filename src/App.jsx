@@ -5,7 +5,7 @@ import { ThemeProvider, useTheme } from "./hooks/useTheme.jsx";
 import { PropertyForm } from "./features/properties/PropertyForm.jsx";
 import { PropertyDetail } from "./features/properties/PropertyDetail.jsx";
 import { PublicGallery } from "./features/properties/PublicGallery.jsx";
-import { ClientsView } from "./features/clients/clientsview.jsx";
+import { ContactsView } from "./features/contacts/contactsview.jsx";
 import { buildOutputs } from "./utils/messageFormatter";
 import { ESTADO_COLORS, ESTADOS } from "./utils/constants";
 import { fetchPropertyById } from "./utils/api";
@@ -687,7 +687,7 @@ function ROCAApp() {
   if (showCRM) {
     return (
       <div style={S.app}>
-        <ClientsView
+        <ContactsView
           onBack={() => { setShowCRM(false); setCrmPropertyFilter(null); }}
           theme={theme}
           mode={mode}
