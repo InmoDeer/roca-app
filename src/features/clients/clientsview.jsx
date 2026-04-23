@@ -255,8 +255,8 @@ function ClientForm({ initial, propertyId, onSave, onClose, theme, mode }) {
   const overlayBg = mode === "dark" ? "rgba(0,0,0,0.8)" : "rgba(0,0,0,0.5)";
 
   return (
-    <div style={{ position: "fixed", inset: 0, background: overlayBg, backdropFilter: "blur(10px)", zIndex: 100, display: "flex", alignItems: "flex-end" }}>
-      <div style={{ background: bg, width: "100%", maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "20px 20px 0 0" }}>
+    <div style={{ position: "fixed", inset: 0, background: overlayBg, backdropFilter: "blur(10px)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ background: bg, width: "90%", maxWidth: 400, maxHeight: "85vh", display: "flex", flexDirection: "column", borderRadius: 20 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 24px", borderBottom: `1px solid ${border}` }}>
           <span style={{ fontWeight: 800, fontSize: 18, color: text }}>
             {initial ? "Editar lead" : "Nuevo lead"}
