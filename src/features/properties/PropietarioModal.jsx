@@ -91,7 +91,6 @@ export function PropietarioModal({ propertyId, user, onClose }) {
       if (data) setSelectedId(data.id);
     }
     setEditMode(false);
-    const userId = user?.id;
     
     let query = supabase
       .from("contactos")
