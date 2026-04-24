@@ -16,6 +16,10 @@ export function PropietarioModal({ propertyId, onClose }) {
 
   useEffect(() => {
     const load = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      const userId = user?.id;
+      
+      // Get current property owner
       const { data: prop } = await supabase
         .from("propiedades")
         .select("propietario_id")
@@ -23,11 +27,17 @@ export function PropietarioModal({ propertyId, onClose }) {
         .single();
       setSelectedId(prop?.propietario_id || null);
 
-      const { data: contacts } = await supabase
+      // Get filtered propietario contacts for this user
+      const query = supabase
         .from("contactos")
         .select("id, nombre, telefono")
-        .eq("tipo", "propietario")
-        .order("nombre");
+        .eq("tipo", "propietario");
+      
+      if (userId) {
+        query.eq("user_id", userId);
+      }
+      
+      const { data: contacts } = await query.order("nombre");
       setContactos(contacts || []);
       setLoading(false);
     };
@@ -63,22 +73,39 @@ export function PropietarioModal({ propertyId, onClose }) {
 
   const handleSaveContact = async () => {
     if (!form.nombre.trim()) return;
+    
+    const { data: { user } } = await supabase.auth.getUser();
+    const userId = user?.id;
+    
     if (selectedId) {
       await supabase.from("contactos").update(form).eq("id", selectedId);
     } else {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("contactos")
-        .insert({ ...form, tipo: "propietario" })
+        .insert({ ...form, tipo: "propietario", user_id: userId })
         .select("id")
         .single();
+      if (error) {
+        console.error("Error al crear propietario:", error.message);
+        alert("No se pudo guardar el propietario.");
+        return;
+      }
       if (data) setSelectedId(data.id);
     }
     setEditMode(false);
-    const { data: contacts } = await supabase
+    const { data: { user } } = await supabase.auth.getUser();
+    const userId = user?.id;
+    
+    const query = supabase
       .from("contactos")
       .select("id, nombre, telefono")
-      .eq("tipo", "propietario")
-      .order("nombre");
+      .eq("tipo", "propietario");
+    
+    if (userId) {
+      query.eq("user_id", userId);
+    }
+    
+    const { data: contacts } = await query.order("nombre");
     setContactos(contacts || []);
   };
 

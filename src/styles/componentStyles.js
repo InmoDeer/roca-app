@@ -320,7 +320,7 @@ export const getFormStyles = (theme) => ({
     backdropFilter: "blur(10px)",
     zIndex: 100,
     display: "flex",
-    alignItems: "flex-end",
+    alignItems: "center",
   },
   modal: {
     background: theme.colors.bg,
@@ -706,7 +706,7 @@ export const getClientsViewStyles = (t, mode) => {
       backdropFilter: "blur(10px)",
       zIndex: 100,
       display: "flex",
-      alignItems: "flex-end",
+      alignItems: "center",
     },
     modal: {
       background: t.colors.bgSecondary,
@@ -1116,7 +1116,7 @@ export const getPropietarioModalStyles = (t) => {
       backdropFilter: "blur(10px)",
       zIndex: 200,
       display: "flex",
-      alignItems: "flex-end",
+      alignItems: "center",
       justifyContent: "center",
     },
     modal: {
