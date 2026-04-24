@@ -18,7 +18,7 @@ src/
 │   ├── ui/            # Componentes UI (Gallery, CopyShareBtns)
 │   └── formFields/    # Campos de formulario (Field, Select, Checkbox)
 ├── features/          # Funcionalidades por módulo
-│   ├── properties/   # PropertyForm, PropertyDetail, PublicGallery
+│   ├── properties/   # PropertyForm, PropertyDetail, PublicGallery, PropietarioModal
 │   └── contacts/     # ContactsView (CRM de leads)
 ├── hooks/            # Custom hooks (useAuth, useProperties, useTheme)
 ├── utils/            # Utilidades (api, constants, cloudinary, messageFormatter)

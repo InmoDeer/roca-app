@@ -6,7 +6,8 @@ import { Gallery } from "../../components/ui/Gallery";
 import { useSwipeBack } from "../../hooks/useSwipeBack";
 import { useTheme } from "../../hooks/useTheme.jsx";
 import { getPropertyDetailStyles } from "../../styles/componentStyles.js";
-import { MapPin, Video, PencilLine, Trash2, X, ArrowLeft, Play, Eye, Images, Globe, DollarSign, FileText, Users } from "lucide-react";
+import { MapPin, Video, PencilLine, Trash2, X, ArrowLeft, Play, Eye, Images, Globe, DollarSign, FileText, Users, Building2 } from "lucide-react";
+import { PropietarioModal } from "./PropietarioModal";
 
 /**
  * Property detail component showing full information for admin
@@ -18,6 +19,7 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete, onLeads 
   const ec = ESTADO_COLORS[p.estado] || ESTADO_COLORS.Disponible;
   const [tab, setTab] = useState("corto");
   const [showGallery, setGallery] = useState(false);
+  const [showPropietarioModal, setShowPropietarioModal] = useState(false);
 
   // Swipe to go back
   useSwipeBack(onBack, true);
@@ -49,6 +51,9 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete, onLeads 
               <Users size={18} strokeWidth={1.5} />
             </button>
           )}
+          <button onClick={() => setShowPropietarioModal(true)} style={detailStyles.iconBtn} title="Propietario">
+            <Building2 size={18} strokeWidth={1.5} />
+          </button>
         </div>
       </div>
 
@@ -165,6 +170,13 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete, onLeads 
 
       {showGallery && (
         <Gallery fotos={out.fotos} onClose={() => setGallery(false)} />
+      )}
+
+      {showPropietarioModal && (
+        <PropietarioModal
+          propertyId={p.id}
+          onClose={() => setShowPropietarioModal(false)}
+        />
       )}
     </div>
   );

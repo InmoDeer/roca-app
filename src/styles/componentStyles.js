@@ -1097,3 +1097,198 @@ export const getAppStyles = (theme, mode) => ({
     margin: "8px 0",
   },
 });
+
+/**
+ * Estilos para PropietarioModal
+ */
+export const getPropietarioModalStyles = (t) => {
+  const waColor = "#25D366";
+  const telColor = "#3b82f6";
+  const dangerBg = "rgba(239,68,68,0.1)";
+  const dangerBorder = "rgba(239,68,68,0.2)";
+  const dangerText = "#ef4444";
+
+  return {
+    overlay: {
+      position: "fixed",
+      inset: 0,
+      background: "rgba(0,0,0,0.8)",
+      backdropFilter: "blur(10px)",
+      zIndex: 200,
+      display: "flex",
+      alignItems: "flex-end",
+      justifyContent: "center",
+    },
+    modal: {
+      background: t.colors.bgCard,
+      width: "100%",
+      maxWidth: 480,
+      maxHeight: "80vh",
+      borderRadius: "20px 20px 0 0",
+      display: "flex",
+      flexDirection: "column",
+    },
+    header: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: "20px 24px",
+      borderBottom: `1px solid ${t.colors.border}`,
+    },
+    title: {
+      fontWeight: 800,
+      fontSize: 18,
+      color: t.colors.text,
+    },
+    closeBtn: {
+      background: "none",
+      border: "none",
+      color: t.colors.textMuted,
+      cursor: "pointer",
+    },
+    body: {
+      padding: 20,
+      overflowY: "auto",
+    },
+    infoCard: {
+      background: t.colors.bgSecondary,
+      borderRadius: 16,
+      padding: 16,
+      marginBottom: 20,
+    },
+    infoName: {
+      fontSize: 18,
+      fontWeight: 700,
+      color: t.colors.text,
+      marginBottom: 4,
+    },
+    infoPhone: {
+      fontSize: 15,
+      color: t.colors.textSecondary,
+      marginBottom: 16,
+    },
+    actionRow: {
+      display: "flex",
+      flexWrap: "wrap",
+      gap: 8,
+    },
+    waBtn: {
+      background: waColor,
+      color: "#000",
+      padding: "10px 16px",
+      borderRadius: 12,
+      textDecoration: "none",
+      fontWeight: 600,
+      display: "flex",
+      alignItems: "center",
+      gap: 6,
+    },
+    telBtn: {
+      background: telColor,
+      color: "#fff",
+      padding: "10px 16px",
+      borderRadius: 12,
+      textDecoration: "none",
+      fontWeight: 600,
+      display: "flex",
+      alignItems: "center",
+      gap: 6,
+    },
+    editBtn: {
+      background: t.colors.bgCard,
+      border: `1px solid ${t.colors.border}`,
+      color: t.colors.text,
+      padding: "10px 16px",
+      borderRadius: 12,
+      cursor: "pointer",
+    },
+    sectionTitle: {
+      fontSize: 14,
+      fontWeight: 700,
+      color: t.colors.textMuted,
+      marginBottom: 12,
+      textTransform: "uppercase",
+      letterSpacing: 1,
+    },
+    select: {
+      width: "100%",
+      padding: 14,
+      borderRadius: 12,
+      background: t.colors.bgSecondary,
+      border: `1px solid ${t.colors.border}`,
+      color: t.colors.text,
+      fontSize: 15,
+      marginBottom: 16,
+    },
+    asignarActions: {
+      display: "flex",
+      gap: 10,
+      marginBottom: 20,
+    },
+    asignarBtn: {
+      flex: 1,
+      padding: 14,
+      background: t.colors.primary,
+      border: "none",
+      borderRadius: 12,
+      fontWeight: 700,
+      color: "#0a0a0a",
+      cursor: "pointer",
+    },
+    desasignarBtn: {
+      padding: 14,
+      background: dangerBg,
+      border: `1px solid ${dangerBorder}`,
+      color: dangerText,
+      borderRadius: 12,
+      cursor: "pointer",
+    },
+    newBtn: {
+      width: "100%",
+      padding: 14,
+      background: t.colors.bgCard,
+      border: `1px solid ${t.colors.border}`,
+      borderRadius: 12,
+      color: t.colors.text,
+      fontWeight: 600,
+      cursor: "pointer",
+    },
+    editForm: {
+      display: "flex",
+      flexDirection: "column",
+      gap: 12,
+    },
+    input: {
+      padding: 14,
+      borderRadius: 12,
+      background: t.colors.bgSecondary,
+      border: `1px solid ${t.colors.border}`,
+      color: t.colors.text,
+      fontSize: 15,
+    },
+    editActions: {
+      display: "flex",
+      gap: 10,
+      marginTop: 8,
+    },
+    saveBtn: {
+      flex: 1,
+      padding: 14,
+      background: t.colors.primary,
+      border: "none",
+      borderRadius: 12,
+      fontWeight: 700,
+      color: "#0a0a0a",
+      cursor: "pointer",
+    },
+    cancelBtn: {
+      flex: 1,
+      padding: 14,
+      background: "rgba(255,255,255,0.08)",
+      border: `1px solid ${t.colors.border}`,
+      borderRadius: 12,
+      color: t.colors.text,
+      cursor: "pointer",
+    },
+  };
+};
