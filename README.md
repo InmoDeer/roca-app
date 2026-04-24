@@ -62,6 +62,12 @@ Para nada. ROCA está diseñada para que cualquier agente inmobiliario la use si
 
 ---
 
+## 🛠️ Stack Tecnológico
+
+- **Frontend**: React 19, Vite
+- **Backend**: Supabase
+- **Estilos**: CSS centralizado con soporte claro/oscuro
+
 ## 🛠️ ¿Eres desarrollador?
 
 Si quieres conocer los detalles técnicos, convenciones de código o contribuir al proyecto, consulta el archivo [AGENTS.md](./AGENTS.md).
