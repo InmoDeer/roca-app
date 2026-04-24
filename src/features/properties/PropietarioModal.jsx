@@ -4,7 +4,7 @@ import { supabase } from "../../config/supabase";
 import { useTheme } from "../../hooks/useTheme";
 import { getPropietarioModalStyles } from "../../styles/componentStyles.js";
 
-export function PropietarioModal({ propertyId, onClose }) {
+export function PropietarioModal({ propertyId, user, onClose }) {
   const { t } = useTheme();
   const [contactos, setContactos] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
@@ -16,7 +16,6 @@ export function PropietarioModal({ propertyId, onClose }) {
 
   useEffect(() => {
     const load = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
       const userId = user?.id;
       
       // Get current property owner
@@ -28,13 +27,13 @@ export function PropietarioModal({ propertyId, onClose }) {
       setSelectedId(prop?.propietario_id || null);
 
       // Get filtered propietario contacts for this user
-      const query = supabase
+      let query = supabase
         .from("contactos")
         .select("id, nombre, telefono")
         .eq("tipo", "propietario");
       
       if (userId) {
-        query.eq("user_id", userId);
+        query = query.eq("user_id", userId);
       }
       
       const { data: contacts } = await query.order("nombre");
@@ -42,7 +41,7 @@ export function PropietarioModal({ propertyId, onClose }) {
       setLoading(false);
     };
     load();
-  }, [propertyId]);
+  }, [propertyId, user]);
 
   useEffect(() => {
     if (selectedId) {
@@ -74,7 +73,6 @@ export function PropietarioModal({ propertyId, onClose }) {
   const handleSaveContact = async () => {
     if (!form.nombre.trim()) return;
     
-    const { data: { user } } = await supabase.auth.getUser();
     const userId = user?.id;
     
     if (selectedId) {
@@ -93,16 +91,15 @@ export function PropietarioModal({ propertyId, onClose }) {
       if (data) setSelectedId(data.id);
     }
     setEditMode(false);
-    const { data: { user } } = await supabase.auth.getUser();
     const userId = user?.id;
     
-    const query = supabase
+    let query = supabase
       .from("contactos")
       .select("id, nombre, telefono")
       .eq("tipo", "propietario");
     
     if (userId) {
-      query.eq("user_id", userId);
+      query = query.eq("user_id", userId);
     }
     
     const { data: contacts } = await query.order("nombre");
