@@ -184,7 +184,6 @@ function ROCAApp() {
       <div style={S.app}>
         <PropertyDetail
           p={current}
-          user={user}
           onBack={() => setSelected(null)}
           onEdit={() => { setEdit(current); setShowForm(true); }}
           onEstado={changeStatus}

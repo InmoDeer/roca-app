@@ -2,10 +2,13 @@ import { useState, useEffect } from "react";
 import { X, Phone, MessageCircle } from "lucide-react";
 import { supabase } from "../../config/supabase";
 import { useTheme } from "../../hooks/useTheme";
+import { useAuth } from "../../hooks/useAuth";
 import { getPropietarioModalStyles } from "../../styles/componentStyles.js";
 
-export function PropietarioModal({ propertyId, user, onClose }) {
+export function PropietarioModal({ propertyId, onClose }) {
+  const { user } = useAuth();
   const { t } = useTheme();
+  const userId = user?.id;
   const [contactos, setContactos] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [loading, setLoading] = useState(true);
