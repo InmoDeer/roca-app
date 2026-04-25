@@ -120,69 +120,66 @@ const filtered = filterEstado
         {filtered.map((c) => {
           const ec = ESTADO_COLORS[c.estado] || ESTADO_COLORS.Nuevo;
           return (
-            <div key={c.id} style={styles.leadCard}>
-              <div style={styles.leadRow}>
-                <div style={styles.leadInfo}>
-                  <div style={styles.leadName}>{c.nombre}</div>
-                  {c.telefono && (
-                    <div style={styles.leadPhone}>{c.telefono}</div>
-                  )}
-                  {c.propiedades && (
-                    <div style={styles.leadProperty}>
-                      🏠 {c.propiedades.tipo} · {c.propiedades.distrito}
+            <div
+              key={c.id}
+              style={{
+                ...styles.leadCard,
+                borderLeftWidth: 4,
+                borderLeftStyle: 'solid',
+                borderLeftColor: ec.dot,
+                padding: 12,
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div style={{ flex: 1, minWidth: 0, marginRight: 8 }}>
+                  <div style={{ fontWeight: 700, fontSize: 15, color: theme.colors.text, marginBottom: 2 }}>{c.nombre}</div>
+                  
+                  {!propertyId && c.propiedades && (
+                    <div style={{ fontSize: 11, color: theme.colors.textMuted, marginBottom: 4 }}>
+                      🏠 {c.propiedades.nombre || c.propiedades.tipo}
                     </div>
                   )}
-                  {c.nota && (
-                    <div style={styles.leadNote}>
-                      {c.nota}
-                    </div>
-                  )}
-                  {/* Estado selector */}
-                  <select
-                    value={c.estado}
-                    onChange={(e) => handleChangeEstado(c.id, e.target.value)}
-                    style={styles.estadoSelect(ec)}
-                  >
-                    {(tipoFiltro === 'lead' ? ESTADOS_LEAD : ESTADOS_PROPIETARIO).map((s) => (
-                      <option key={s} value={s} style={{ background: "#1a1a1a", color: "#fff" }}>{s}</option>
-                    ))}
-                  </select>
                 </div>
 
-                {/* Acciones */}
-                <div style={styles.actions}>
+                <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
                   {c.telefono && (
                     <>
                       <a
-                        href={`https://wa.me/${c.telefono.replace(/\D/g, "")}`}
+                        href={`https://wa.me/${c.telefono.replace(/\D/g, '')}`}
                         target="_blank"
                         rel="noreferrer"
-                        style={styles.waBtn}
+                        style={{ ...styles.waBtn, padding: '6px 8px' }}
                       >
-                        <MessageCircle size={16} strokeWidth={1.5} />
+                        <MessageCircle size={14} strokeWidth={1.5} />
                       </a>
                       <a
-                        href={`tel:${c.telefono.replace(/\D/g, "")}`}
-                        style={styles.telBtn}
+                        href={`tel:${c.telefono.replace(/\D/g, '')}`}
+                        style={{ ...styles.telBtn, padding: '6px 8px' }}
                       >
-                        <Phone size={16} strokeWidth={1.5} />
+                        <Phone size={14} strokeWidth={1.5} />
                       </a>
                     </>
                   )}
                   <button
                     onClick={() => { setEditTarget(c); setShowForm(true); }}
-                    style={styles.actionBtn}
+                    style={{ ...styles.actionBtn, padding: '6px 8px' }}
                   >
                     ✏️
                   </button>
                   <button
                     onClick={() => handleDelete(c.id)}
-                    style={styles.deleteBtn}
+                    style={{ ...styles.deleteBtn, padding: '6px 8px' }}
                   >
                     <X size={14} strokeWidth={2} />
                   </button>
                 </div>
               </div>
+
+              {c.nota && (
+                <div style={{ fontSize: 12, color: theme.colors.textMuted, marginTop: 6, whiteSpace: 'pre-wrap' }}>
+                  {c.nota}
+                </div>
+              )}
             </div>
           );
         })}
