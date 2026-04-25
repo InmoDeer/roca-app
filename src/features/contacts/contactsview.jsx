@@ -72,6 +72,8 @@ const filtered = filterEstado
 
   const dynamicEstados = tipoFiltro === 'lead' ? ESTADOS_LEAD : ESTADOS_PROPIETARIO;
 
+  const styles = getClientsViewStyles(theme, mode);
+
   return (
     <div style={styles.container}>
       {/* Header */}
