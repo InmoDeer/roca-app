@@ -66,11 +66,11 @@ export function ContactsView({ onBack, theme, mode, user, propertyId = null, pro
     setContacts((c) => c.map((x) => x.id === id ? { ...x, estado } : x));
   };
 
-  const filtered = filterEstado
+const filtered = filterEstado
     ? contacts.filter((c) => c.estado === filterEstado)
     : contacts;
 
-  const styles = getClientsViewStyles(theme, mode);
+  const dynamicEstados = tipoFiltro === 'lead' ? ESTADOS_LEAD : ESTADOS_PROPIETARIO;
 
   return (
     <div style={styles.container}>
@@ -94,7 +94,7 @@ export function ContactsView({ onBack, theme, mode, user, propertyId = null, pro
 
       {/* Filtro por estado */}
       <div style={styles.filterContainer}>
-        {["", ...estadosAMostrar].map((e) => (
+        {["", ...dynamicEstados].map((e) => (
           <button
             key={e}
             onClick={() => setFilterEstado(e)}
@@ -143,7 +143,7 @@ export function ContactsView({ onBack, theme, mode, user, propertyId = null, pro
                     onChange={(e) => handleChangeEstado(c.id, e.target.value)}
                     style={styles.estadoSelect(ec)}
                   >
-                    {ESTADOS_LEAD.map((s) => (
+                    {(tipoFiltro === 'lead' ? ESTADOS_LEAD : ESTADOS_PROPIETARIO).map((s) => (
                       <option key={s} value={s} style={{ background: "#1a1a1a", color: "#fff" }}>{s}</option>
                     ))}
                   </select>
@@ -198,6 +198,8 @@ export function ContactsView({ onBack, theme, mode, user, propertyId = null, pro
           theme={theme}
           mode={mode}
           userId={user?.id}
+          tipoLabel={tipoLabel}
+          tipoFiltro={tipoFiltro}
         />
       )}
     </div>
@@ -205,8 +207,8 @@ export function ContactsView({ onBack, theme, mode, user, propertyId = null, pro
 }
 
 
-function ContactForm({ initial, propertyId, onSave, onClose, theme, mode, userId }) {
-  const defaultEstado = initial?.estado || "Nuevo";
+function ContactForm({ initial, propertyId, onSave, onClose, theme, mode, userId, tipoLabel, tipoFiltro }) {
+  const defaultEstado = initial?.estado || (tipoFiltro === 'lead' ? "Nuevo" : "Activo");
   const [form, setForm] = useState({
     nombre: initial?.nombre || "",
     telefono: initial?.telefono || "",
@@ -310,7 +312,7 @@ function ContactForm({ initial, propertyId, onSave, onClose, theme, mode, userId
           <div>
             <label style={labelStyle}>Estado</label>
             <select style={inputStyle} value={form.estado} onChange={(e) => setForm(f => ({ ...f, estado: e.target.value }))}>
-              {ESTADOS_LEAD.map((s) => <option key={s} value={s} style={{ background: "#1a1a1a" }}>{s}</option>)}
+              {(tipoFiltro === 'lead' ? ESTADOS_LEAD : ESTADOS_PROPIETARIO).map((s) => <option key={s} value={s} style={{ background: "#1a1a1a" }}>{s}</option>)}
             </select>
           </div>
           <div>
