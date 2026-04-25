@@ -34,6 +34,7 @@ function ROCAApp() {
   const [filters, setFilters] = useState({ q: "", operacion: "", tipo: "", estado: "" });
   const [showCRM, setShowCRM] = useState(false);
   const [crmPropertyFilter, setCrmPropertyFilter] = useState(null);
+  const [crmTipoFiltro, setCrmTipoFiltro] = useState('lead');
   const [publicProperty, setPublicProperty] = useState(null);
   const [publicLoading, setPublicLoading] = useState(false);
 
@@ -172,6 +173,7 @@ function ROCAApp() {
           user={user}
           propertyId={crmPropertyFilter?.id || null}
           propertyName={crmPropertyFilter?.nombre || null}
+          tipoInicial={crmTipoFiltro}
         />
       </div>
     );
@@ -218,8 +220,21 @@ function ROCAApp() {
             <button style={getProfileMenuStyles(theme).item} onClick={cycleTheme}>
               {mode === "light" ? "☀️ Claro" : "🌙 Oscuro"}
             </button>
-            <button style={getProfileMenuStyles(theme).item} onClick={() => { setShowCRM(true); setProfileMenuOpen(false); }}>
-              👥 CRM · Leads
+            <button style={getProfileMenuStyles(theme).item} onClick={() => { 
+              setCrmPropertyFilter(null);
+              setCrmTipoFiltro('lead');
+              setShowCRM(true); 
+              setProfileMenuOpen(false); 
+            }}>
+              👥 Leads
+            </button>
+            <button style={getProfileMenuStyles(theme).item} onClick={() => { 
+              setCrmPropertyFilter(null);
+              setCrmTipoFiltro('propietario');
+              setShowCRM(true); 
+              setProfileMenuOpen(false); 
+            }}>
+              🏢 Propietarios
             </button>
             <div style={getProfileMenuStyles(theme).divider} />
             <button style={getProfileMenuStyles(theme).item} onClick={logout}>

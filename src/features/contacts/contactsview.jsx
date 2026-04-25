@@ -13,35 +13,41 @@ import { supabase } from "../../config/supabase.js";
 import { getClientsViewStyles } from "../../styles/componentStyles.js";
 
 const ESTADOS_LEAD = ["Nuevo", "Contactado", "Visita agendada", "Negociando", "Cerrado"];
+const ESTADOS_PROPIETARIO = ["Activo", "Inactivo", "Cerrado"];
 
 const ESTADO_COLORS = {
-  Nuevo: { bg: "#1e3a5f", text: "#60a5fa", dot: "#3b82f6" },
+ Nuevo: { bg: "#1e3a5f", text: "#60a5fa", dot: "#3b82f6" },
   Contactado: { bg: "#1e3a2e", text: "#4ade80", dot: "#22c55e" },
   "Visita agendada": { bg: "#3a2e1e", text: "#fbbf24", dot: "#f59e0b" },
   Negociando: { bg: "#3a1e2e", text: "#f472b6", dot: "#ec4899" },
   Cerrado: { bg: "#2e1e1e", text: "#f87171", dot: "#ef4444" },
+  Activo: { bg: "#1e3a2e", text: "#4ade80", dot: "#22c55e" },
+  Inactivo: { bg: "#2e1e1e", text: "#f87171", dot: "#ef4444" },
 };
 
-export function ContactsView({ onBack, theme, mode, user, propertyId = null, propertyName = null }) {
+export function ContactsView({ onBack, theme, mode, user, propertyId = null, propertyName = null, tipoInicial = 'lead' }) {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
   const [filterEstado, setFilterEstado] = useState("");
+  const [tipoFiltro, setTipoFiltro] = useState(tipoInicial);
+  const tipoLabel = tipoFiltro === 'lead' ? 'Lead' : 'Propietario';
+  const tipoLabelPlural = tipoFiltro === 'lead' ? 'Leads' : 'Propietarios';
 
   const load = async () => {
     setLoading(true);
     const data = propertyId
-      ? await fetchContactsByProperty(propertyId, user?.id)
-      : await fetchContacts(user?.id);
+      ? await fetchContactsByProperty(propertyId, user?.id, tipoFiltro)
+      : await fetchContacts(user?.id, tipoFiltro);
     setContacts(data);
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, [propertyId, user?.id]);
+  useEffect(() => { load(); }, [propertyId, user?.id, tipoFiltro]);
 
   const handleSave = async (payload, id) => {
-    const enriched = { ...payload, user_id: user?.id };
+    const enriched = { ...payload, user_id: user?.id, tipo: tipoFiltro };
     if (id) await updateContact(id, enriched);
     else await createContact(enriched);
     await load();
@@ -50,7 +56,7 @@ export function ContactsView({ onBack, theme, mode, user, propertyId = null, pro
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("¿Eliminar este lead?")) return;
+    if (!confirm(`¿Eliminar este ${tipoLabel}?`)) return;
     await deleteContact(id);
     setContacts((c) => c.filter((x) => x.id !== id));
   };
@@ -74,19 +80,21 @@ export function ContactsView({ onBack, theme, mode, user, propertyId = null, pro
           <ArrowLeft size={20} strokeWidth={1.5} />
         </button>
         <div style={styles.headerTitle}>
-          {propertyName ? `Leads · ${propertyName}` : "CRM · Leads"}
+          {propertyName ? `${tipoLabelPlural} · ${propertyName}` : `CRM · ${tipoLabelPlural}`}
         </div>
         <button
           onClick={() => { setEditTarget(null); setShowForm(true); }}
           style={styles.addBtn}
         >
-          + Lead
++ {tipoLabel}
         </button>
       </div>
 
+      const estadosAMostrar = tipoFiltro === 'lead' ? ESTADOS_LEAD : ESTADOS_PROPIETARIO;
+
       {/* Filtro por estado */}
       <div style={styles.filterContainer}>
-        {["", ...ESTADOS_LEAD].map((e) => (
+        {["", ...estadosAMostrar].map((e) => (
           <button
             key={e}
             onClick={() => setFilterEstado(e)}
@@ -99,14 +107,14 @@ export function ContactsView({ onBack, theme, mode, user, propertyId = null, pro
 
       {/* Contador */}
       <div style={styles.counter}>
-        {loading ? "Cargando..." : `${filtered.length} lead${filtered.length !== 1 ? "s" : ""}`}
+        {loading ? "Cargando..." : `${filtered.length} ${tipoLabelPlural.toLowerCase()}`}
       </div>
 
       {/* Lista */}
       <div style={styles.list}>
         {!loading && filtered.length === 0 && (
           <div style={styles.empty}>
-            Sin leads todavía. Toca + Lead para agregar.
+            Sin {tipoLabelPlural.toLowerCase()} todavía. Toca + {tipoLabel} para agregar.
           </div>
         )}
         {filtered.map((c) => {
@@ -198,11 +206,12 @@ export function ContactsView({ onBack, theme, mode, user, propertyId = null, pro
 
 
 function ContactForm({ initial, propertyId, onSave, onClose, theme, mode, userId }) {
+  const defaultEstado = initial?.estado || "Nuevo";
   const [form, setForm] = useState({
     nombre: initial?.nombre || "",
     telefono: initial?.telefono || "",
     propiedad_id: initial?.propiedad_id || propertyId || null,
-    estado: initial?.estado || "Nuevo",
+    estado: defaultEstado,
     nota: initial?.nota || "",
   });
   const [saving, setSaving] = useState(false);
@@ -262,7 +271,7 @@ function ContactForm({ initial, propertyId, onSave, onClose, theme, mode, userId
       <div style={{ background: bg, width: "90%", maxWidth: 400, maxHeight: "85vh", display: "flex", flexDirection: "column", borderRadius: 20 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 24px", borderBottom: `1px solid ${border}` }}>
           <span style={{ fontWeight: 800, fontSize: 18, color: text }}>
-            {initial ? "Editar lead" : "Nuevo lead"}
+            {initial ? `Editar ${tipoLabel}` : `Nuevo ${tipoLabel}`}
           </span>
           <button onClick={onClose} style={{ background: "none", border: "none", color: muted, cursor: "pointer" }}>
             <X size={20} strokeWidth={1.5} />
@@ -320,7 +329,7 @@ function ContactForm({ initial, propertyId, onSave, onClose, theme, mode, userId
             Cancelar
           </button>
           <button onClick={handleSave} disabled={saving} style={{ flex: 2, padding: 14, background: primary, color: primaryDark, border: "none", borderRadius: 12, fontWeight: 700, fontSize: 15, cursor: "pointer", boxShadow: "0 4px 15px rgba(212,175,55,0.3)" }}>
-            {saving ? "Guardando..." : initial ? "Guardar cambios" : "Crear lead"}
+            {saving ? "Guardando..." : initial ? "Guardar cambios" : `Crear ${tipoLabel}`}
           </button>
         </div>
       </div>

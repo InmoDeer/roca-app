@@ -1,22 +1,30 @@
 import { supabase } from "../config/supabase";
 
-export async function fetchContacts(userId) {
-  const { data, error } = await supabase
+export async function fetchContacts(userId, tipo = null) {
+  let query = supabase
     .from("contactos")
     .select("*")
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
+  
+  if (tipo) query = query.eq("tipo", tipo);
+  
+  const { data, error } = await query;
   if (error) console.error("Error fetching contacts:", error);
   return data || [];
 }
 
-export async function fetchContactsByProperty(propertyId, userId) {
-  const { data, error } = await supabase
+export async function fetchContactsByProperty(propertyId, userId, tipo = null) {
+  let query = supabase
     .from("contactos")
     .select("*")
     .eq("propiedad_id", propertyId)
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
+  
+  if (tipo) query = query.eq("tipo", tipo);
+  
+  const { data, error } = await query;
   if (error) console.error("Error fetching contacts by property:", error);
   return data || [];
 }
