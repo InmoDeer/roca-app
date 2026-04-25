@@ -3,7 +3,7 @@ import { supabase } from "../config/supabase";
 export async function fetchContacts(userId) {
   const { data, error } = await supabase
     .from("contactos")
-    .select("*, propiedades(nombre, distrito, tipo)")
+    .select("*")
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
   if (error) console.error("Error fetching contacts:", error);
