@@ -3,7 +3,7 @@ import { supabase } from "../config/supabase";
 export async function fetchContacts(userId, tipo = null) {
   let query = supabase
     .from("contactos")
-    .select("*")
+    .select("*, propiedades:propiedad_id(nombre, tipo, distrito)")
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
   
