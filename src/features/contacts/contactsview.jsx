@@ -92,8 +92,6 @@ const filtered = filterEstado
         </button>
       </div>
 
-      const estadosAMostrar = tipoFiltro === 'lead' ? ESTADOS_LEAD : ESTADOS_PROPIETARIO;
-
       {/* Filtro por estado */}
       <div style={styles.filterContainer}>
         {["", ...dynamicEstados].map((e) => (
