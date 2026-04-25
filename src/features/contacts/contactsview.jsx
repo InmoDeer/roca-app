@@ -7,6 +7,8 @@ import {
   updateContact,
   deleteContact,
 } from "../../utils/contactsApi.js";
+// Importamos supabase para poder listar las propiedades en el select
+import { supabase } from "../../utils/supabase.js";
 
 import { getClientsViewStyles } from "../../styles/componentStyles.js";
 
@@ -187,6 +189,7 @@ export function ContactsView({ onBack, theme, mode, user, propertyId = null, pro
           onClose={() => { setShowForm(false); setEditTarget(null); }}
           theme={theme}
           mode={mode}
+          userId={user?.id}
         />
       )}
     </div>
@@ -194,20 +197,43 @@ export function ContactsView({ onBack, theme, mode, user, propertyId = null, pro
 }
 
 
-function ContactForm({ initial, propertyId, onSave, onClose, theme, mode }) {
+function ContactForm({ initial, propertyId, onSave, onClose, theme, mode, userId }) {
   const [form, setForm] = useState({
     nombre: initial?.nombre || "",
     telefono: initial?.telefono || "",
-    propiedad_id: initial?.propiedad_id || propertyId || "",
+    propiedad_id: initial?.propiedad_id || propertyId || null,
     estado: initial?.estado || "Nuevo",
     nota: initial?.nota || "",
   });
   const [saving, setSaving] = useState(false);
+  const [properties, setProperties] = useState([]);
+
+  // Cargamos las propiedades solo si estamos en el CRM General (!propertyId)
+  useEffect(() => {
+    if (!propertyId && userId) {
+      const loadProps = async () => {
+        const { data } = await supabase
+          .from("propiedades")
+          .select("id, nombre, tipo, distrito")
+          .eq("user_id", userId)
+          .order("nombre");
+        if (data) setProperties(data);
+      };
+      loadProps();
+    }
+  }, [propertyId, userId]);
 
   const handleSave = async () => {
     if (!form.nombre.trim()) { alert("El nombre es obligatorio"); return; }
     setSaving(true);
-    await onSave(form, initial?.id);
+    
+    // Aseguramos que si propiedad_id está vacío, se envíe como null para la base de datos
+    const payload = { 
+      ...form, 
+      propiedad_id: form.propiedad_id || null 
+    };
+    
+    await onSave(payload, initial?.id);
     setSaving(false);
   };
 
@@ -252,6 +278,26 @@ function ContactForm({ initial, propertyId, onSave, onClose, theme, mode }) {
             <label style={labelStyle}>Teléfono / WhatsApp</label>
             <input style={inputStyle} value={form.telefono} placeholder="+51 999 999 999" onChange={(e) => setForm(f => ({ ...f, telefono: e.target.value }))} />
           </div>
+
+          {/* Solo mostramos el selector si no venimos de una propiedad específica */}
+          {!propertyId && (
+            <div>
+              <label style={labelStyle}>Asociar a Propiedad</label>
+              <select 
+                style={inputStyle} 
+                value={form.propiedad_id || ""} 
+                onChange={(e) => setForm(f => ({ ...f, propiedad_id: e.target.value || null }))}
+              >
+                <option value="" style={{ background: "#1a1a1a" }}>Ninguna (Lead general)</option>
+                {properties.map(p => (
+                  <option key={p.id} value={p.id} style={{ background: "#1a1a1a" }}>
+                    {p.nombre} · {p.tipo} ({p.distrito})
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           <div>
             <label style={labelStyle}>Estado</label>
             <select style={inputStyle} value={form.estado} onChange={(e) => setForm(f => ({ ...f, estado: e.target.value }))}>
