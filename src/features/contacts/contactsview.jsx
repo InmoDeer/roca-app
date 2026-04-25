@@ -179,7 +179,7 @@ const filtered = filterEstado
               </div>
 
               {c.nota && (
-                <div style={{ fontSize: 12, color: muted, marginTop: 2, whiteSpace: 'pre-wrap', lineHeight: 1.4 }}>
+                <div style={{ fontSize: 12, color: muted, marginTop: 0, whiteSpace: 'pre-wrap', lineHeight: 1.4 }}>
                   {c.nota}
                 </div>
               )}
