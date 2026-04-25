@@ -119,6 +119,8 @@ const filtered = filterEstado
         )}
         {filtered.map((c) => {
           const ec = ESTADO_COLORS[c.estado] || ESTADO_COLORS.Nuevo;
+          const text = theme.colors.text;
+          const muted = theme.colors.textMuted;
           return (
             <div
               key={c.id}
@@ -127,16 +129,17 @@ const filtered = filterEstado
                 borderLeftWidth: 4,
                 borderLeftStyle: 'solid',
                 borderLeftColor: ec.dot,
-                padding: 12,
+                padding: "10px 12px",
+                marginBottom: 6,
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <div style={{ flex: 1, minWidth: 0, marginRight: 8 }}>
-                  <div style={{ fontWeight: 700, fontSize: 15, color: theme.colors.text, marginBottom: 2 }}>{c.nombre}</div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontWeight: 700, fontSize: 14, color: text, marginBottom: 2 }}>{c.nombre}</div>
                   
                   {!propertyId && c.propiedades && (
-                    <div style={{ fontSize: 11, color: theme.colors.textMuted, marginBottom: 4 }}>
-                      🏠 {c.propiedades.nombre || c.propiedades.tipo}
+                    <div style={{ fontSize: 11, color: muted, marginBottom: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      🏠 {c.propiedades.nombre || c.propiedades.tipo} · {c.propiedades.distrito}
                     </div>
                   )}
                 </div>
@@ -176,7 +179,7 @@ const filtered = filterEstado
               </div>
 
               {c.nota && (
-                <div style={{ fontSize: 12, color: theme.colors.textMuted, marginTop: 6, whiteSpace: 'pre-wrap' }}>
+                <div style={{ fontSize: 12, color: muted, marginTop: 6, whiteSpace: 'pre-wrap', lineHeight: 1.4 }}>
                   {c.nota}
                 </div>
               )}
