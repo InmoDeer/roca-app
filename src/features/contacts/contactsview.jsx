@@ -8,7 +8,7 @@ import {
   deleteContact,
 } from "../../utils/contactsApi.js";
 // Importamos supabase para poder listar las propiedades en el select
-import { supabase } from "../../utils/supabase.js";
+import { supabase } from "../../config/supabase.js";
 
 import { getClientsViewStyles } from "../../styles/componentStyles.js";
 
