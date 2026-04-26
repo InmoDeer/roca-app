@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { supabase } from "../../config/supabase.js";
 import { useTheme } from "../../hooks/useTheme.jsx";
+import { getContactFormStyles } from "../../styles/componentStyles.js";
 import { ESTADOS_LEAD, ESTADOS_PROPIETARIO } from "../../utils/constants";
 
 export function ContactForm({
@@ -50,46 +51,105 @@ export function ContactForm({
 
   const estados = tipoFiltro === "lead" ? ESTADOS_LEAD : ESTADOS_PROPIETARIO;
 
-  const bg = t.colors.bgSecondary;
-  const border = t.colors.border;
-  const text = t.colors.text;
-  const muted = t.colors.textMuted;
-  const primary = t.colors.primary;
-  const primaryDark = mode === "dark" ? "#0a0a0a" : "#ffffff";
-  const overlayBg = mode === "dark" ? "rgba(0,0,0,0.8)" : "rgba(0,0,0,0.5)";
-
-  const inputStyle = {
-    width: "100%", padding: "12px 14px", borderRadius: 12,
-    border: `1px solid ${border}`, fontSize: 15, boxSizing: "border-box",
-    outline: "none", background: bg, color: text,
-  };
-  const labelStyle = {
-    display: "block", fontSize: 12, fontWeight: 600, color: muted,
-    marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.5px",
-  };
+  const S = getContactFormStyles(t, mode);
 
   return (
-    <div style={{
-      position: "fixed", inset: 0, background: overlayBg,
-      backdropFilter: "blur(10px)", zIndex: 100,
-      display: "flex", alignItems: "center", justifyContent: "center",
-    }}>
-      <div style={{
-        background: bg, width: "90%", maxWidth: 400,
-        maxHeight: "85vh", display: "flex", flexDirection: "column", borderRadius: 20,
-      }}>
+    <div style={S.overlay}>
+      <div style={S.modal}>
         {/* Header */}
-        <div style={{
-          display: "flex", justifyContent: "space-between", alignItems: "center",
-          padding: "20px 24px", borderBottom: `1px solid ${border}`,
-        }}>
-          <span style={{ fontWeight: 800, fontSize: 18, color: text }}>
+        <div style={S.header}>
+          <span style={S.headerTitle}>
             {initial ? `Editar ${tipoLabel}` : `Nuevo ${tipoLabel}`}
           </span>
-          <button onClick={onClose} style={{ background: "none", border: "none", color: muted, cursor: "pointer" }}>
+          <button onClick={onClose} style={S.closeBtn}>
             <X size={20} strokeWidth={1.5} />
           </button>
         </div>
+
+        {/* Body */}
+        <div style={S.body}>
+          <div>
+            <label style={S.label}>Nombre *</label>
+            <input
+              style={S.input}
+              value={form.nombre}
+              placeholder="Nombre del contacto"
+              onChange={(e) => setForm(f => ({ ...f, nombre: e.target.value }))}
+            />
+          </div>
+          <div>
+            <label style={S.label}>Teléfono / WhatsApp</label>
+            <input
+              style={S.input}
+              value={form.telefono}
+              placeholder="+51 999 999 999"
+              onChange={(e) => setForm(f => ({ ...f, telefono: e.target.value }))}
+            />
+          </div>
+
+          {/* Selector de propiedad solo en CRM general */}
+          {!propertyId && (
+            <div>
+              <label style={S.label}>Asociar a Propiedad</label>
+              <select
+                style={S.input}
+                value={form.propiedad_id || ""}
+                onChange={(e) => setForm(f => ({ ...f, propiedad_id: e.target.value || null }))}
+              >
+                <option value="">Ninguna</option>
+                {properties.map(p => (
+                  <option key={p.id} value={p.id}>
+                    {p.nombre} · {p.tipo} ({p.distrito})
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          <div>
+            <label style={S.label}>Estado</label>
+            <select
+              style={S.input}
+              value={form.estado}
+              onChange={(e) => setForm(f => ({ ...f, estado: e.target.value }))}
+            >
+              {estados.map(s => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label style={S.label}>Nota</label>
+            <textarea
+              style={S.noteInput}
+              value={form.nota}
+              placeholder="Presupuesto, preferencias, comentarios..."
+              onChange={(e) => setForm(f => ({ ...f, nota: e.target.value }))}
+            />
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div style={S.footer}>
+          <button
+            onClick={onClose}
+            style={S.btnCancel}
+          >
+            Cancelar
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            style={S.btnSave}
+          >
+            {saving ? "Guardando..." : initial ? "Guardar cambios" : `Crear ${tipoLabel}`}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
         {/* Body */}
         <div style={{

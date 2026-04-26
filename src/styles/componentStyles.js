@@ -1292,3 +1292,178 @@ export const getPropietarioModalStyles = (t) => {
     },
   };
 };
+
+// =====================
+// Contact Form Styles
+// =====================
+export const getContactFormStyles = (t, mode) => {
+  const primaryDark = "#0a0a0a";
+  const overlayBg = mode === "dark" ? "rgba(0,0,0,0.8)" : "rgba(0,0,0,0.5)";
+  const bg = t.colors.bg;
+  const border = t.colors.border;
+  const text = t.colors.text;
+  const muted = t.colors.textMuted;
+  const primary = t.colors.primary;
+
+  return {
+    overlay: {
+      position: "fixed",
+      inset: 0,
+      background: overlayBg,
+      backdropFilter: "blur(10px)",
+      zIndex: 100,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    modal: {
+      background: bg,
+      width: "90%",
+      maxWidth: 400,
+      maxHeight: "85vh",
+      display: "flex",
+      flexDirection: "column",
+      borderRadius: 20,
+    },
+    header: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: "20px 24px",
+      borderBottom: `1px solid ${border}`,
+    },
+    headerTitle: {
+      fontWeight: 800,
+      fontSize: 18,
+      color: text,
+    },
+    closeBtn: {
+      background: "none",
+      border: "none",
+      color: muted,
+      cursor: "pointer",
+    },
+    body: {
+      overflowY: "auto",
+      padding: "20px 24px",
+      flex: 1,
+      display: "flex",
+      flexDirection: "column",
+      gap: 14,
+    },
+    footer: {
+      display: "flex",
+      gap: 12,
+      padding: "16px 24px",
+      borderTop: `1px solid ${border}`,
+    },
+    input: {
+      width: "100%",
+      padding: "12px 14px",
+      borderRadius: 12,
+      border: `1px solid ${border}`,
+      fontSize: 15,
+      boxSizing: "border-box",
+      outline: "none",
+      background: t.colors.bgSecondary,
+      color: text,
+    },
+    label: {
+      display: "block",
+      fontSize: 12,
+      fontWeight: 600,
+      color: muted,
+      marginBottom: 6,
+      textTransform: "uppercase",
+      letterSpacing: "0.5px",
+    },
+    btnCancel: {
+      flex: 1,
+      padding: 14,
+      background: bg,
+      border: `1px solid ${border}`,
+      borderRadius: 12,
+      fontWeight: 700,
+      fontSize: 15,
+      cursor: "pointer",
+      color: text,
+    },
+    btnSave: {
+      flex: 2,
+      padding: 14,
+      background: primary,
+      color: primaryDark,
+      border: "none",
+      borderRadius: 12,
+      fontWeight: 700,
+      fontSize: 15,
+      cursor: "pointer",
+      boxShadow: "0 4px 15px rgba(212,175,55,0.3)",
+    },
+    noteInput: {
+      width: "100%",
+      padding: "12px 14px",
+      borderRadius: 12,
+      border: `1px solid ${border}`,
+      fontSize: 15,
+      boxSizing: "border-box",
+      outline: "none",
+      background: t.colors.bgSecondary,
+      color: text,
+      resize: "vertical",
+      minHeight: 80,
+    },
+  };
+};
+
+// =====================
+// Contact Card Styles
+// =====================
+export const getContactCardStyles = (t, ec) => {
+  const text = t.colors.text;
+  const muted = t.colors.textMuted;
+
+  return {
+    card: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "flex-start",
+      gap: 8,
+      padding: "10px 12px",
+      marginBottom: 6,
+      background: t.colors.bgSecondary,
+      borderRadius: 12,
+      borderLeft: `4px solid ${ec.dot}`,
+    },
+    cardContent: {
+      flex: 1,
+      minWidth: 0,
+    },
+    name: {
+      fontWeight: 700,
+      fontSize: 14,
+      color: text,
+      marginBottom: 2,
+    },
+    property: {
+      fontSize: 11,
+      color: muted,
+      marginBottom: 0,
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    },
+    actions: {
+      display: "flex",
+      gap: 6,
+      alignItems: "center",
+    },
+    note: {
+      fontSize: 12,
+      color: muted,
+      marginTop: 0,
+      whiteSpace: "pre-wrap",
+      lineHeight: 1.4,
+    },
+  };
+};

@@ -12,7 +12,7 @@ import {
   assignPropietarioToPropiedad,
   unassignPropietario,
 } from "../../utils/contactsApi.js";
-import { getClientsViewStyles } from "../../styles/componentStyles.js";
+import { getClientsViewStyles, getContactCardStyles } from "../../styles/componentStyles.js";
 import { ESTADO_COLORS, ESTADOS_LEAD, ESTADOS_PROPIETARIO } from "../../utils/constants";
 
 export function ContactsView({ onBack, theme, mode, user, propertyId = null, propertyName = null, tipoInicial = 'lead', defaultEstadoLead = 'Interesado', defaultEstadoProp = 'Captación' }) {
@@ -142,56 +142,47 @@ const filtered = filterEstado
           </div>
         )}
         {filtered.map((c) => {
-          const ec = ESTADO_COLORS[c.estado] || ESTADO_COLORS.Interesado;
-          const text = theme.colors.text;
-          const muted = theme.colors.textMuted;
+const ec = ESTADO_COLORS[c.estado] || ESTADO_COLORS.Interesado;
+          const cardStyles = getContactCardStyles(theme, ec);
           return (
             <div
               key={c.id}
-              style={{
-                ...styles.leadCard,
-                borderLeftWidth: 4,
-                borderLeftStyle: 'solid',
-                borderLeftColor: ec.dot,
-                padding: "10px 12px",
-                marginBottom: 6,
-              }}
+              style={cardStyles.card}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontWeight: 700, fontSize: 14, color: text, marginBottom: 2 }}>{c.nombre}</div>
-                  
-                  {!propertyId && c.propiedades && (
-                    <div style={{ fontSize: 11, color: muted, marginBottom: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      🏠 {c.propiedades.nombre || c.propiedades.tipo} · {c.propiedades.distrito}
-                    </div>
-                  )}
-                </div>
+              <div style={cardStyles.cardContent}>
+                <div style={cardStyles.name}>{c.nombre}</div>
+                
+                {!propertyId && c.propiedades && (
+                  <div style={cardStyles.property}>
+                    🏠 {c.propiedades.nombre || c.propiedades.tipo} · {c.propiedades.distrito}
+                  </div>
+                )}
+              </div>
 
-                <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-                  {c.telefono && (
-                    <>
-                      <a
-                        href={`https://wa.me/${c.telefono.replace(/\D/g, '')}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        style={{ ...styles.waBtn, padding: '6px 8px' }}
-                      >
-                        <MessageCircle size={14} strokeWidth={1.5} />
-                      </a>
-                      <a
-                        href={`tel:${c.telefono.replace(/\D/g, '')}`}
-                        style={{ ...styles.telBtn, padding: '6px 8px' }}
-                      >
-                        <Phone size={14} strokeWidth={1.5} />
-                      </a>
-                    </>
-                  )}
-                  <button
-                    onClick={() => { setEditTarget(c); setShowForm(true); }}
-                    style={{ ...styles.actionBtn, padding: '6px 8px' }}
-                  >
-                    ✏️
+              <div style={cardStyles.actions}>
+                {c.telefono && (
+                  <>
+                    <a
+                      href={`https://wa.me/${c.telefono.replace(/\D/g, '')}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{ ...styles.waBtn, padding: '6px 8px' }}
+                    >
+                      <MessageCircle size={14} strokeWidth={1.5} />
+                    </a>
+                    <a
+                      href={`tel:${c.telefono.replace(/\D/g, '')}`}
+                      style={{ ...styles.telBtn, padding: '6px 8px' }}
+                    >
+                      <Phone size={14} strokeWidth={1.5} />
+                    </a>
+                  </>
+                )}
+                <button
+                  onClick={() => { setEditTarget(c); setShowForm(true); }}
+                  style={{ ...styles.actionBtn, padding: '6px 8px' }}
+                >
+                  ✏️
                   </button>
                   <button
                     onClick={() => handleDelete(c.id)}
@@ -203,7 +194,7 @@ const filtered = filterEstado
               </div>
 
               {c.nota && (
-                <div style={{ fontSize: 12, color: muted, marginTop: 0, whiteSpace: 'pre-wrap', lineHeight: 1.4 }}>
+                <div style={cardStyles.note}>
                   {c.nota}
                 </div>
               )}
