@@ -4,7 +4,7 @@ import { supabase } from "../../config/supabase";
 import { useTheme } from "../../hooks/useTheme";
 import { useAuth } from "../../hooks/useAuth";
 import { getPropietarioModalStyles } from "../../styles/componentStyles.js";
-import { ContactForm } from "../contacts/contactForm.jsx";
+import { ContactForm } from "./contactForm.jsx";
 
 export function PropietarioModal({ propertyId, onClose, onCrearPropiedad }) {
   const { user } = useAuth();

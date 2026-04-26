@@ -18,8 +18,14 @@ src/
 │   ├── ui/            # Componentes UI (Gallery, CopyShareBtns)
 │   └── formFields/    # Campos de formulario (Field, Select, Checkbox)
 ├── features/          # Funcionalidades por módulo
-│   ├── properties/   # PropertyForm, PropertyDetail, PublicGallery, PropietarioModal
-│   └── contacts/     # ContactsView, ContactForm, PropietarioForm (CRM)
+│   ├── contacts/     # CRM de contactos
+│   │   ├── contactsview.jsx   # Vista principal del CRM
+│   │   ├── contactForm.jsx    # Formulario de contacto
+│   │   └── PropietarioModal.jsx  # Modal para asignar propietarios
+│   └── properties/   # Gestión de propiedades
+│       ├── PropertyForm.jsx      # Formulario de propiedad
+│       ├── PropertyDetail.jsx    # Detalle de propiedad
+│       └── PublicGallery.jsx     # Galería pública
 ├── hooks/            # Custom hooks (useAuth, useProperties, useTheme)
 ├── utils/            # Utilidades (api, constants, cloudinary, messageFormatter)
 ├── config/           # Configuración del entorno
@@ -36,8 +42,11 @@ src/
 | Componente | Ubicación | Propósito |
 |-----------|-----------|-----------|
 | PropertyForm | features/properties/ | Crear/editar propiedades |
-| ContactForm | features/contacts/ | Crear/editar leads |
-| PropietarioForm | features/contacts/ | Crear/editar propietarios |
+| ContactForm | features/contacts/ | Crear/editar leads/propietarios |
+| PropietarioModal | features/contacts/ | Asignar propietario a propiedad |
+
+### PropietarioForm (ya no existe - usado ContactForm)
+- Ahora ContactForm maneja tanto leads como propietarios según `tipoFiltro`
 
 ### PropietarioForm Props
 - `initial`: Contacto existente (para editar)

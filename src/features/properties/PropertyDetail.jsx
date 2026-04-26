@@ -7,7 +7,7 @@ import { useSwipeBack } from "../../hooks/useSwipeBack";
 import { useTheme } from "../../hooks/useTheme.jsx";
 import { getPropertyDetailStyles } from "../../styles/componentStyles.js";
 import { MapPin, Video, PencilLine, Trash2, X, ArrowLeft, Play, Eye, Images, Globe, DollarSign, FileText, Users, Building2 } from "lucide-react";
-import { PropietarioModal } from "./PropietarioModal";
+import { PropietarioModal } from "../contacts/PropietarioModal";
 
 /**
  * Property detail component showing full information for admin
