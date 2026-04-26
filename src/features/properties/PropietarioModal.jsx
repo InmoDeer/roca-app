@@ -4,7 +4,7 @@ import { supabase } from "../../config/supabase";
 import { useTheme } from "../../hooks/useTheme";
 import { useAuth } from "../../hooks/useAuth";
 import { getPropietarioModalStyles } from "../../styles/componentStyles.js";
-import { PropietarioForm } from "../contacts/PropietarioForm.jsx";
+import { ContactForm } from "../contacts/contactForm.jsx";
 
 export function PropietarioModal({ propertyId, onClose, onCrearPropiedad }) {
   const { user } = useAuth();
@@ -122,11 +122,21 @@ export function PropietarioModal({ propertyId, onClose, onCrearPropiedad }) {
 
   if (editMode && editData) {
     return (
-      <PropietarioForm
+      <ContactForm
         initial={editData}
-        onSave={handleSaveEdit}
+        tipoFiltro="propietario"
+        tipoLabel="Propietario"
+        userId={userId}
+        defaultEstadoProp="Captación"
+        onSave={async (payload) => {
+          if (editData?.id) {
+            await supabase.from("contactos").update(payload).eq("id", editData.id);
+          } else {
+            await supabase.from("contactos").insert({ ...payload, tipo: "propietario" });
+          }
+          await handleSaveEdit();
+        }}
         onClose={handleCloseEdit}
-        onCrearPropiedad={handleCrearPropiedadFromForm}
       />
     );
   }
