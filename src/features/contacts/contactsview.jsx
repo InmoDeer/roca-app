@@ -124,7 +124,7 @@ const filtered = filterEstado
           </div>
         )}
         {filtered.map((c) => {
-          const ec = ESTADO_COLORS[c.estado] || ESTADO_COLORS.Nuevo;
+          const ec = ESTADO_COLORS[c.estado] || ESTADO_COLORS.Interesado;
           const text = theme.colors.text;
           const muted = theme.colors.textMuted;
           return (
