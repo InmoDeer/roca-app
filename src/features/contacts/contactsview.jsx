@@ -7,6 +7,7 @@ import {
   updateContact,
   deleteContact,
 } from "../../utils/contactsApi.js";
+import { supabase } from "../../config/supabase.js";
 // Importamos supabase para poder listar las propiedades en el select
 import { supabase } from "../../config/supabase.js";
 
@@ -54,8 +55,32 @@ export function ContactsView({ onBack, theme, mode, user, propertyId = null, pro
 
   const handleSave = async (payload, id) => {
     const enriched = { ...payload, user_id: user?.id, tipo: tipoFiltro };
-    if (id) await updateContact(id, enriched);
-    else await createContact(enriched);
+    
+    if (id) {
+      const oldContact = contacts.find(c => c.id === id);
+      const oldPropiedadId = oldContact?.propiedad_id;
+      const newPropiedadId = payload.propiedad_id;
+      
+      await updateContact(id, enriched);
+      
+      if (tipoFiltro === 'propietario') {
+        if (oldPropiedadId && oldPropiedadId !== newPropiedadId) {
+          await supabase.from("propiedades").update({ propietario_id: null }).eq("id", oldPropiedadId);
+        }
+        if (newPropiedadId && oldPropiedadId !== newPropiedadId) {
+          await supabase.from("propiedades").update({ propietario_id: id }).eq("id", newPropiedadId);
+        }
+      }
+    } else {
+      await createContact(enriched);
+      if (tipoFiltro === 'propietario' && payload.propiedad_id) {
+        const newId = (await supabase.from("contactos").select("id").eq("user_id", user?.id).eq("tipo", "propietario").eq("propiedad_id", payload.propiedad_id).single()).data?.id;
+        if (newId) {
+          await supabase.from("propiedades").update({ propietario_id: newId }).eq("id", payload.propiedad_id);
+        }
+      }
+    }
+    
     await load();
     setShowForm(false);
     setEditTarget(null);
@@ -68,8 +93,18 @@ export function ContactsView({ onBack, theme, mode, user, propertyId = null, pro
   };
 
   const handleChangeEstado = async (id, estado) => {
+    const contacto = contacts.find(c => c.id === id);
+    const oldEstado = contacto?.estado;
+    
     await updateContact(id, { estado });
     setContacts((c) => c.map((x) => x.id === id ? { ...x, estado } : x));
+    
+    if (tipoFiltro === 'propietario' && estado === "Firmado / Cerrado" && contacto?.propiedad_id) {
+      await supabase.from("propiedades").update({ propietario_id: id }).eq("id", contacto.propiedad_id);
+    }
+    if (tipoFiltro === 'propietario' && oldEstado === "Firmado / Cerrado" && estado !== "Firmado / Cerrado" && contacto?.propiedad_id) {
+      await supabase.from("propiedades").update({ propietario_id: null }).eq("id", contacto.propiedad_id);
+    }
   };
 
 const filtered = filterEstado
