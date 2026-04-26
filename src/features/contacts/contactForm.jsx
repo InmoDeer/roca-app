@@ -3,9 +3,7 @@ import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { supabase } from "../../config/supabase.js";
 import { useTheme } from "../../hooks/useTheme.jsx";
-
-const ESTADOS_LEAD = ["Interesado", "Seguimiento", "Visita", "Vendido/Alquilado", "Cerrado"];
-const ESTADOS_PROPIETARIO = ["Captación", "Propuesta/Tasación", "Negociación", "Firmado / Cerrado"];
+import { ESTADOS_LEAD, ESTADOS_PROPIETARIO } from "../../utils/constants";
 
 export function ContactForm({
   initial,

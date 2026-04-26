@@ -10,25 +10,7 @@ import {
   deleteContact,
 } from "../../utils/contactsApi.js";
 import { getClientsViewStyles } from "../../styles/componentStyles.js";
-
-const ESTADOS_LEAD = ["Interesado", "Seguimiento", "Visita", "Vendido/Alquilado", "Cerrado"];
-const ESTADOS_PROPIETARIO = ["Captación", "Propuesta/Tasación", "Negociación", "Firmado / Cerrado"];
-
-const ESTADO_COLORS = {
-  // LEADS
-  Interesado: { bg: "#1a1a1a", text: "#9e8a4b", dot: "#9e8a4b" },
-  Seguimiento: { bg: "#1a1a1a", text: "#c4a44a", dot: "#c4a44a" },
-  Visita: { bg: "#1a1a1a", text: "#d4af37", dot: "#d4af37" },
-  "Vendido/Alquilado": { bg: "#1a1a1a", text: "#00ff88", dot: "#00ff88" },
-  Cerrado: { bg: "#1a1a1a", text: "#666666", dot: "#666666" },
-  // PROPIETARIOS
-  Captación: { bg: "#1a1a1a", text: "#9e8a4b", dot: "#9e8a4b" },
-  "Propuesta/Tasación": { bg: "#1a1a1a", text: "#c4a44a", dot: "#c4a44a" },
-  Negociación: { bg: "#1a1a1a", text: "#e5c04a", dot: "#e5c04a" },
-  "Firmado / Cerrado": { bg: "#1a1a1a", text: "#00ff88", dot: "#00ff88" },
-  // ESTADO GENERAL
-  Descartado: { bg: "#1a1a1a", text: "#555555", dot: "#555555" },
-};
+import { ESTADO_COLORS, ESTADOS_LEAD, ESTADOS_PROPIETARIO } from "../../utils/constants";
 
 export function ContactsView({ onBack, theme, mode, user, propertyId = null, propertyName = null, tipoInicial = 'lead', defaultEstadoLead = 'Interesado', defaultEstadoProp = 'Captación' }) {
   const [contacts, setContacts] = useState([]);
