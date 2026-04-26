@@ -206,6 +206,8 @@ const filtered = filterEstado
           userId={user?.id}
           tipoLabel={tipoLabel}
           tipoFiltro={tipoFiltro}
+          defaultEstadoLead={defaultEstadoLead}
+          defaultEstadoProp={defaultEstadoProp}
         />
       )}
     </div>
@@ -213,7 +215,7 @@ const filtered = filterEstado
 }
 
 
-function ContactForm({ initial, propertyId, onSave, onClose, theme, mode, userId, tipoLabel, tipoFiltro }) {
+function ContactForm({ initial, propertyId, onSave, onClose, theme, mode, userId, tipoLabel, tipoFiltro, defaultEstadoLead = 'Interesado', defaultEstadoProp = 'Captación' }) {
   const defaultEstado = initial?.estado || (tipoFiltro === 'lead' ? defaultEstadoLead : defaultEstadoProp);
   const [form, setForm] = useState({
     nombre: initial?.nombre || "",
