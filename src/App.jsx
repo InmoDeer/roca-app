@@ -179,8 +179,8 @@ function ROCAApp() {
           user={user}
           propertyId={crmPropertyFilter?.id || null}
           propertyName={crmPropertyFilter?.nombre || null}
-          tipoInicial={crmPropertyFilter ? 'propietario' : crmTipoFiltro}
-          defaultEstadoLead={crmPropertyFilter ? "Cerrado" : "Interesado"}
+          tipoInicial={crmTipoFiltro}
+          defaultEstadoLead="Interesado"
           defaultEstadoProp={crmPropertyFilter ? "Cerrado" : "Captación"}
         />
       </div>
