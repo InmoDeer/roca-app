@@ -5,6 +5,7 @@ import { useTheme } from "../../hooks/useTheme";
 import { useAuth } from "../../hooks/useAuth";
 import { getPropietarioModalStyles } from "../../styles/componentStyles.js";
 import { ContactForm } from "./contactForm.jsx";
+import { assignPropietarioToPropiedad, unassignPropietario, createContactAndReturn, updateContact } from "../../utils/contactsApi";
 
 export function PropietarioModal({ propertyId, onClose, onCrearPropiedad }) {
   const { user } = useAuth();
@@ -46,31 +47,12 @@ export function PropietarioModal({ propertyId, onClose, onCrearPropiedad }) {
   }, [propertyId, user]);
 
   const handleAsignar = async () => {
-    await supabase
-      .from("propiedades")
-      .update({ propietario_id: selectedId })
-      .eq("id", propertyId);
-    if (selectedId) {
-      await supabase
-        .from("contactos")
-        .update({ propiedad_id: propertyId })
-        .eq("id", selectedId);
-    }
+    await assignPropietarioToPropiedad(propertyId, selectedId);
     onClose();
   };
 
   const handleDesasignar = async () => {
-    const currentPropietarioId = selectedId;
-    await supabase
-      .from("propiedades")
-      .update({ propietario_id: null })
-      .eq("id", propertyId);
-    if (currentPropietarioId) {
-      await supabase
-        .from("contactos")
-        .update({ propiedad_id: null })
-        .eq("id", currentPropietarioId);
-    }
+    await unassignPropietario(propertyId, selectedId);
     onClose();
   };
 
@@ -130,9 +112,9 @@ export function PropietarioModal({ propertyId, onClose, onCrearPropiedad }) {
         defaultEstadoProp="Captación"
         onSave={async (payload) => {
           if (editData?.id) {
-            await supabase.from("contactos").update(payload).eq("id", editData.id);
+            await updateContact(editData.id, payload);
           } else {
-            await supabase.from("contactos").insert({ ...payload, tipo: "propietario" });
+            await createContactAndReturn({ ...payload, tipo: "propietario", user_id: userId });
           }
           await handleSaveEdit();
         }}

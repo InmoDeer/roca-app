@@ -6,8 +6,11 @@ import {
   fetchContacts,
   fetchContactsByProperty,
   createContact,
+  createContactAndReturn,
   updateContact,
   deleteContact,
+  assignPropietarioToPropiedad,
+  unassignPropietario,
 } from "../../utils/contactsApi.js";
 import { getClientsViewStyles } from "../../styles/componentStyles.js";
 import { ESTADO_COLORS, ESTADOS_LEAD, ESTADOS_PROPIETARIO } from "../../utils/constants";
@@ -45,18 +48,18 @@ export function ContactsView({ onBack, theme, mode, user, propertyId = null, pro
       
       if (tipoFiltro === 'propietario') {
         if (oldPropiedadId && oldPropiedadId !== newPropiedadId) {
-          await supabase.from("propiedades").update({ propietario_id: null }).eq("id", oldPropiedadId);
+          await unassignPropietario(oldPropiedadId, id);
         }
         if (newPropiedadId && oldPropiedadId !== newPropiedadId) {
-          await supabase.from("propiedades").update({ propietario_id: id }).eq("id", newPropiedadId);
+          await assignPropietarioToPropiedad(newPropiedadId, id);
         }
       }
     } else {
       await createContact(enriched);
       if (tipoFiltro === 'propietario' && payload.propiedad_id) {
-        const newId = (await supabase.from("contactos").select("id").eq("user_id", user?.id).eq("tipo", "propietario").eq("propiedad_id", payload.propiedad_id).single()).data?.id;
+        const newId = await createContactAndReturn(enriched);
         if (newId) {
-          await supabase.from("propiedades").update({ propietario_id: newId }).eq("id", payload.propiedad_id);
+          await assignPropietarioToPropiedad(payload.propiedad_id, newId);
         }
       }
     }
@@ -80,10 +83,10 @@ export function ContactsView({ onBack, theme, mode, user, propertyId = null, pro
     setContacts((c) => c.map((x) => x.id === id ? { ...x, estado } : x));
     
     if (tipoFiltro === 'propietario' && estado === "Firmado / Cerrado" && contacto?.propiedad_id) {
-      await supabase.from("propiedades").update({ propietario_id: id }).eq("id", contacto.propiedad_id);
+      await assignPropietarioToPropiedad(contacto.propiedad_id, id);
     }
     if (tipoFiltro === 'propietario' && oldEstado === "Firmado / Cerrado" && estado !== "Firmado / Cerrado" && contacto?.propiedad_id) {
-      await supabase.from("propiedades").update({ propietario_id: null }).eq("id", contacto.propiedad_id);
+      await unassignPropietario(contacto.propiedad_id, id);
     }
   };
 
