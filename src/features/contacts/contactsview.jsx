@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { ArrowLeft, Plus, X, Phone, MessageCircle } from "lucide-react";
+import { supabase } from "../../config/supabase.js";
 import {
   fetchContacts,
   fetchContactsByProperty,
@@ -7,10 +8,6 @@ import {
   updateContact,
   deleteContact,
 } from "../../utils/contactsApi.js";
-import { supabase } from "../../config/supabase.js";
-// Importamos supabase para poder listar las propiedades en el select
-import { supabase } from "../../config/supabase.js";
-
 import { getClientsViewStyles } from "../../styles/componentStyles.js";
 
 const ESTADOS_LEAD = ["Interesado", "Seguimiento", "Visita", "Vendido/Alquilado", "Cerrado"];
