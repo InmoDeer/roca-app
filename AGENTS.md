@@ -31,19 +31,19 @@ src/
 │       └── PublicGallery.jsx
 ├── hooks/
 │   ├── useAuth.js
-│   ├── useProperties.js
-│   ├── useContacts.js     # ← hook CRM
-│   ├── useTheme.jsx
+│   ├── useProperties.js    # CRUD propiedades
+│   ├── useContacts.js     # CRUD contactos (leads + propietarios)
+│   ├── useTheme.jsx        # Tema (t, mode)
 │   └── useSwipeBack.js
 ├── utils/
 │   ├── api.js             # CRUD propiedades
-│   ├── contactsApi.js     # CRUD contactos + asignaciones
-│   ├── cloudinary.js
-│   ├── messageFormatter.js
-│   └── constants.js       # Estados, pipelines, colores
+│   ├── contactsApi.js      # CRUD contactos + funciones de sync
+│   ├── cloudinary.js       # Upload fotos
+│   ├── messageFormatter.js # Generar mensajes WhatsApp
+│   └── constants.js      # Estados, pipelines, colores
 ├── styles/
 │   ├── theme.js           # darkTheme, lightTheme
-│   └── componentStyles.js # Una función por componente
+│   └── componentStyles.js # getPropertyCardStyles, getContactFormStyles, etc.
 ├── config/
 │   └── environment.js
 ├── App.jsx
@@ -100,16 +100,15 @@ src/
 
 ## Pipelines CRM
 
-### Leads (clientes que buscan)
-Interesado → Seguimiento → Visita → Vendido/Alquilado
-+ Cerrado (descarte suave)
+### Leads (clientes que buscan comprar/alquilar)
+Interesado → Seguimiento → Visita → Vendido/Alquilado → Cerrado
 
 ### Propietarios (captación)
 Captación → Propuesta/Tasación → Negociación → Firmado / Cerrado
 
 ### Colores de estado
 - Generados automáticamente por buildEstadoColors(pipeline) en constants.js
-- Gradiente de color oscuro → dorado → verde según avance en el pipeline
+- PIPELINE_LEAD y PIPELINE_PROPIETARIO definen los estados y colores
 - Nunca definir colores de estado fuera de constants.js
 
 ---
@@ -138,3 +137,18 @@ Captación → Propuesta/Tasación → Negociación → Firmado / Cerrado
 - ❌ Colores hardcodeados fuera de theme.js / constants.js
 - ❌ Lógica de fetch fuera de hooks
 - ❌ Duplicar funciones que ya existen en utils
+
+---
+
+## Funciones de estilos disponibles
+
+### componentStyles.js
+| Función | Uso |
+|---------|-----|
+| getPropertyCardStyles | Card de propiedad en lista |
+| getPropertyDetailStyles | Vista detalle de propiedad |
+| getFormStyles | Formulario de propiedad |
+| getClientsViewStyles | Vista CRM (lista de contactos) |
+| getContactFormStyles | Formulario de contacto |
+| getContactCardStyles | Card de contacto (con color por estado) |
+| getPropietarioModalStyles | Modal de asignación de propietario |
