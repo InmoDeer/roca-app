@@ -12,20 +12,26 @@ import { supabase } from "../../config/supabase.js";
 
 import { getClientsViewStyles } from "../../styles/componentStyles.js";
 
-const ESTADOS_LEAD = ["Nuevo", "Contactado", "Visita agendada", "Negociando", "Cerrado"];
-const ESTADOS_PROPIETARIO = ["Activo", "Inactivo", "Cerrado"];
+const ESTADOS_LEAD = ["Interesado", "Seguimiento", "Visita", "Vendido/Alquilado", "Cerrado"];
+const ESTADOS_PROPIETARIO = ["Captación", "Propuesta/Tasación", "Negociación", "Firmado / Cerrado"];
 
 const ESTADO_COLORS = {
- Nuevo: { bg: "#1e3a5f", text: "#60a5fa", dot: "#3b82f6" },
-  Contactado: { bg: "#1e3a2e", text: "#4ade80", dot: "#22c55e" },
-  "Visita agendada": { bg: "#3a2e1e", text: "#fbbf24", dot: "#f59e0b" },
-  Negociando: { bg: "#3a1e2e", text: "#f472b6", dot: "#ec4899" },
-  Cerrado: { bg: "#2e1e1e", text: "#f87171", dot: "#ef4444" },
-  Activo: { bg: "#1e3a2e", text: "#4ade80", dot: "#22c55e" },
-  Inactivo: { bg: "#2e1e1e", text: "#f87171", dot: "#ef4444" },
+  // LEADS
+  Interesado: { bg: "#1a1a1a", text: "#9e8a4b", dot: "#9e8a4b" },
+  Seguimiento: { bg: "#1a1a1a", text: "#c4a44a", dot: "#c4a44a" },
+  Visita: { bg: "#1a1a1a", text: "#d4af37", dot: "#d4af37" },
+  "Vendido/Alquilado": { bg: "#1a1a1a", text: "#00ff88", dot: "#00ff88" },
+  Cerrado: { bg: "#1a1a1a", text: "#666666", dot: "#666666" },
+  // PROPIETARIOS
+  Captación: { bg: "#1a1a1a", text: "#9e8a4b", dot: "#9e8a4b" },
+  "Propuesta/Tasación": { bg: "#1a1a1a", text: "#c4a44a", dot: "#c4a44a" },
+  Negociación: { bg: "#1a1a1a", text: "#e5c04a", dot: "#e5c04a" },
+  "Firmado / Cerrado": { bg: "#1a1a1a", text: "#00ff88", dot: "#00ff88" },
+  // ESTADO GENERAL
+  Descartado: { bg: "#1a1a1a", text: "#555555", dot: "#555555" },
 };
 
-export function ContactsView({ onBack, theme, mode, user, propertyId = null, propertyName = null, tipoInicial = 'lead' }) {
+export function ContactsView({ onBack, theme, mode, user, propertyId = null, propertyName = null, tipoInicial = 'lead', defaultEstadoLead = 'Interesado', defaultEstadoProp = 'Captación' }) {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -208,7 +214,7 @@ const filtered = filterEstado
 
 
 function ContactForm({ initial, propertyId, onSave, onClose, theme, mode, userId, tipoLabel, tipoFiltro }) {
-  const defaultEstado = initial?.estado || (tipoFiltro === 'lead' ? "Nuevo" : "Activo");
+  const defaultEstado = initial?.estado || (tipoFiltro === 'lead' ? defaultEstadoLead : defaultEstadoProp);
   const [form, setForm] = useState({
     nombre: initial?.nombre || "",
     telefono: initial?.telefono || "",

@@ -13,7 +13,7 @@ import { PropietarioModal } from "./PropietarioModal";
  * Property detail component showing full information for admin
  * Displays messages, photos, location, and status management
  */
-export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete, onLeads }) {
+export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete, onLeads, onCrearPropiedad }) {
   const { t, mode } = useTheme(); // ← Obtenemos también 'mode' para fondos adaptables
   const out = buildOutputs(p);
   const ec = ESTADO_COLORS[p.estado] || ESTADO_COLORS.Disponible;
@@ -176,6 +176,7 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete, onLeads 
         <PropietarioModal
           propertyId={p.id}
           onClose={() => setShowPropietarioModal(false)}
+          onCrearPropiedad={onCrearPropiedad}
         />
       )}
     </div>

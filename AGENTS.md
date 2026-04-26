@@ -19,7 +19,7 @@ src/
 │   └── formFields/    # Campos de formulario (Field, Select, Checkbox)
 ├── features/          # Funcionalidades por módulo
 │   ├── properties/   # PropertyForm, PropertyDetail, PublicGallery, PropietarioModal
-│   └── contacts/     # ContactsView (CRM de leads)
+│   └── contacts/     # ContactsView, ContactForm, PropietarioForm (CRM)
 ├── hooks/            # Custom hooks (useAuth, useProperties, useTheme)
 ├── utils/            # Utilidades (api, constants, cloudinary, messageFormatter)
 ├── config/           # Configuración del entorno
@@ -30,6 +30,44 @@ src/
 ├── main.jsx          # Entry point
 └── index.css       # Estilos globales
 ```
+
+## Formularios de la App
+
+| Componente | Ubicación | Propósito |
+|-----------|-----------|-----------|
+| PropertyForm | features/properties/ | Crear/editar propiedades |
+| ContactForm | features/contacts/ | Crear/editar leads |
+| PropietarioForm | features/contacts/ | Crear/editar propietarios |
+
+### PropietarioForm Props
+- `initial`: Contacto existente (para editar)
+- `onSave`: Callback al guardar
+- `onClose`: Callback cerrar
+- `onCrearPropiedad`: Callback para abrir PropertyForm con propietario precargado
+
+## Pipeline de CRM (ContactsView)
+
+### Leads - Estados
+- Interesado: Ya hablaste con él
+- Seguimiento: Le enviaste opciones
+- Visita: Estado CRÍTICO en Real Estate
+- Vendido/Alquilado: ¡Comisión ganada!
+- Cerrado
+
+### Propietarios - Estados
+- Captación: Dueño identificado
+- Propuesta/Tasación: Le diste el precio sugerido
+- Negociación: Ajustando comisión/exclusividad
+- Firmado / Cerrado: YA PUEDES CREAR EL INMUEBLE
+
+### Propiedades del componente
+- `defaultEstadoLead`: Estado inicial para nuevos leads (default: "Interesado")
+- `defaultEstadoProp`: Estado inicial para nuevos propietarios (default: "Captación")
+
+## Relación Propietario-Propiedad
+- `propiedades.propietario_id`: FK a contactos (un propietario puede tener varias propiedades)
+- `contactos.propiedad_id`: FK a propiedades (se guarda al asignar desde PropertyDetail)
+- PropietarioModal actualiza ambas tablas al asignar/desasignar
 
 ## Convenciones de Código
 - Componentes funcionales con Hooks

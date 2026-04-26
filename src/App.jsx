@@ -37,6 +37,7 @@ function ROCAApp() {
   const [crmTipoFiltro, setCrmTipoFiltro] = useState('lead');
   const [publicProperty, setPublicProperty] = useState(null);
   const [publicLoading, setPublicLoading] = useState(false);
+  const [propietarioParaPropiedad, setPropietarioParaPropiedad] = useState(null);
 
   const S = getAppStyles(theme, mode);
 
@@ -53,6 +54,11 @@ function ROCAApp() {
       tour360_url: "",
     };
     setEdit(duplicate);
+    setShowForm(true);
+  };
+
+  const handleCrearPropiedad = (propietarioId) => {
+    setPropietarioParaPropiedad(propietarioId);
     setShowForm(true);
   };
 
@@ -173,7 +179,9 @@ function ROCAApp() {
           user={user}
           propertyId={crmPropertyFilter?.id || null}
           propertyName={crmPropertyFilter?.nombre || null}
-          tipoInicial={crmTipoFiltro}
+          tipoInicial={crmPropertyFilter ? 'propietario' : crmTipoFiltro}
+          defaultEstadoLead={crmPropertyFilter ? "Cerrado" : "Interesado"}
+          defaultEstadoProp={crmPropertyFilter ? "Cerrado" : "Captación"}
         />
       </div>
     );
@@ -194,12 +202,14 @@ function ROCAApp() {
             setCrmPropertyFilter(current);
             setShowCRM(true);
           }}
+          onCrearPropiedad={handleCrearPropiedad}
         />
         {showForm && (
           <PropertyForm
             initial={editTarget}
             onSave={saveProperty}
-            onClose={() => { setShowForm(false); setEdit(null); }}
+            onClose={() => { setShowForm(false); setEdit(null); setPropietarioParaPropiedad(null); }}
+            propietarioId={propietarioParaPropiedad}
           />
         )}
       </div>
@@ -292,13 +302,14 @@ function ROCAApp() {
         })}
       </div>
 
-      {showForm && (
-        <PropertyForm
-          initial={editTarget}
-          onSave={saveProperty}
-          onClose={() => { setShowForm(false); setEdit(null); }}
-        />
-      )}
+{showForm && (
+          <PropertyForm
+            initial={editTarget}
+            onSave={saveProperty}
+            onClose={() => { setShowForm(false); setEdit(null); setPropietarioParaPropiedad(null); }}
+            propietarioId={propietarioParaPropiedad}
+          />
+        )}
     </div>
   );
 }

@@ -1,10 +1,12 @@
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef, useMemo, useEffect } from "react";
 import { Field } from "../../components/formFields/Field";
 import { Select } from "../../components/formFields/Select";
 import { Checkbox } from "../../components/formFields/Checkbox";
 import { uploadToCloudinary, deleteCloudinaryImages } from "../../utils/cloudinary";
 import { useTheme } from "../../hooks/useTheme.jsx";
+import { useAuth } from "../../hooks/useAuth";
 import { getFormStyles } from "../../styles/componentStyles.js";
+import { supabase } from "../../config/supabase";
 import {
   ArrowUp, Armchair, Sparkles, Camera, X, Car, Flame,
   Waves, WashingMachine, DoorOpen, Sun, Box, CookingPot,
@@ -22,8 +24,9 @@ import {
  * Property form component for creating/editing properties
  * Handles photo uploads to Cloudinary, form validation and submission
  */
-export function PropertyForm({ initial, onSave, onClose }) {
+export function PropertyForm({ initial, onSave, onClose, propietarioId }) {
   const { t } = useTheme();
+  const { user } = useAuth();
   const blank = {
     nombre: "",
     tipo: "Departamento",
@@ -78,7 +81,24 @@ export function PropertyForm({ initial, onSave, onClose }) {
   const [draggingIdx, setDraggingIdx] = useState(null);
   const [dragOverIdx, setDragOverIdx] = useState(null);
   const [dragSourceIdx, setDragSourceIdx] = useState(null);
+  const [propietarios, setPropietarios] = useState([]);
+  const [selectedPropietarioId, setSelectedPropietarioId] = useState(initial?.propietario_id || propietarioId || null);
   const fileRef = useRef();
+
+  useEffect(() => {
+    const loadPropietarios = async () => {
+      if (!user?.id) return;
+      const { data } = await supabase
+        .from("contactos")
+        .select("id, nombre, telefono")
+        .eq("tipo", "propietario")
+        .eq("estado", "Firmado / Cerrado")
+        .eq("user_id", user.id)
+        .order("nombre");
+      if (data) setPropietarios(data);
+    };
+    loadPropietarios();
+  }, [user?.id]);
 
   const handlePhotos = async (e) => {
     const files = Array.from(e.target.files);
@@ -198,9 +218,18 @@ export function PropertyForm({ initial, onSave, onClose }) {
         lavanderia: !!form.lavanderia,
         tendal: !!form.tendal,
         destacados_manuales: form.destacados_manuales || [],
+        propietario_id: selectedPropietarioId || null,
       };
 
       await onSave(payload, initial?.id);
+
+      if (selectedPropietarioId) {
+        await supabase
+          .from("contactos")
+          .update({ propiedad_id: initial?.id || null })
+          .eq("id", selectedPropietarioId);
+      }
+
       onClose();
     } finally {
       setSaving(false);
@@ -485,6 +514,35 @@ export function PropertyForm({ initial, onSave, onClose }) {
             setForm={setForm}
             placeholder="opcional"
           />
+
+          {propietarios.length > 0 && (
+            <div style={formStyles.section}>Propietario (opcional)</div>
+          )}
+          {propietarios.length > 0 && (
+            <select
+              style={{
+                width: "100%",
+                padding: "12px 14px",
+                borderRadius: 12,
+                border: `1px solid ${t.colors.border}`,
+                fontSize: 15,
+                boxSizing: "border-box",
+                outline: "none",
+                background: t.colors.bgSecondary,
+                color: t.colors.text,
+                marginBottom: 16,
+              }}
+              value={selectedPropietarioId || ""}
+              onChange={(e) => setSelectedPropietarioId(e.target.value || null)}
+            >
+              <option value="">-- Sin propietario --</option>
+              {propietarios.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.nombre} {p.telefono ? `· ${p.telefono}` : ""}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
 
         <div style={formStyles.footer}>

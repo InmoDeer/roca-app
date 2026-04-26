@@ -11,7 +11,7 @@ ROCA te permite gestionar tus propiedades, generar mensajes profesionales para W
 - **📋 Gestionar inmuebles**: Agrega, edita y organiza todas tus propiedades (departamentos, casas, oficinas).
 - **⚡ Generar mensajes listos para WhatsApp**: Con un solo toque, copia un mensaje atractivo con fotos, características destacadas y ubicación.
 - **🎯 Personalizar automáticamente**: El sistema detecta si el inmueble es familiar, ejecutivo o de lujo y adapta el tono del mensaje.
-- **👥 Seguimiento de contactos: Registra leads interesados y propietarios. Haz seguimiento del estado (Nuevo, Contactado, Visita, Cerrado) y contacta por WhatsApp o llamada con un solo toque.
+- **👥 Seguimiento de contactos (CRM)**: Registra leads interesados y propietarios. Haz seguimiento del estado del pipeline y contacta por WhatsApp o llamada con un solo toque.
 - **🌓 Modo claro / oscuro**: Trabaja cómodo a cualquier hora.
 
 ---
@@ -43,6 +43,24 @@ Encuentra rápido lo que buscas filtrando por:
 - Operación (Alquiler / Venta)
 - Tipo (Departamento, Casa, etc.)
 - Estado
+
+### 📊 Pipeline de Leads y Propietarios
+Organiza tu seguimiento con estados visuales:
+
+**Leads** (clientes que buscan comprar/alquilar):
+- Interesado → Seguimiento → Visita → Vendido/Alquilado → Cerrado
+
+**Propietarios** (seguimiento de captación):
+- Captación → Propuesta/Tasación → Negociación → Firmado / Cerrado
+- Al marcar "Firmado / Cerrado", puedes associate una propiedad directamente
+
+### 🔗 Flujo Propietario → Propiedad
+1. **Captación**: Identifica al propietario
+2. **Propuesta/Tasación**: Le das el precio sugerido
+3. **Negociación**: Ajustas comisión/exclusividad
+4. **Firmado / Cerrado**: ¡Ya puedes crear el inmueble!
+   - Selecciona la propiedad asociada
+   - Click "Crear" → Abre formulario con propietario precargado
 
 ### 🌙 Tema personalizable
 Elige entre modo claro, oscuro o el de tu sistema. Tu preferencia se guarda automáticamente.

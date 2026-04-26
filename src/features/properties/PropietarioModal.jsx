@@ -4,8 +4,9 @@ import { supabase } from "../../config/supabase";
 import { useTheme } from "../../hooks/useTheme";
 import { useAuth } from "../../hooks/useAuth";
 import { getPropietarioModalStyles } from "../../styles/componentStyles.js";
+import { PropietarioForm } from "../contacts/PropietarioForm.jsx";
 
-export function PropietarioModal({ propertyId, onClose }) {
+export function PropietarioModal({ propertyId, onClose, onCrearPropiedad }) {
   const { user } = useAuth();
   const { t } = useTheme();
   const userId = user?.id;
@@ -13,7 +14,7 @@ export function PropietarioModal({ propertyId, onClose }) {
   const [selectedId, setSelectedId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [editMode, setEditMode] = useState(false);
-  const [form, setForm] = useState({ nombre: "", telefono: "" });
+  const [editData, setEditData] = useState(null);
 
   const styles = getPropietarioModalStyles(t);
 
@@ -21,7 +22,6 @@ export function PropietarioModal({ propertyId, onClose }) {
     const load = async () => {
       const userId = user?.id;
       
-      // Get current property owner
       const { data: prop } = await supabase
         .from("propiedades")
         .select("propietario_id")
@@ -29,10 +29,9 @@ export function PropietarioModal({ propertyId, onClose }) {
         .single();
       setSelectedId(prop?.propietario_id || null);
 
-      // Get filtered propietario contacts for this user
       let query = supabase
         .from("contactos")
-        .select("id, nombre, telefono")
+        .select("id, nombre, telefono, estado")
         .eq("tipo", "propietario");
       
       if (userId) {
@@ -46,58 +45,39 @@ export function PropietarioModal({ propertyId, onClose }) {
     load();
   }, [propertyId, user]);
 
-  useEffect(() => {
-    if (selectedId) {
-      const contacto = contactos.find(c => c.id === selectedId);
-      if (contacto) {
-        setForm({ nombre: contacto.nombre, telefono: contacto.telefono || "" });
-      }
-    } else {
-      setForm({ nombre: "", telefono: "" });
-    }
-  }, [selectedId, contactos]);
-
   const handleAsignar = async () => {
     await supabase
       .from("propiedades")
       .update({ propietario_id: selectedId })
       .eq("id", propertyId);
+    if (selectedId) {
+      await supabase
+        .from("contactos")
+        .update({ propiedad_id: propertyId })
+        .eq("id", selectedId);
+    }
     onClose();
   };
 
   const handleDesasignar = async () => {
+    const currentPropietarioId = selectedId;
     await supabase
       .from("propiedades")
       .update({ propietario_id: null })
       .eq("id", propertyId);
+    if (currentPropietarioId) {
+      await supabase
+        .from("contactos")
+        .update({ propiedad_id: null })
+        .eq("id", currentPropietarioId);
+    }
     onClose();
   };
 
-  const handleSaveContact = async () => {
-    if (!form.nombre.trim()) return;
-    
-    const userId = user?.id;
-    
-    if (selectedId) {
-      await supabase.from("contactos").update(form).eq("id", selectedId);
-    } else {
-      const { data, error } = await supabase
-        .from("contactos")
-        .insert({ ...form, tipo: "propietario", user_id: userId })
-        .select("id")
-        .single();
-      if (error) {
-        console.error("Error al crear propietario:", error.message);
-        alert("No se pudo guardar el propietario.");
-        return;
-      }
-      if (data) setSelectedId(data.id);
-    }
-    setEditMode(false);
-    
+  const refreshContactos = async () => {
     let query = supabase
       .from("contactos")
-      .select("id, nombre, telefono")
+      .select("id, nombre, telefono, estado")
       .eq("tipo", "propietario");
     
     if (userId) {
@@ -108,9 +88,48 @@ export function PropietarioModal({ propertyId, onClose }) {
     setContactos(contacts || []);
   };
 
+  const handleEdit = (contacto) => {
+    setEditData(contacto);
+    setEditMode(true);
+  };
+
+  const handleNew = () => {
+    setEditData({ nombre: "", telefono: "", estado: "Captación" });
+    setEditMode(true);
+  };
+
+  const handleSaveEdit = async () => {
+    await refreshContactos();
+    setEditMode(false);
+    setEditData(null);
+  };
+
+  const handleCloseEdit = () => {
+    setEditMode(false);
+    setEditData(null);
+  };
+
+  const handleCrearPropiedadFromForm = (propietarioId) => {
+    if (onCrearPropiedad) {
+      onClose();
+      onCrearPropiedad(propietarioId);
+    }
+  };
+
   const contactoSeleccionado = contactos.find(c => c.id === selectedId);
 
   if (loading) return <div style={styles.modal}>Cargando...</div>;
+
+  if (editMode && editData) {
+    return (
+      <PropietarioForm
+        initial={editData}
+        onSave={handleSaveEdit}
+        onClose={handleCloseEdit}
+        onCrearPropiedad={handleCrearPropiedadFromForm}
+      />
+    );
+  }
 
   return (
     <div style={styles.overlay} onClick={onClose}>
@@ -146,33 +165,8 @@ export function PropietarioModal({ propertyId, onClose }) {
                     </a>
                   </>
                 )}
-                <button onClick={() => setEditMode(true)} style={styles.editBtn}>
+                <button onClick={() => handleEdit(contactoSeleccionado)} style={styles.editBtn}>
                   ✏️ Editar
-                </button>
-              </div>
-            </div>
-          )}
-
-          {editMode && (
-            <div style={styles.editForm}>
-              <input
-                style={styles.input}
-                value={form.nombre}
-                onChange={(e) => setForm(f => ({ ...f, nombre: e.target.value }))}
-                placeholder="Nombre"
-              />
-              <input
-                style={styles.input}
-                value={form.telefono}
-                onChange={(e) => setForm(f => ({ ...f, telefono: e.target.value }))}
-                placeholder="Teléfono"
-              />
-              <div style={styles.editActions}>
-                <button onClick={handleSaveContact} style={styles.saveBtn}>
-                  Guardar
-                </button>
-                <button onClick={() => setEditMode(false)} style={styles.cancelBtn}>
-                  Cancelar
                 </button>
               </div>
             </div>
@@ -188,7 +182,7 @@ export function PropietarioModal({ propertyId, onClose }) {
               >
                 <option value="">-- Seleccionar --</option>
                 {contactos.map(c => (
-                  <option key={c.id} value={c.id}>{c.nombre}</option>
+                  <option key={c.id} value={c.id}>{c.nombre} {c.estado ? `· ${c.estado}` : ""}</option>
                 ))}
               </select>
               <div style={styles.asignarActions}>
@@ -206,7 +200,7 @@ export function PropietarioModal({ propertyId, onClose }) {
                 )}
               </div>
               <button
-                onClick={() => { setSelectedId(null); setEditMode(true); }}
+                onClick={handleNew}
                 style={styles.newBtn}
               >
                 + Crear nuevo propietario
