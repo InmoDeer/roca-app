@@ -1,21 +1,34 @@
-import { useState, useEffect } from "react";
-import { ArrowLeft, Plus, X, Phone, MessageCircle } from "lucide-react";
+import { useState } from "react";
+import { ArrowLeft, X, Phone, MessageCircle } from "lucide-react";
 import { ContactForm } from "./contactForm.jsx";
 import { useContacts } from "../../hooks/useContacts";
+import { useTheme } from "../../hooks/useTheme.jsx";
 import { getClientsViewStyles, getContactCardStyles } from "../../styles/componentStyles.js";
 import { ESTADO_COLORS, ESTADOS_LEAD, ESTADOS_PROPIETARIO } from "../../utils/constants";
 
-export function ContactsView({ onBack, theme, mode, user, propertyId = null, propertyName = null, tipoInicial = 'lead', defaultEstadoLead = 'Interesado', defaultEstadoProp = 'Captación' }) {
-  const [contacts, setContacts] = useState([]);
+export function ContactsView({
+  onBack,
+  user,
+  propertyId = null,
+  propertyName = null,
+  tipoInicial = "lead",
+  defaultEstadoLead = "Interesado",
+  defaultEstadoProp = "Captación",
+}) {
+  const { t, mode } = useTheme();
   const [showForm, setShowForm] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
   const [filterEstado, setFilterEstado] = useState("");
   const [tipoFiltro, setTipoFiltro] = useState(tipoInicial);
-  
-  const { contacts, loading, saveContact, removeContact, changeEstado } = useContacts(user?.id, tipoFiltro, propertyId);
-  
-const tipoLabel = tipoFiltro === 'lead' ? 'Lead' : 'Propietario';
-  const tipoLabelPlural = tipoFiltro === 'lead' ? 'Leads' : 'Propietarios';
+
+  const { contacts, loading, saveContact, removeContact, changeEstado } =
+    useContacts(user?.id, tipoFiltro, propertyId);
+
+  const tipoLabel = tipoFiltro === "lead" ? "Lead" : "Propietario";
+  const tipoLabelPlural = tipoFiltro === "lead" ? "Leads" : "Propietarios";
+  const dynamicEstados = tipoFiltro === "lead" ? ESTADOS_LEAD : ESTADOS_PROPIETARIO;
+
+  const styles = getClientsViewStyles(t, mode);
 
   const handleSave = async (payload, id) => {
     await saveContact(payload, id, tipoFiltro);
@@ -32,31 +45,29 @@ const tipoLabel = tipoFiltro === 'lead' ? 'Lead' : 'Propietario';
     await changeEstado(id, estado, tipoFiltro);
   };
 
-const filtered = filterEstado
+  const filtered = filterEstado
     ? contacts.filter((c) => c.estado === filterEstado)
     : contacts;
 
-  const loadingFinal = loading || contactsLoading;
-
   return (
     <div style={styles.container}>
-      {/* Header */}
       <div style={styles.header}>
         <button onClick={onBack} style={styles.backBtn}>
           <ArrowLeft size={20} strokeWidth={1.5} />
         </button>
         <div style={styles.headerTitle}>
-          {propertyName ? `${tipoLabelPlural} · ${propertyName}` : `CRM · ${tipoLabelPlural}`}
+          {propertyName
+            ? `${tipoLabelPlural} · ${propertyName}`
+            : `CRM · ${tipoLabelPlural}`}
         </div>
         <button
           onClick={() => { setEditTarget(null); setShowForm(true); }}
           style={styles.addBtn}
         >
-+ {tipoLabel}
+          + {tipoLabel}
         </button>
       </div>
 
-      {/* Filtro por estado */}
       <div style={styles.filterContainer}>
         {["", ...dynamicEstados].map((e) => (
           <button
@@ -69,12 +80,12 @@ const filtered = filterEstado
         ))}
       </div>
 
-      {/* Contador */}
       <div style={styles.counter}>
-        {loading ? "Cargando..." : `${filtered.length} ${tipoLabelPlural.toLowerCase()}`}
+        {loading
+          ? "Cargando..."
+          : `${filtered.length} ${tipoLabelPlural.toLowerCase()}`}
       </div>
 
-      {/* Lista */}
       <div style={styles.list}>
         {!loading && filtered.length === 0 && (
           <div style={styles.empty}>
@@ -82,20 +93,19 @@ const filtered = filterEstado
           </div>
         )}
         {filtered.map((c) => {
-const ec = ESTADO_COLORS[c.estado] || ESTADO_COLORS.Interesado;
-          const cardStyles = getContactCardStyles(theme, ec);
+          const ec = ESTADO_COLORS[c.estado] || ESTADO_COLORS.Interesado;
+          const cardStyles = getContactCardStyles(t, ec);
           return (
-            <div
-              key={c.id}
-              style={cardStyles.card}
-            >
+            <div key={c.id} style={cardStyles.card}>
               <div style={cardStyles.cardContent}>
                 <div style={cardStyles.name}>{c.nombre}</div>
-                
                 {!propertyId && c.propiedades && (
                   <div style={cardStyles.property}>
                     🏠 {c.propiedades.nombre || c.propiedades.tipo} · {c.propiedades.distrito}
                   </div>
+                )}
+                {c.nota && (
+                  <div style={cardStyles.note}>{c.nota}</div>
                 )}
               </div>
 
@@ -103,16 +113,16 @@ const ec = ESTADO_COLORS[c.estado] || ESTADO_COLORS.Interesado;
                 {c.telefono && (
                   <>
                     <a
-                      href={`https://wa.me/${c.telefono.replace(/\D/g, '')}`}
+                      href={`https://wa.me/${c.telefono.replace(/\D/g, "")}`}
                       target="_blank"
                       rel="noreferrer"
-                      style={{ ...styles.waBtn, padding: '6px 8px' }}
+                      style={styles.waBtn}
                     >
                       <MessageCircle size={14} strokeWidth={1.5} />
                     </a>
                     <a
-                      href={`tel:${c.telefono.replace(/\D/g, '')}`}
-                      style={{ ...styles.telBtn, padding: '6px 8px' }}
+                      href={`tel:${c.telefono.replace(/\D/g, "")}`}
+                      style={styles.telBtn}
                     >
                       <Phone size={14} strokeWidth={1.5} />
                     </a>
@@ -120,30 +130,22 @@ const ec = ESTADO_COLORS[c.estado] || ESTADO_COLORS.Interesado;
                 )}
                 <button
                   onClick={() => { setEditTarget(c); setShowForm(true); }}
-                  style={{ ...styles.actionBtn, padding: '6px 8px' }}
+                  style={styles.actionBtn}
                 >
                   ✏️
-                  </button>
-                  <button
-                    onClick={() => handleDelete(c.id)}
-                    style={{ ...styles.deleteBtn, padding: '6px 8px' }}
-                  >
-                    <X size={14} strokeWidth={2} />
-                  </button>
-                </div>
+                </button>
+                <button
+                  onClick={() => handleDelete(c.id)}
+                  style={styles.deleteBtn}
+                >
+                  <X size={14} strokeWidth={2} />
+                </button>
               </div>
-
-              {c.nota && (
-                <div style={cardStyles.note}>
-                  {c.nota}
-                </div>
-              )}
             </div>
           );
         })}
       </div>
 
-      {/* Form modal */}
       {showForm && (
         <ContactForm
           initial={editTarget}
