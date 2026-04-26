@@ -1,102 +1,42 @@
 import { useState, useEffect } from "react";
 import { ArrowLeft, Plus, X, Phone, MessageCircle } from "lucide-react";
-import { supabase } from "../../config/supabase.js";
 import { ContactForm } from "./contactForm.jsx";
-import {
-  fetchContacts,
-  fetchContactsByProperty,
-  createContact,
-  createContactAndReturn,
-  updateContact,
-  deleteContact,
-  assignPropietarioToPropiedad,
-  unassignPropietario,
-} from "../../utils/contactsApi.js";
+import { useContacts } from "../../hooks/useContacts";
 import { getClientsViewStyles, getContactCardStyles } from "../../styles/componentStyles.js";
 import { ESTADO_COLORS, ESTADOS_LEAD, ESTADOS_PROPIETARIO } from "../../utils/constants";
 
 export function ContactsView({ onBack, theme, mode, user, propertyId = null, propertyName = null, tipoInicial = 'lead', defaultEstadoLead = 'Interesado', defaultEstadoProp = 'Captación' }) {
   const [contacts, setContacts] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
   const [filterEstado, setFilterEstado] = useState("");
   const [tipoFiltro, setTipoFiltro] = useState(tipoInicial);
-  const tipoLabel = tipoFiltro === 'lead' ? 'Lead' : 'Propietario';
+  
+  const { contacts, loading, saveContact, removeContact, changeEstado } = useContacts(user?.id, tipoFiltro, propertyId);
+  
+const tipoLabel = tipoFiltro === 'lead' ? 'Lead' : 'Propietario';
   const tipoLabelPlural = tipoFiltro === 'lead' ? 'Leads' : 'Propietarios';
 
-  const load = async () => {
-    setLoading(true);
-    const data = propertyId
-      ? await fetchContactsByProperty(propertyId, user?.id, tipoFiltro)
-      : await fetchContacts(user?.id, tipoFiltro);
-    setContacts(data);
-    setLoading(false);
-  };
-
-  useEffect(() => { load(); }, [propertyId, user?.id, tipoFiltro]);
-
   const handleSave = async (payload, id) => {
-    const enriched = { ...payload, user_id: user?.id, tipo: tipoFiltro };
-    
-    if (id) {
-      const oldContact = contacts.find(c => c.id === id);
-      const oldPropiedadId = oldContact?.propiedad_id;
-      const newPropiedadId = payload.propiedad_id;
-      
-      await updateContact(id, enriched);
-      
-      if (tipoFiltro === 'propietario') {
-        if (oldPropiedadId && oldPropiedadId !== newPropiedadId) {
-          await unassignPropietario(oldPropiedadId, id);
-        }
-        if (newPropiedadId && oldPropiedadId !== newPropiedadId) {
-          await assignPropietarioToPropiedad(newPropiedadId, id);
-        }
-      }
-    } else {
-      await createContact(enriched);
-      if (tipoFiltro === 'propietario' && payload.propiedad_id) {
-        const newId = await createContactAndReturn(enriched);
-        if (newId) {
-          await assignPropietarioToPropiedad(payload.propiedad_id, newId);
-        }
-      }
-    }
-    
-    await load();
+    await saveContact(payload, id, tipoFiltro);
     setShowForm(false);
     setEditTarget(null);
   };
 
   const handleDelete = async (id) => {
     if (!confirm(`¿Eliminar este ${tipoLabel}?`)) return;
-    await deleteContact(id);
-    setContacts((c) => c.filter((x) => x.id !== id));
+    await removeContact(id);
   };
 
   const handleChangeEstado = async (id, estado) => {
-    const contacto = contacts.find(c => c.id === id);
-    const oldEstado = contacto?.estado;
-    
-    await updateContact(id, { estado });
-    setContacts((c) => c.map((x) => x.id === id ? { ...x, estado } : x));
-    
-    if (tipoFiltro === 'propietario' && estado === "Firmado / Cerrado" && contacto?.propiedad_id) {
-      await assignPropietarioToPropiedad(contacto.propiedad_id, id);
-    }
-    if (tipoFiltro === 'propietario' && oldEstado === "Firmado / Cerrado" && estado !== "Firmado / Cerrado" && contacto?.propiedad_id) {
-      await unassignPropietario(contacto.propiedad_id, id);
-    }
+    await changeEstado(id, estado, tipoFiltro);
   };
 
 const filtered = filterEstado
     ? contacts.filter((c) => c.estado === filterEstado)
     : contacts;
 
-  const dynamicEstados = tipoFiltro === 'lead' ? ESTADOS_LEAD : ESTADOS_PROPIETARIO;
-
-  const styles = getClientsViewStyles(theme, mode);
+  const loadingFinal = loading || contactsLoading;
 
   return (
     <div style={styles.container}>
