@@ -62,6 +62,14 @@ function ROCAApp() {
     setShowForm(true);
   };
 
+  const handleRefreshProperty = async () => {
+    if (!selected?.id) return;
+    const refreshed = await fetchPropertyById(selected.id);
+    if (refreshed) {
+      setSelected(refreshed);
+    }
+  };
+
   const filtered = useMemo(() => {
     const result = properties.filter((p) => {
       const q = filters.q.toLowerCase();
@@ -203,6 +211,7 @@ function ROCAApp() {
             setShowCRM(true);
           }}
           onCrearPropiedad={handleCrearPropiedad}
+          onRefresh={handleRefreshProperty}
         />
         {showForm && (
           <PropertyForm
