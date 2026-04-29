@@ -104,12 +104,13 @@ export function PropietarioModal({ propertyId, onClose, onCrearPropiedad }) {
 
   if (editMode && editData) {
     return (
-      <ContactForm
-        initial={editData}
-        tipoFiltro="propietario"
-        tipoLabel="Propietario"
-        userId={userId}
-        defaultEstadoProp="Captación"
+<ContactForm
+          initial={editData}
+          propertyId={propertyId}
+          tipoFiltro="propietario"
+          tipoLabel="Propietario"
+          userId={userId}
+          defaultEstadoProp="Firmado"
         onSave={async (payload) => {
           if (editData?.id) {
             await updateContact(editData.id, payload);
