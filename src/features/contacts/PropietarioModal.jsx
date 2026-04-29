@@ -119,6 +119,7 @@ export function PropietarioModal({ propertyId, onClose, onCrearPropiedad, onRefr
           } else {
             const nuevoId = await createContactAndReturn({ ...payloadCompleto, tipo: "propietario", user_id: userId });
             await assignPropietarioToPropiedad(propertyId, nuevoId);
+            setSelectedId(nuevoId);
             onRefresh?.();
           }
           await handleSaveEdit();
