@@ -72,10 +72,10 @@ export function useContacts(userId, tipo = null, propertyId = null) {
     await updateContact(id, { estado });
     setContacts((cs) => cs.map((c) => c.id === id ? { ...c, estado } : c));
     
-    if (tipoFiltro === 'propietario' && estado === "Firmado / Cerrado" && contacto?.propiedad_id) {
+    if (tipoFiltro === 'propietario' && estado === "Cerrado" && contacto?.propiedad_id) {
       await assignPropietarioToPropiedad(contacto.propiedad_id, id);
     }
-    if (tipoFiltro === 'propietario' && oldEstado === "Firmado / Cerrado" && estado !== "Firmado / Cerrado" && contacto?.propiedad_id) {
+    if (tipoFiltro === 'propietario' && oldEstado === "Cerrado" && estado !== "Cerrado" && contacto?.propiedad_id) {
       await unassignPropietario(contacto.propiedad_id, id);
     }
   };

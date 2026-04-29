@@ -92,7 +92,7 @@ export function PropertyForm({ initial, onSave, onClose, propietarioId }) {
         .from("contactos")
         .select("id, nombre, telefono")
         .eq("tipo", "propietario")
-        .eq("estado", "Firmado / Cerrado")
+        .eq("estado", "Cerrado")
         .eq("user_id", user.id)
         .order("nombre");
       if (data) setPropietarios(data);

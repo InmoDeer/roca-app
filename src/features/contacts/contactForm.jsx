@@ -13,7 +13,7 @@ export function ContactForm({
   tipoLabel,
   hideEstado = false,
   defaultEstadoLead = "Interesado",
-  defaultEstadoProp = "Captación",
+  defaultEstadoProp = "Contactado",
   onSave,
   onClose,
   userId,

@@ -76,7 +76,7 @@ export function PropietarioModal({ propertyId, onClose, onCrearPropiedad, onRefr
   };
 
   const handleNew = () => {
-    setEditData({ nombre: "", telefono: "", estado: "Captación" });
+    setEditData({ nombre: "", telefono: "", estado: "Contactado" });
     setEditMode(true);
   };
 
@@ -110,10 +110,10 @@ export function PropietarioModal({ propertyId, onClose, onCrearPropiedad, onRefr
           tipoFiltro="propietario"
           tipoLabel="Propietario"
           userId={userId}
-          defaultEstadoProp="Firmado / Cerrado"
+          defaultEstadoProp="Cerrado"
           hideEstado={true}
         onSave={async (payload) => {
-          const payloadCompleto = { ...payload, estado: "Firmado / Cerrado", propiedad_id: propertyId };
+          const payloadCompleto = { ...payload, estado: "Cerrado", propiedad_id: propertyId };
           if (editData?.id) {
             await updateContact(editData.id, payloadCompleto);
           } else {

@@ -13,7 +13,7 @@ export function ContactsView({
   propertyName = null,
   tipoInicial = "lead",
   defaultEstadoLead = "Interesado",
-  defaultEstadoProp = "Captación",
+  defaultEstadoProp = "Contactado",
 }) {
   const { t, mode } = useTheme();
   const [showForm, setShowForm] = useState(false);
