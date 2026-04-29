@@ -7,7 +7,7 @@ import { getPropietarioModalStyles } from "../../styles/componentStyles.js";
 import { ContactForm } from "./contactForm.jsx";
 import { assignPropietarioToPropiedad, unassignPropietario, createContactAndReturn, updateContact } from "../../utils/contactsApi";
 
-export function PropietarioModal({ propertyId, onClose, onCrearPropiedad }) {
+export function PropietarioModal({ propertyId, onClose, onCrearPropiedad, onRefresh }) {
   const { user } = useAuth();
   const { t } = useTheme();
   const userId = user?.id;
@@ -119,6 +119,7 @@ export function PropietarioModal({ propertyId, onClose, onCrearPropiedad }) {
           } else {
             const nuevoId = await createContactAndReturn({ ...payloadCompleto, tipo: "propietario", user_id: userId });
             await assignPropietarioToPropiedad(propertyId, nuevoId);
+            onRefresh?.();
           }
           await handleSaveEdit();
         }}

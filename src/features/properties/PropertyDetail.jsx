@@ -177,6 +177,7 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete, onLeads,
           propertyId={p.id}
           onClose={() => { setShowPropietarioModal(false); onRefresh?.(); }}
           onCrearPropiedad={onCrearPropiedad}
+          onRefresh={onRefresh}
         />
       )}
     </div>
