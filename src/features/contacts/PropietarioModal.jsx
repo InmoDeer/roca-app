@@ -113,10 +113,12 @@ export function PropietarioModal({ propertyId, onClose, onCrearPropiedad }) {
           defaultEstadoProp="Firmado / Cerrado"
           hideEstado={true}
         onSave={async (payload) => {
+          const payloadCompleto = { ...payload, estado: "Firmado / Cerrado", propiedad_id: propertyId };
           if (editData?.id) {
-            await updateContact(editData.id, payload);
+            await updateContact(editData.id, payloadCompleto);
           } else {
-            await createContactAndReturn({ ...payload, tipo: "propietario", user_id: userId });
+            const nuevoId = await createContactAndReturn({ ...payloadCompleto, tipo: "propietario", user_id: userId });
+            await assignPropietarioToPropiedad(propertyId, nuevoId);
           }
           await handleSaveEdit();
         }}
