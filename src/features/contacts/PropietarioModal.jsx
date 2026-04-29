@@ -110,7 +110,8 @@ export function PropietarioModal({ propertyId, onClose, onCrearPropiedad }) {
           tipoFiltro="propietario"
           tipoLabel="Propietario"
           userId={userId}
-          defaultEstadoProp="Firmado"
+          defaultEstadoProp="Firmado / Cerrado"
+          hideEstado={true}
         onSave={async (payload) => {
           if (editData?.id) {
             await updateContact(editData.id, payload);

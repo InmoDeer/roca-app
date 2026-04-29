@@ -11,6 +11,7 @@ export function ContactForm({
   propertyId,
   tipoFiltro,
   tipoLabel,
+  hideEstado = false,
   defaultEstadoLead = "Interesado",
   defaultEstadoProp = "Captación",
   onSave,
@@ -102,6 +103,7 @@ export function ContactForm({
             </div>
           )}
 
+          {!hideEstado && (
           <div>
             <label style={S.label}>Estado</label>
             <select
@@ -114,6 +116,7 @@ export function ContactForm({
               ))}
             </select>
           </div>
+          )}
 
           <div>
             <label style={S.label}>Nota</label>
