@@ -1,7 +1,7 @@
 import { createContext, useContext, useCallback, useState } from "react";
 import * as Toast from "@radix-ui/react-toast";
 import { CheckCircle2, XCircle, Info, AlertTriangle } from "lucide-react";
-import { useTheme } from "../hooks/useTheme.jsx";
+import { useTheme } from "../../hooks/useTheme.jsx";
 
 const ToastContext = createContext(null);
 
