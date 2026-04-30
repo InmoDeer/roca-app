@@ -1,8 +1,7 @@
 import { MoreVertical, PencilLine, Trash2, Copy } from "lucide-react";
-import { getEstadoDisplay } from "../utils/constants";
 import { useTheme } from "../hooks/useTheme.jsx";
-import { useStatus } from "../hooks/useStatus.js";
 import { getPropertyCardStyles } from "../styles/componentStyles.js";
+import { useStatus } from "../hooks/useStatus.js";
 
 /**
  * PropertyCard - Tarjeta individual de propiedad en la lista
@@ -24,10 +23,7 @@ export function PropertyCard({
   const styles = getPropertyCardStyles(t, ec);
 
   return (
-    <div
-      style={styles.card}
-      onClick={onClick}
-    >
+    <div style={styles.card} onClick={onClick}>
       <div style={styles.cardMain}>
         <div style={styles.cardLeft}>
           <div style={styles.cardName}>{property.nombre}</div>
@@ -36,11 +32,6 @@ export function PropertyCard({
         </div>
 
         <div style={styles.cardRight} onClick={(e) => e.stopPropagation()}>
-          <span style={styles.statusBadge(ec)}>
-            <span style={styles.statusDot(ec)} />
-            {getEstadoDisplay(property.estado, property.operacion)}
-          </span>
-          
           {isMenuOpen && (
             <div style={styles.dropdown} onClick={(e) => e.stopPropagation()}>
               <button 
