@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { useAuth } from "./hooks/useAuth";
 import { useProperties } from "./hooks/useProperties";
 import { ThemeProvider, useTheme } from "./hooks/useTheme.jsx";
-import { ToastProvider } from "./hooks/useToast.js";
+import { ToastProvider } from "./components/ui/ToastProvider.jsx";
 import { PropertyForm } from "./features/properties/PropertyForm.jsx";
 import { PropertyDetail } from "./features/properties/PropertyDetail.jsx";
 import { PublicGallery } from "./features/properties/PublicGallery.jsx";
