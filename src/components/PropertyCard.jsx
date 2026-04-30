@@ -21,7 +21,7 @@ export function PropertyCard({
   const isMenuOpen = openMenu === property.id;
   const ec = useStatus(property.estado, "property", "solid");
 
-  const styles = getPropertyCardStyles(t);
+  const styles = getPropertyCardStyles(t, ec);
 
   return (
     <div

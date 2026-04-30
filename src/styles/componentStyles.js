@@ -54,11 +54,12 @@ export function focusRing(color = "#d4af37", width = 2) {
 /**
  * Estilos para PropertyCard
  */
-export const getPropertyCardStyles = (t) => ({
+export const getPropertyCardStyles = (t, ec) => ({
   card: {
     background: t.colors.bgCard,
     borderRadius: 16,
     border: `1px solid ${t.colors.border}`,
+    borderLeft: `4px solid ${ec.dot}`,
     position: "relative",
     transition: "all 0.2s ease",
     cursor: "pointer",
