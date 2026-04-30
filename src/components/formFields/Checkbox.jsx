@@ -1,3 +1,4 @@
+import { Check } from "lucide-react";
 import { useTheme } from "../../hooks/useTheme.jsx";
 
 /**
@@ -23,7 +24,7 @@ export function Checkbox({ label, k, form, setForm, icon: Icon }) {
         background: isChecked ? "linear-gradient(135deg, #d4af37 0%, #b8962e 100%)" : t.colors.bgSecondary,
         borderColor: isChecked ? "#d4af37" : t.colors.border,
       }}>
-        {isChecked && <span style={styles.check}>✓</span>}
+        {isChecked && <Check size={14} strokeWidth={2.5} style={{ color: "#0a0a0a" }} />}
       </span>
       {Icon && (
         <span style={styles.icon}>
