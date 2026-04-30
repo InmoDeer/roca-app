@@ -1342,6 +1342,95 @@ export const getPropietarioModalStyles = (t) => {
   };
 };
 
+/**
+ * Estilos para RocaDialog
+ */
+export const getDialogStyles = (t, mode, variant = "bottom") => {
+  return {
+    overlay: {
+      position: "fixed",
+      inset: 0,
+      background: "rgba(0,0,0,0.6)",
+      backdropFilter: "blur(4px)",
+      zIndex: 100,
+      animation: "fadeIn 0.2s ease",
+    },
+    content: variant === "bottom" ? {
+      position: "fixed",
+      bottom: 0,
+      left: "50%",
+      transform: "translateX(-50%)",
+      width: "100%",
+      maxWidth: 480,
+      maxHeight: "92vh",
+      background: mode === "dark" ? t.colors.bgCard : "#ffffff",
+      borderRadius: "20px 20px 0 0",
+      display: "flex",
+      flexDirection: "column",
+      zIndex: 101,
+      animation: "slideUp 0.3s ease",
+      fontFamily: t.fonts.family,
+      outline: "none",
+    } : {
+      position: "fixed",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      width: "calc(100% - 32px)",
+      maxWidth: 420,
+      maxHeight: "85vh",
+      background: mode === "dark" ? t.colors.bgCard : "#ffffff",
+      borderRadius: t.radius.xl,
+      display: "flex",
+      flexDirection: "column",
+      zIndex: 101,
+      animation: "scaleIn 0.2s ease",
+      fontFamily: t.fonts.family,
+      outline: "none",
+      boxShadow: mode === "dark"
+        ? "0 24px 64px rgba(0,0,0,0.6)"
+        : "0 24px 64px rgba(0,0,0,0.15)",
+    },
+    header: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: "18px 20px",
+      borderBottom: `1px solid ${t.colors.border}`,
+      flexShrink: 0,
+    },
+    title: {
+      fontWeight: 800,
+      fontSize: 17,
+      color: t.colors.text,
+      margin: 0,
+    },
+    closeBtn: {
+      background: "none",
+      border: "none",
+      cursor: "pointer",
+      color: t.colors.textMuted,
+      padding: 4,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: t.radius.sm,
+    },
+    body: {
+      overflowY: "auto",
+      padding: "16px 20px",
+      flex: 1,
+    },
+    footer: {
+      display: "flex",
+      gap: 10,
+      padding: "14px 20px",
+      borderTop: `1px solid ${t.colors.border}`,
+      flexShrink: 0,
+    },
+  };
+};
+
 // =====================
 // Contact Form Styles
 // =====================
