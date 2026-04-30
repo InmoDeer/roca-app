@@ -7,6 +7,7 @@ import { useTheme } from "../../hooks/useTheme.jsx";
 import { useAuth } from "../../hooks/useAuth";
 import { getFormStyles } from "../../styles/componentStyles.js";
 import { supabase } from "../../config/supabase";
+import { RocaDialog } from "../../components/ui/dialog.jsx";
 import {
   ArrowUp, Armchair, Sparkles, Camera, X, Car, Flame,
   Waves, WashingMachine, DoorOpen, Sun, Box, CookingPot,
@@ -237,17 +238,23 @@ export function PropertyForm({ initial, onSave, onClose, propietarioId }) {
   };
 
   return (
-    <div style={formStyles.overlay} onClick={onClose}>
-      <div style={formStyles.modal} onClick={(e) => e.stopPropagation()}>
-        <div style={formStyles.header}>
-          <span style={formStyles.title}>
-            {initial ? "Editar propiedad" : "Nueva propiedad"}
-          </span>
-          <button onClick={onClose} style={formStyles.closeBtn}>
-            <X size={20} strokeWidth={1.5} />
+    <RocaDialog
+      open={true}
+      onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}
+      title={initial ? "Editar propiedad" : "Nueva propiedad"}
+      variant="bottom"
+      footer={
+        <>
+          <button onClick={onClose} style={formStyles.cancelBtn}>
+            Cancelar
           </button>
-        </div>
-        <div style={formStyles.body}>
+          <button onClick={handleSave} disabled={saving} style={formStyles.saveBtn}>
+            {saving ? "Guardando..." : initial ? "Guardar cambios" : "Crear inmueble"}
+          </button>
+        </>
+      }
+    >
+      <div style={formStyles.body}>
           <div style={formStyles.section}>General</div>
           <Field
             label="Nombre*"
@@ -544,17 +551,7 @@ export function PropertyForm({ initial, onSave, onClose, propietarioId }) {
             </select>
           )}
         </div>
-
-        <div style={formStyles.footer}>
-          <button onClick={onClose} style={formStyles.cancelBtn}>
-            Cancelar
-          </button>
-          <button onClick={handleSave} disabled={saving} style={formStyles.saveBtn}>
-            {saving ? "Guardando..." : initial ? "Guardar cambios" : "Crear inmueble"}
-          </button>
-        </div>
-      </div>
-    </div>
+    </RocaDialog>
   );
 }
 

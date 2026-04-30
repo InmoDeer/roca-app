@@ -1,6 +1,7 @@
 import { MoreVertical, PencilLine, Trash2, Copy } from "lucide-react";
 import { getEstadoDisplay } from "../utils/constants";
 import { useTheme } from "../hooks/useTheme.jsx";
+import { useStatus } from "../hooks/useStatus.js";
 import { getPropertyCardStyles } from "../styles/componentStyles.js";
 
 /**
@@ -9,7 +10,6 @@ import { getPropertyCardStyles } from "../styles/componentStyles.js";
 export function PropertyCard({ 
   property, 
   out, 
-  ec, 
   onClick, 
   onEdit, 
   onDelete, 
@@ -19,6 +19,7 @@ export function PropertyCard({
 }) {
   const { t } = useTheme();
   const isMenuOpen = openMenu === property.id;
+  const ec = useStatus(property.estado, "property", "solid");
 
   const styles = getPropertyCardStyles(t);
 

@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { X, Phone, MessageCircle } from "lucide-react";
+import { Phone, MessageCircle } from "lucide-react";
 import { supabase } from "../../config/supabase";
 import { useTheme } from "../../hooks/useTheme";
 import { useAuth } from "../../hooks/useAuth";
 import { getPropietarioModalStyles } from "../../styles/componentStyles.js";
 import { ContactForm } from "./contactForm.jsx";
 import { assignPropietarioToPropiedad, unassignPropietario, createContactAndReturn, updateContact } from "../../utils/contactsApi";
+import { RocaDialog } from "../../components/ui/dialog.jsx";
 
 export function PropietarioModal({ propertyId, onClose, onCrearPropiedad, onRefresh }) {
   const { user } = useAuth();
@@ -130,83 +131,81 @@ export function PropietarioModal({ propertyId, onClose, onCrearPropiedad, onRefr
   }
 
   return (
-    <div style={styles.overlay} onClick={onClose}>
-      <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <div style={styles.header}>
-          <span style={styles.title}>Propietario</span>
-          <button onClick={onClose} style={styles.closeBtn}><X size={20} /></button>
-        </div>
-
-        <div style={styles.body}>
-          {!editMode && contactoSeleccionado && (
-            <div style={styles.infoCard}>
-              <div style={styles.infoName}>{contactoSeleccionado.nombre}</div>
+    <RocaDialog
+      open={true}
+      onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}
+      title="Propietario"
+      variant="bottom"
+    >
+      <div style={styles.body}>
+        {!editMode && contactoSeleccionado && (
+          <div style={styles.infoCard}>
+            <div style={styles.infoName}>{contactoSeleccionado.nombre}</div>
+            {contactoSeleccionado.telefono && (
+              <div style={styles.infoPhone}>{contactoSeleccionado.telefono}</div>
+            )}
+            <div style={styles.actionRow}>
               {contactoSeleccionado.telefono && (
-                <div style={styles.infoPhone}>{contactoSeleccionado.telefono}</div>
+                <>
+                  <a
+                    href={`https://wa.me/${contactoSeleccionado.telefono.replace(/\D/g, '')}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={styles.waBtn}
+                  >
+                    <MessageCircle size={18} /> WhatsApp
+                  </a>
+                  <a
+                    href={`tel:${contactoSeleccionado.telefono.replace(/\D/g, '')}`}
+                    style={styles.telBtn}
+                  >
+                    <Phone size={18} /> Llamar
+                  </a>
+                </>
               )}
-              <div style={styles.actionRow}>
-                {contactoSeleccionado.telefono && (
-                  <>
-                    <a
-                      href={`https://wa.me/${contactoSeleccionado.telefono.replace(/\D/g, '')}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      style={styles.waBtn}
-                    >
-                      <MessageCircle size={18} /> WhatsApp
-                    </a>
-                    <a
-                      href={`tel:${contactoSeleccionado.telefono.replace(/\D/g, '')}`}
-                      style={styles.telBtn}
-                    >
-                      <Phone size={18} /> Llamar
-                    </a>
-                  </>
-                )}
-                <button onClick={() => handleEdit(contactoSeleccionado)} style={styles.editBtn}>
-                  ✏️ Editar
-                </button>
-              </div>
-            </div>
-          )}
-
-          {!editMode && (
-            <>
-              <div style={styles.sectionTitle}>Asignar propietario</div>
-              <select
-                style={styles.select}
-                value={selectedId || ""}
-                onChange={(e) => setSelectedId(e.target.value || null)}
-              >
-                <option value="">-- Seleccionar --</option>
-                {contactos.map(c => (
-                  <option key={c.id} value={c.id}>{c.nombre} {c.estado ? `· ${c.estado}` : ""}</option>
-                ))}
-              </select>
-              <div style={styles.asignarActions}>
-                <button
-                  onClick={handleAsignar}
-                  style={styles.asignarBtn}
-                  disabled={!selectedId}
-                >
-                  Asignar
-                </button>
-                {selectedId && (
-                  <button onClick={handleDesasignar} style={styles.desasignarBtn}>
-                    Desasignar
-                  </button>
-                )}
-              </div>
-              <button
-                onClick={handleNew}
-                style={styles.newBtn}
-              >
-                + Crear nuevo propietario
+              <button onClick={() => handleEdit(contactoSeleccionado)} style={styles.editBtn}>
+                Editar
               </button>
-            </>
-          )}
-        </div>
+            </div>
+          </div>
+        )}
+
+        {!editMode && (
+          <>
+            <div style={styles.sectionTitle}>Asignar propietario</div>
+            <select
+              style={styles.select}
+              value={selectedId || ""}
+              onChange={(e) => setSelectedId(e.target.value || null)}
+            >
+              <option value="">-- Seleccionar --</option>
+              {contactos.map(c => (
+                <option key={c.id} value={c.id}>{c.nombre} {c.estado ? `· ${c.estado}` : ""}</option>
+              ))}
+            </select>
+            <div style={styles.asignarActions}>
+              <button
+                onClick={handleAsignar}
+                style={styles.asignarBtn}
+                disabled={!selectedId}
+              >
+                Asignar
+              </button>
+              {selectedId && (
+                <button onClick={handleDesasignar} style={styles.desasignarBtn}>
+                  Desasignar
+                </button>
+              )}
+            </div>
+            <button
+              onClick={handleNew}
+              style={styles.newBtn}
+            >
+              + Crear nuevo propietario
+            </button>
+          </>
+        )}
       </div>
-    </div>
+    </RocaDialog>
   );
 }

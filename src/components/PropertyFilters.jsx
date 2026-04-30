@@ -1,5 +1,6 @@
 import { Search } from "lucide-react";
 import { useTheme } from "../hooks/useTheme.jsx";
+import { RocaSelect } from "./ui/select.jsx";
 
 /**
  * PropertyFilters - Componente de búsqueda y filtros
@@ -85,23 +86,27 @@ export function PropertyFilters({ filters, setFilters, loading, filteredCount })
 
       {/* Filtros */}
       <div style={styles.filterRow}>
-        {[
-          { k: "operacion", opts: ["Venta", "Alquiler"], label: "Operación" },
-          { k: "tipo", opts: ["Departamento", "Casa", "Local", "Oficina", "Terreno"], label: "Tipo" },
-          { k: "estado", opts: ["Disponible", "Reservado", "Cerrado"], label: "Estado" },
-        ].map(({ k, opts, label }) => (
-          <select
-            key={k}
-            style={styles.filterSelect}
-            value={filters[k]}
-            onChange={(e) => setFilters((f) => ({ ...f, [k]: e.target.value }))}
-          >
-            <option value="" style={{ color: t.colors.textMuted }}>{label}</option>
-            {opts.map((o) => (
-              <option key={o} value={o} style={{ color: t.colors.text }}>{o}</option>
-            ))}
-          </select>
-        ))}
+        <RocaSelect
+          label=""
+          value={filters.operacion}
+          onValueChange={(v) => setFilters((f) => ({ ...f, operacion: v }))}
+          options={["Venta", "Alquiler"]}
+          placeholder="Operación"
+        />
+        <RocaSelect
+          label=""
+          value={filters.tipo}
+          onValueChange={(v) => setFilters((f) => ({ ...f, tipo: v }))}
+          options={["Departamento", "Casa", "Local", "Oficina", "Terreno"]}
+          placeholder="Tipo"
+        />
+        <RocaSelect
+          label=""
+          value={filters.estado}
+          onValueChange={(v) => setFilters((f) => ({ ...f, estado: v }))}
+          options={["Disponible", "Reservado", "Cerrado"]}
+          placeholder="Estado"
+        />
       </div>
 
       {/* Conteo de resultados */}

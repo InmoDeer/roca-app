@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
+import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { X, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { useTheme } from "../../hooks/useTheme.jsx";
 
 /**
  * Gallery component for viewing property photos with navigation
+ * Uses Radix VisuallyHidden for accessibility
  */
 export function Gallery({ fotos, onClose, initialIndex = 0 }) {
+  const { mode } = useTheme();
   const [idx, setIdx] = useState(initialIndex);
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -20,6 +24,16 @@ export function Gallery({ fotos, onClose, initialIndex = 0 }) {
     img.onload = () => setLoading(false);
   }, [idx, fotos]);
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft") setIdx((i) => (i - 1 + fotos.length) % fotos.length);
+      if (e.key === "ArrowRight") setIdx((i) => (i + 1) % fotos.length);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [fotos.length, onClose]);
+
   if (!fotos.length) return null;
 
   return (
@@ -30,6 +44,17 @@ export function Gallery({ fotos, onClose, initialIndex = 0 }) {
       }} 
       onClick={onClose}
     >
+      <VisuallyHidden.Root>
+        <button autoFocus onClick={onClose}>Cerrar galería</button>
+      </VisuallyHidden.Root>
+      <button 
+        onClick={onClose} 
+        style={galleryStyles.closeBtn}
+        aria-label="Cerrar galería"
+      >
+        <X size={20} strokeWidth={1.5} />
+      </button>
+      
       <div 
         style={{
           ...galleryStyles.box,
@@ -38,9 +63,6 @@ export function Gallery({ fotos, onClose, initialIndex = 0 }) {
         }} 
         onClick={(e) => e.stopPropagation()}
       >
-        <button onClick={onClose} style={galleryStyles.closeBtn}>
-          <X size={20} strokeWidth={1.5} />
-        </button>
         
         <div style={galleryStyles.imgContainer}>
           {loading && (

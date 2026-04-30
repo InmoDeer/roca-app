@@ -2,6 +2,55 @@
 // Estilos centralizados para componentes de ROCA App
 // Cada función recibe `t` (tema) y opcionalmente `mode`
 
+// ─── Helpers globales ──────────────────────────────────────────────────────────
+
+export const primaryGradient = "linear-gradient(135deg, #d4af37 0%, #b8962e 100%)";
+
+export const transitions = {
+  fast: "0.15s ease",
+  base: "0.2s ease",
+  slow: "0.3s ease",
+  bounce: "0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
+};
+
+/**
+ * Crea una sombra dinámica según el modo y la intensidad
+ */
+export function createShadow(mode, intensity = 1) {
+  const opacity = Math.min(intensity * 0.15, 1);
+  const blur = 8 + intensity * 8;
+  const y = 4 + intensity * 4;
+  if (mode === "dark") {
+    return `0 ${y}px ${blur}px rgba(0,0,0,${opacity})`;
+  }
+  return `0 ${y}px ${blur}px rgba(0,0,0,${opacity * 0.15})`;
+}
+
+/**
+ * Superficie con efecto glass (blur)
+ */
+export function glassSurface(mode, opacity = 0.85) {
+  return {
+    background: mode === "dark"
+      ? `rgba(10,10,10,${opacity})`
+      : `rgba(255,255,255,${opacity})`,
+    backdropFilter: "blur(10px)",
+    WebkitBackdropFilter: "blur(10px)",
+  };
+}
+
+/**
+ * Anillo dorado para focus en inputs
+ */
+export function focusRing(color = "#d4af37", width = 2) {
+  return {
+    outline: "none",
+    boxShadow: `0 0 0 ${width}px ${color}40`,
+  };
+}
+
+// ─── Fin helpers globales ──────────────────────────────────────────────────────
+
 /**
  * Estilos para PropertyCard
  */

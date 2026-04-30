@@ -2,21 +2,25 @@ import { useState, useMemo, useEffect } from "react";
 import { useAuth } from "./hooks/useAuth";
 import { useProperties } from "./hooks/useProperties";
 import { ThemeProvider, useTheme } from "./hooks/useTheme.jsx";
+import { ToastProvider } from "./hooks/useToast.js";
 import { PropertyForm } from "./features/properties/PropertyForm.jsx";
 import { PropertyDetail } from "./features/properties/PropertyDetail.jsx";
 import { PublicGallery } from "./features/properties/PublicGallery.jsx";
 import { ContactsView } from "./features/contacts/contactsview.jsx";
 import { buildOutputs } from "./utils/messageFormatter";
-import { ESTADO_COLORS, ESTADOS } from "./utils/constants";
+import { ESTADOS } from "./utils/constants";
 import { fetchPropertyById } from "./utils/api";
 import { PropertyCard } from "./components/PropertyCard.jsx";
 import { PropertyFilters } from "./components/PropertyFilters.jsx";
 import { getAppStyles, getProfileMenuStyles } from "./styles/componentStyles.js";
+import { Sun, Moon, Users, Building2, LogOut } from "lucide-react";
 
 export default function App() {
   return (
     <ThemeProvider>
-      <ROCAApp />
+      <ToastProvider>
+        <ROCAApp />
+      </ToastProvider>
     </ThemeProvider>
   );
 }
@@ -42,7 +46,7 @@ function ROCAApp() {
   const S = getAppStyles(theme, mode);
 
   const handleDuplicate = (original) => {
-    const { id, created_at, updated_at, ...rest } = original;
+    const { id: _id, created_at: _created, updated_at: _updated, ...rest } = original;
     const duplicate = {
       ...rest,
       nombre: `${original.nombre} (copia)`,
@@ -237,7 +241,7 @@ function ROCAApp() {
               <div style={getProfileMenuStyles(theme).userEmail}>{user.email}</div>
             </div>
             <button style={getProfileMenuStyles(theme).item} onClick={cycleTheme}>
-              {mode === "light" ? "☀️ Claro" : "🌙 Oscuro"}
+              {mode === "light" ? <><Sun size={16} /> Claro</> : <><Moon size={16} /> Oscuro</>}
             </button>
             <button style={getProfileMenuStyles(theme).item} onClick={() => { 
               setCrmPropertyFilter(null);
@@ -245,7 +249,7 @@ function ROCAApp() {
               setShowCRM(true); 
               setProfileMenuOpen(false); 
             }}>
-              👥 Leads
+              <Users size={16} /> Leads
             </button>
             <button style={getProfileMenuStyles(theme).item} onClick={() => { 
               setCrmPropertyFilter(null);
@@ -253,11 +257,11 @@ function ROCAApp() {
               setShowCRM(true); 
               setProfileMenuOpen(false); 
             }}>
-              🏢 Propietarios
+              <Building2 size={16} /> Propietarios
             </button>
             <div style={getProfileMenuStyles(theme).divider} />
             <button style={getProfileMenuStyles(theme).item} onClick={logout}>
-              🚪 Cerrar sesión
+              <LogOut size={16} /> Cerrar sesión
             </button>
           </div>
         </>
@@ -292,14 +296,11 @@ function ROCAApp() {
 
         {filtered.map((p) => {
           const out = buildOutputs(p);
-          const ec = ESTADO_COLORS[p.estado] || ESTADO_COLORS.Disponible;
-
           return (
             <PropertyCard
               key={p.id}
               property={p}
               out={out}
-              ec={ec}
               onClick={() => setSelected(p)}
               onEdit={() => { setEdit(p); setShowForm(true); }}
               onDelete={() => removeProperty(p.id)}

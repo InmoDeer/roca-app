@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { ArrowLeft, X, Phone, MessageCircle } from "lucide-react";
+import { ArrowLeft, X, Phone, MessageCircle, Building2, PencilLine } from "lucide-react";
 import { ContactForm } from "./contactForm.jsx";
 import { useContacts } from "../../hooks/useContacts";
 import { useTheme } from "../../hooks/useTheme.jsx";
 import { getClientsViewStyles, getContactCardStyles } from "../../styles/componentStyles.js";
-import { ESTADO_COLORS, ESTADOS_LEAD, ESTADOS_PROPIETARIO } from "../../utils/constants";
+import { getStatusColors, getPipelineForEntity } from "../../styles/statusColors.js";
+import { ESTADOS_LEAD, ESTADOS_PROPIETARIO } from "../../utils/constants";
 
 export function ContactsView({
   onBack,
@@ -93,7 +94,9 @@ export function ContactsView({
           </div>
         )}
         {filtered.map((c) => {
-          const ec = ESTADO_COLORS[c.estado] || ESTADO_COLORS.Interesado;
+          const pipelineType = tipoFiltro === "lead" ? "lead" : "propietario";
+          const pipeline = getPipelineForEntity(pipelineType);
+          const ec = getStatusColors(c.estado, pipeline, t, mode, "solid");
           const cardStyles = getContactCardStyles(t, ec);
           return (
             <div key={c.id} style={cardStyles.card}>
@@ -101,7 +104,8 @@ export function ContactsView({
                 <div style={cardStyles.name}>{c.nombre}</div>
                 {!propertyId && c.propiedades && (
                   <div style={cardStyles.property}>
-                    🏠 {c.propiedades.nombre || c.propiedades.tipo} · {c.propiedades.distrito}
+                    <Building2 size={12} style={{ marginRight: 4 }} />
+                    {c.propiedades.nombre || c.propiedades.tipo} · {c.propiedades.distrito}
                   </div>
                 )}
                 {c.nota && (
@@ -132,7 +136,7 @@ export function ContactsView({
                   onClick={() => { setEditTarget(c); setShowForm(true); }}
                   style={styles.actionBtn}
                 >
-                  ✏️
+                  <PencilLine size={16} />
                 </button>
                 <button
                   onClick={() => handleDelete(c.id)}

@@ -5,7 +5,7 @@ import { useTheme } from "../../hooks/useTheme.jsx";
  * Button component for copying/sharing text (for WhatsApp messages)
  */
 export function CopyShareBtns({ text }) {
-  const { t, mode } = useTheme();
+  const { t } = useTheme();
   const [copied, setCopied] = useState(false);
 
   const copy = () => {

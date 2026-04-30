@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { buildOutputs } from "../../utils/messageFormatter";
-import { ESTADO_COLORS, getEstadoDisplay } from "../../utils/constants";
+import { getEstadoDisplay, PIPELINE_PROPERTY } from "../../utils/constants";
 import { CopyShareBtns } from "../../components/ui/CopyShareBtns";
 import { Gallery } from "../../components/ui/Gallery";
+import { StatusSelect } from "../../components/ui/select.jsx";
 import { useSwipeBack } from "../../hooks/useSwipeBack";
 import { useTheme } from "../../hooks/useTheme.jsx";
 import { getPropertyDetailStyles } from "../../styles/componentStyles.js";
@@ -14,9 +15,8 @@ import { PropietarioModal } from "../contacts/PropietarioModal";
  * Displays messages, photos, location, and status management
  */
 export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete, onLeads, onCrearPropiedad, onRefresh }) {
-  const { t, mode } = useTheme(); // ← Obtenemos también 'mode' para fondos adaptables
+  const { t, mode } = useTheme();
   const out = buildOutputs(p);
-  const ec = ESTADO_COLORS[p.estado] || ESTADO_COLORS.Disponible;
   const [tab, setTab] = useState("corto");
   const [showGallery, setGallery] = useState(false);
   const [showPropietarioModal, setShowPropietarioModal] = useState(false);
@@ -83,22 +83,12 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete, onLeads,
               {p.nombre} · {p.tipo} · {p.distrito}
             </div>
           </div>
-          <select
+          <StatusSelect
             value={p.estado}
-            onChange={(e) => onEstado(p.id, e.target.value)}
-            style={{
-              ...detailStyles.estadoSelect,
-              backgroundColor: ec.bg,
-              color: ec.text,
-              border: `1px solid ${ec.dot}`,
-            }}
-          >
-            {Object.keys(ESTADO_COLORS).map((s) => (
-              <option key={s} value={s}>
-                {s === "Cerrado" ? getEstadoDisplay(s, p.operacion) : s}
-              </option>
-            ))}
-          </select>
+            onValueChange={(v) => onEstado(p.id, v)}
+            pipeline={PIPELINE_PROPERTY}
+            operacion={p.operacion}
+          />
         </div>
         <div style={detailStyles.precioBlock}>{out.precio}</div>
         {p.mantenimiento && (
