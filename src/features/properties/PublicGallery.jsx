@@ -1,36 +1,33 @@
+import { useTheme } from "../../hooks/useTheme";
 import { Gallery } from "../../components/ui/Gallery";
 
 export function PublicGallery({ property, onClose }) {
-  const fotos = property?.fotos_urls || [];
+  const { t } = useTheme();
+  const fotos = property?.fotos_urls ?? []; // <-- Acceso seguro (optional chaining + nullish coalescing)
 
   return (
-    <div style={publicStyles.container}>
+    <div style={{
+      minHeight: "100vh",
+      background: t.colors.bg,
+      position: "relative",
+    }}>
       {fotos.length > 0 ? (
         <Gallery 
           fotos={fotos} 
           onClose={onClose}
         />
       ) : (
-        <div style={publicStyles.empty}>
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "100vh",
+          color: t.colors.textMuted,
+          fontSize: 16,
+        }}>
           No hay fotos disponibles
         </div>
       )}
     </div>
   );
 }
-
-const publicStyles = {
-  container: {
-    minHeight: "100vh",
-    background: "#000000",
-    position: "relative",
-  },
-  empty: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    minHeight: "100vh",
-    color: "#666666",
-    fontSize: 16,
-  },
-};
