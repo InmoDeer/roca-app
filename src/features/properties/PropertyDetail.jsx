@@ -7,19 +7,17 @@ import { StatusSelect } from "../../components/ui/select.jsx";
 import { useSwipeBack } from "../../hooks/useSwipeBack";
 import { useTheme } from "../../hooks/useTheme.jsx";
 import { getPropertyDetailStyles } from "../../styles/componentStyles.js";
-import { MapPin, Video, PencilLine, Trash2, X, ArrowLeft, Play, Eye, Images, Globe, DollarSign, FileText, Users, Building2 } from "lucide-react";
-import { PropietarioModal } from "../contacts/PropietarioModal";
+import { MapPin, Video, PencilLine, Trash2, X, ArrowLeft, Play, Eye, Images, Globe, DollarSign, FileText } from "lucide-react";
 
 /**
  * Property detail component showing full information for admin
  * Displays messages, photos, location, and status management
  */
-export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete, onLeads, onCrearPropiedad, onRefresh }) {
+export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete, onRefresh }) {
   const { t, mode } = useTheme();
   const out = buildOutputs(p);
   const [tab, setTab] = useState("corto");
   const [showGallery, setGallery] = useState(false);
-  const [showPropietarioModal, setShowPropietarioModal] = useState(false);
 
   // Swipe to go back
   useSwipeBack(onBack, true);
@@ -45,14 +43,6 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete, onLeads,
           </button>
           <button onClick={onEdit} style={detailStyles.iconBtn} title="Editar">
             <PencilLine size={18} strokeWidth={1.5} />
-          </button>
-          {onLeads && (
-            <button onClick={onLeads} style={detailStyles.iconBtn} title="Ver Leads">
-              <Users size={18} strokeWidth={1.5} />
-            </button>
-          )}
-          <button onClick={() => setShowPropietarioModal(true)} style={detailStyles.iconBtn} title="Propietario">
-            <Building2 size={18} strokeWidth={1.5} />
           </button>
         </div>
       </div>
@@ -160,15 +150,6 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete, onLeads,
 
       {showGallery && (
         <Gallery fotos={out.fotos} onClose={() => setGallery(false)} />
-      )}
-
-      {showPropietarioModal && (
-        <PropietarioModal
-          propertyId={p.id}
-          onClose={() => { setShowPropietarioModal(false); onRefresh?.(); }}
-          onCrearPropiedad={onCrearPropiedad}
-          onRefresh={onRefresh}
-        />
       )}
     </div>
   );

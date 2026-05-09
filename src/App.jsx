@@ -6,14 +6,13 @@ import { ToastProvider, useToast } from "./components/ui/ToastProvider.jsx";
 import { PropertyForm } from "./features/properties/PropertyForm.jsx";
 import { PropertyDetail } from "./features/properties/PropertyDetail.jsx";
 import { PublicGallery } from "./features/properties/PublicGallery.jsx";
-import { ContactsView } from "./features/contacts/contactsview.jsx";
 import { buildOutputs } from "./utils/messageFormatter";
 import { ESTADOS } from "./utils/constants";
 import { fetchPropertyById } from "./utils/api";
 import { PropertyCard } from "./components/PropertyCard.jsx";
 import { PropertyFilters } from "./components/PropertyFilters.jsx";
 import { getAppStyles, getProfileMenuStyles } from "./styles/componentStyles.js";
-import { Sun, Moon, Users, Building2, LogOut } from "lucide-react";
+import { Sun, Moon, LogOut } from "lucide-react";
 
 export default function App() {
   return (
@@ -36,12 +35,8 @@ function ROCAApp() {
   const [openMenu, setOpenMenu] = useState(null);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [filters, setFilters] = useState({ q: "", operacion: "", tipo: "", estado: "" });
-  const [showCRM, setShowCRM] = useState(false);
-  const [crmPropertyFilter, setCrmPropertyFilter] = useState(null);
-  const [crmTipoFiltro, setCrmTipoFiltro] = useState('lead');
   const [publicProperty, setPublicProperty] = useState(null);
   const [publicLoading, setPublicLoading] = useState(false);
-  const [propietarioParaPropiedad, setPropietarioParaPropiedad] = useState(null);
 
   const S = getAppStyles(theme, mode);
 
@@ -58,11 +53,6 @@ function ROCAApp() {
       tour360_url: "",
     };
     setEdit(duplicate);
-    setShowForm(true);
-  };
-
-  const handleCrearPropiedad = (propietarioId) => {
-    setPropietarioParaPropiedad(propietarioId);
     setShowForm(true);
   };
 
@@ -180,25 +170,6 @@ function ROCAApp() {
     );
   }
 
-  // CRM View
-  if (showCRM) {
-    return (
-      <div style={S.app}>
-        <ContactsView
-          onBack={() => { setShowCRM(false); setCrmPropertyFilter(null); }}
-          theme={theme}
-          mode={mode}
-          user={user}
-          propertyId={crmPropertyFilter?.id || null}
-          propertyName={crmPropertyFilter?.nombre || null}
-          tipoInicial={crmTipoFiltro}
-          defaultEstadoLead="Interesado"
-          defaultEstadoProp={crmPropertyFilter ? "Cerrado" : "Contactado"}
-        />
-      </div>
-    );
-  }
-
   // App principal
   if (selected) {
     const current = properties.find((p) => p.id === selected.id) || selected;
@@ -210,19 +181,13 @@ function ROCAApp() {
           onEdit={() => { setEdit(current); setShowForm(true); }}
           onEstado={changeStatus}
           onDelete={(id) => { removeProperty(id); setSelected(null); }}
-          onLeads={() => {
-            setCrmPropertyFilter(current);
-            setShowCRM(true);
-          }}
-          onCrearPropiedad={handleCrearPropiedad}
           onRefresh={handleRefreshProperty}
         />
         {showForm && (
           <PropertyForm
             initial={editTarget}
             onSave={saveProperty}
-            onClose={() => { setShowForm(false); setEdit(null); setPropietarioParaPropiedad(null); }}
-            propietarioId={propietarioParaPropiedad}
+            onClose={() => { setShowForm(false); setEdit(null); }}
           />
         )}
       </div>
@@ -242,22 +207,6 @@ function ROCAApp() {
             </div>
             <button style={getProfileMenuStyles(theme).item} onClick={cycleTheme}>
               {mode === "light" ? <><Sun size={16} /> Claro</> : <><Moon size={16} /> Oscuro</>}
-            </button>
-            <button style={getProfileMenuStyles(theme).item} onClick={() => { 
-              setCrmPropertyFilter(null);
-              setCrmTipoFiltro('lead');
-              setShowCRM(true); 
-              setProfileMenuOpen(false); 
-            }}>
-              <Users size={16} /> Leads
-            </button>
-            <button style={getProfileMenuStyles(theme).item} onClick={() => { 
-              setCrmPropertyFilter(null);
-              setCrmTipoFiltro('propietario');
-              setShowCRM(true); 
-              setProfileMenuOpen(false); 
-            }}>
-              <Building2 size={16} /> Propietarios
             </button>
             <div style={getProfileMenuStyles(theme).divider} />
             <button style={getProfileMenuStyles(theme).item} onClick={logout}>
@@ -316,8 +265,7 @@ function ROCAApp() {
           <PropertyForm
             initial={editTarget}
             onSave={saveProperty}
-            onClose={() => { setShowForm(false); setEdit(null); setPropietarioParaPropiedad(null); }}
-            propietarioId={propietarioParaPropiedad}
+            onClose={() => { setShowForm(false); setEdit(null); }}
           />
         )}
     </div>

@@ -1,6 +1,3 @@
-// =====================
-// PIPELINE - Propiedades
-// =====================
 export const PIPELINE_PROPERTY = [
   "Descartado",
   "Mantenimiento",
@@ -9,17 +6,9 @@ export const PIPELINE_PROPERTY = [
   "Cerrado",
 ];
 
-// =====================
-// Arrays de estados (para selects)
-// =====================
 export const ESTADOS_PROPERTY = PIPELINE_PROPERTY;
-
-// =====================
-// Property states (inmuebles)
-// =====================
 export const ESTADOS = PIPELINE_PROPERTY;
 
-// Property types
 export const PROPERTY_TYPES = [
   "Departamento",
   "Casa",
@@ -28,13 +17,9 @@ export const PROPERTY_TYPES = [
   "Terreno",
 ];
 
-// Operations (Venta/Alquiler)
 export const OPERATIONS = ["Venta", "Alquiler"];
-
-// Currencies
 export const CURRENCIES = ["PEN", "USD"];
 
-// Antiguedad (age) options
 export const ANTIGUEDAD_OPTIONS = [
   "",
   "A estrenar",
@@ -44,11 +29,9 @@ export const ANTIGUEDAD_OPTIONS = [
   "20+ años",
 ];
 
-// Pet options
 export const MASCOTAS_OPTIONS = ["Sí", "No", "A tratar"];
 
-// Helper to get display label for cerrado
-export function getEstadoDisplay(estado, operacion) {
+export function getEstadoDisplay(estado: string, operacion: string) {
   if (estado !== "Cerrado") return estado;
   return operacion === "Alquiler" ? "Alquilado" : "Vendido";
 }

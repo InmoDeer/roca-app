@@ -1,9 +1,3 @@
-// src/styles/componentStyles.js
-// Estilos centralizados para componentes de ROCA App
-// Cada función recibe `t` (tema) y opcionalmente `mode`
-
-// ─── Helpers globales ──────────────────────────────────────────────────────────
-
 export const primaryGradient = "linear-gradient(135deg, #d4af37 0%, #b8962e 100%)";
 
 export const transitions = {
@@ -13,10 +7,7 @@ export const transitions = {
   bounce: "0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
 };
 
-/**
- * Crea una sombra dinámica según el modo y la intensidad
- */
-export function createShadow(mode, intensity = 1) {
+export function createShadow(mode: string, intensity = 1) {
   const opacity = Math.min(intensity * 0.15, 1);
   const blur = 8 + intensity * 8;
   const y = 4 + intensity * 4;
@@ -26,10 +17,7 @@ export function createShadow(mode, intensity = 1) {
   return `0 ${y}px ${blur}px rgba(0,0,0,${opacity * 0.15})`;
 }
 
-/**
- * Superficie con efecto glass (blur)
- */
-export function glassSurface(mode, opacity = 0.85) {
+export function glassSurface(mode: string, opacity = 0.85) {
   return {
     background: mode === "dark"
       ? `rgba(10,10,10,${opacity})`
@@ -39,15 +27,7 @@ export function glassSurface(mode, opacity = 0.85) {
   };
 }
 
-
-}
-
-// ─── Fin helpers globales ──────────────────────────────────────────────────────
-
-/**
- * Estilos para PropertyCard
- */
-export const getPropertyCardStyles = (t, ec) => ({
+export const getPropertyCardStyles = (t: any, ec: any) => ({
   card: {
     background: t.colors.bgCard,
     borderRadius: 16,
@@ -91,7 +71,7 @@ export const getPropertyCardStyles = (t, ec) => ({
     gap: 8,
     position: "relative",
   },
-  statusBadge: (ec) => ({
+  statusBadge: (ec: any) => ({
     fontSize: 11,
     fontWeight: 700,
     borderRadius: 20,
@@ -102,7 +82,7 @@ export const getPropertyCardStyles = (t, ec) => ({
     backgroundColor: ec?.bg || t.colors.success,
     color: ec?.text || t.colors.text,
   }),
-  statusDot: (ec) => ({
+  statusDot: (ec: any) => ({
     width: 6,
     height: 6,
     borderRadius: "50%",
@@ -160,10 +140,7 @@ export const getPropertyCardStyles = (t, ec) => ({
   },
 });
 
-/**
- * Estilos para PropertyDetail
- */
-export const getPropertyDetailStyles = (t, mode) => ({
+export const getPropertyDetailStyles = (t: any, mode: string) => ({
   container: {
     padding: "0 0 80px",
     background: t.colors.bg,
@@ -176,7 +153,7 @@ export const getPropertyDetailStyles = (t, mode) => ({
     padding: "16px 20px",
     background: mode === 'dark' ? "rgba(10,10,10,0.9)" : "rgba(255,255,255,0.9)",
     backdropFilter: "blur(10px)",
-    position: "sticky",
+    position: "sticky" as const,
     top: 0,
     zIndex: 10,
     borderBottom: `1px solid ${t.colors.border}`,
@@ -204,17 +181,17 @@ export const getPropertyDetailStyles = (t, mode) => ({
     minWidth: 40,
   },
   heroWrap: {
-    position: "relative",
+    position: "relative" as const,
     cursor: "pointer",
   },
   heroImg: {
     width: "100%",
     height: 260,
-    objectFit: "cover",
+    objectFit: "cover" as const,
     display: "block",
   },
   heroBadge: {
-    position: "absolute",
+    position: "absolute" as const,
     bottom: 16,
     right: 16,
     background: "rgba(0,0,0,0.7)",
@@ -299,8 +276,8 @@ export const getPropertyDetailStyles = (t, mode) => ({
   msgPre: {
     fontFamily: "'Outfit',sans-serif",
     fontSize: 14,
-    whiteSpace: "pre-wrap",
-    wordBreak: "break-word",
+    whiteSpace: "pre-wrap" as const,
+    wordBreak: "break-word" as const,
     color: t.colors.textSecondary,
     margin: "0 0 16px",
     lineHeight: 1.7,
@@ -308,8 +285,8 @@ export const getPropertyDetailStyles = (t, mode) => ({
   msgPreNoBox: {
     fontFamily: "'Outfit',sans-serif",
     fontSize: 14,
-    whiteSpace: "pre-wrap",
-    wordBreak: "break-word",
+    whiteSpace: "pre-wrap" as const,
+    wordBreak: "break-word" as const,
     color: t.colors.textSecondary,
     background: "none",
     border: "none",
@@ -321,7 +298,7 @@ export const getPropertyDetailStyles = (t, mode) => ({
     display: "flex",
     gap: 10,
     padding: "16px 20px 0",
-    flexWrap: "wrap",
+    flexWrap: "wrap" as const,
   },
   actionBtn: {
     flex: "1 1 calc(50% - 5px)",
@@ -329,7 +306,7 @@ export const getPropertyDetailStyles = (t, mode) => ({
     background: t.colors.bgSecondary,
     border: `1px solid ${t.colors.border}`,
     borderRadius: 12,
-    textAlign: "center",
+    textAlign: "center" as const,
     textDecoration: "none",
     color: t.colors.text,
     fontSize: 13,
@@ -346,16 +323,13 @@ export const getPropertyDetailStyles = (t, mode) => ({
     fontSize: 12,
     color: t.colors.textMuted,
     marginBottom: 12,
-    textTransform: "uppercase",
+    textTransform: "uppercase" as const,
     letterSpacing: "1px",
-    textAlign: "center",
+    textAlign: "center" as const,
   },
 });
 
-/**
- * Estilos para PropertyForm
- */
-export const getFormStyles = (theme) => ({
+export const getFormStyles = (theme: any) => ({
   overlay: {
     position: "fixed",
     inset: 0,
@@ -371,7 +345,7 @@ export const getFormStyles = (theme) => ({
     width: "100%",
     maxHeight: "100vh",
     display: "flex",
-    flexDirection: "column",
+    flexDirection: "column" as const,
     marginTop: 0,
   },
   header: {
@@ -396,7 +370,7 @@ export const getFormStyles = (theme) => ({
     padding: 4,
   },
   body: {
-    overflowY: "auto",
+    overflowY: "auto" as const,
     padding: "20px 24px",
     flex: 1,
   },
@@ -434,7 +408,7 @@ export const getFormStyles = (theme) => ({
     fontWeight: 800,
     fontSize: 11,
     color: theme.colors.textMuted,
-    textTransform: "uppercase",
+    textTransform: "uppercase" as const,
     letterSpacing: "1px",
     margin: "20px 0 12px",
     paddingBottom: 8,
@@ -467,26 +441,26 @@ export const getFormStyles = (theme) => ({
   photoGrid: {
     display: "flex",
     gap: 10,
-    flexWrap: "wrap",
+    flexWrap: "wrap" as const,
     marginBottom: 14,
   },
   photoThumbWrap: {
-    position: "relative",
+    position: "relative" as const,
     transition: "transform 0.2s ease, border 0.2s ease, background-color 0.2s ease",
     borderRadius: 10,
-    overflow: "hidden",
+    overflow: "hidden" as const,
     minWidth: 80,
     minHeight: 80,
   },
   photoThumb: {
     width: 80,
     height: 80,
-    objectFit: "cover",
+    objectFit: "cover" as const,
     borderRadius: 10,
     display: "block",
   },
   photoRemove: {
-    position: "absolute",
+    position: "absolute" as const,
     top: 4,
     right: 4,
     background: "#ef4444",
@@ -502,7 +476,7 @@ export const getFormStyles = (theme) => ({
     boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
   },
   dragHandle: {
-    position: "absolute",
+    position: "absolute" as const,
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
@@ -518,7 +492,7 @@ export const getFormStyles = (theme) => ({
     border: "1px solid rgba(255,255,255,0.2)",
   },
   mainPhotoBadge: {
-    position: "absolute",
+    position: "absolute" as const,
     bottom: 6,
     left: "50%",
     transform: "translateX(-50%)",
@@ -528,7 +502,7 @@ export const getFormStyles = (theme) => ({
     background: "linear-gradient(135deg, #d4af37 0%, #b8962e 100%)",
     borderRadius: 4,
     padding: "2px 8px",
-    whiteSpace: "nowrap",
+    whiteSpace: "nowrap" as const,
   },
   spinner: {
     width: 16,
@@ -540,5 +514,224 @@ export const getFormStyles = (theme) => ({
   },
 });
 
-
+export const getDialogStyles = (t: any, mode: string, variant: string) => {
+  const isBottom = variant === "bottom";
+  return {
+    overlay: {
+      position: "fixed" as const,
+      inset: 0,
+      background: "rgba(0,0,0,0.8)",
+      backdropFilter: "blur(10px)",
+      zIndex: 100,
+    },
+    content: isBottom
+      ? {
+          position: "fixed" as const,
+          bottom: 0,
+          left: 0,
+          right: 0,
+          background: t.colors.bg,
+          borderTopLeftRadius: 24,
+          borderTopRightRadius: 24,
+          maxHeight: "90vh",
+          display: "flex",
+          flexDirection: "column" as const,
+          animation: "slideUp 0.3s ease",
+        }
+      : {
+          position: "fixed" as const,
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          background: t.colors.bg,
+          borderRadius: 24,
+          width: "90%",
+          maxWidth: 500,
+          maxHeight: "90vh",
+          display: "flex",
+          flexDirection: "column" as const,
+          animation: "scaleIn 0.2s ease",
+        },
+    header: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: "20px 24px",
+      borderBottom: `1px solid ${t.colors.border}`,
+      flexShrink: 0,
+    },
+    title: {
+      fontWeight: 800,
+      fontSize: 18,
+      color: t.colors.text,
+    },
+    closeBtn: {
+      background: "none",
+      border: "none",
+      fontSize: 22,
+      cursor: "pointer",
+      color: t.colors.textMuted,
+      padding: 4,
+    },
+    body: {
+      overflowY: "auto" as const,
+      padding: "20px 24px",
+      flex: 1,
+    },
+    footer: {
+      display: "flex",
+      gap: 12,
+      padding: "16px 24px",
+      borderTop: `1px solid ${t.colors.border}`,
+      flexShrink: 0,
+    },
+  };
 };
+
+export const getAppStyles = (t: any, mode: string) => ({
+  app: {
+    minHeight: "100vh",
+    background: t.colors.bg,
+    paddingBottom: 100,
+  },
+  loadingWrap: {
+    minHeight: "100vh",
+    display: "flex",
+    flexDirection: "column" as const,
+    alignItems: "center",
+    justifyContent: "center",
+    background: t.colors.bg,
+    color: t.colors.text,
+  },
+  authWrap: {
+    minHeight: "100vh",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    background: t.colors.bg,
+    padding: 20,
+  },
+  authCard: {
+    width: "100%",
+    maxWidth: 360,
+    background: t.colors.bgCard,
+    borderRadius: 24,
+    padding: 32,
+    border: `1px solid ${t.colors.border}`,
+  },
+  input: {
+    width: "100%",
+    padding: "14px 16px",
+    borderRadius: 12,
+    border: `1px solid ${t.colors.border}`,
+    fontSize: 15,
+    boxSizing: "border-box",
+    outline: "none",
+    background: t.colors.bgSecondary,
+    color: t.colors.text,
+    transition: "all 0.3s ease",
+  },
+  newBtn: {
+    background: "linear-gradient(135deg, #d4af37 0%, #b8962e 100%)",
+    color: "#0a0a0a",
+    border: "none",
+    borderRadius: 12,
+    fontWeight: 700,
+    fontSize: 14,
+    padding: "10px 16px",
+    cursor: "pointer",
+    boxShadow: "0 4px 15px rgba(212,175,55,0.3)",
+  },
+  topBar: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "16px 20px",
+    background: mode === "dark" ? "rgba(10,10,10,0.95)" : "rgba(255,255,255,0.95)",
+    backdropFilter: "blur(10px)",
+    position: "sticky" as const,
+    top: 0,
+    zIndex: 20,
+    borderBottom: `1px solid ${t.colors.border}`,
+  },
+  logo: {
+    fontWeight: 800,
+    fontSize: 22,
+    color: t.colors.primary,
+    letterSpacing: "2px",
+  },
+  userTag: {
+    fontSize: 13,
+    color: t.colors.textMuted,
+    marginRight: 12,
+  },
+  list: {
+    padding: "16px 20px",
+    display: "flex",
+    flexDirection: "column",
+    gap: 12,
+  },
+  empty: {
+    textAlign: "center" as const,
+    padding: "40px 20px",
+    color: t.colors.textMuted,
+    fontSize: 14,
+  },
+});
+
+export const getProfileMenuStyles = (t: any) => ({
+  overlay: {
+    position: "fixed",
+    inset: 0,
+    background: "rgba(0,0,0,0.6)",
+    zIndex: 40,
+  },
+  drawer: {
+    position: "fixed",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    width: 280,
+    background: t.colors.bgCard,
+    borderLeft: `1px solid ${t.colors.border}`,
+    padding: "24px 20px",
+    zIndex: 50,
+    animation: "slideInRight 0.3s ease",
+  },
+  header: {
+    marginBottom: 24,
+    paddingBottom: 16,
+    borderBottom: `1px solid ${t.colors.border}`,
+  },
+  userInfo: {
+    fontWeight: 700,
+    fontSize: 18,
+    color: t.colors.text,
+    marginBottom: 4,
+  },
+  userEmail: {
+    fontSize: 13,
+    color: t.colors.textMuted,
+  },
+  item: {
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    width: "100%",
+    padding: "14px 12px",
+    background: "none",
+    border: "none",
+    borderRadius: 12,
+    fontSize: 15,
+    fontWeight: 500,
+    color: t.colors.text,
+    cursor: "pointer",
+    textAlign: "left",
+    transition: "background 0.2s ease",
+  },
+  divider: {
+    height: 1,
+    background: t.colors.border,
+    margin: "16px 0",
+  },
+});

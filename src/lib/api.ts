@@ -1,4 +1,4 @@
-import { supabase } from "../lib/supabase";
+import { supabase } from "./supabase";
 import { deleteCloudinaryImages } from "./cloudinary";
 
 export async function fetchProperties() {
@@ -10,7 +10,7 @@ export async function fetchProperties() {
   return data || [];
 }
 
-export async function fetchPropertyById(id) {
+export async function fetchPropertyById(id: string) {
   const { data, error } = await supabase.client
     .from("properties")
     .select("*")
@@ -20,7 +20,7 @@ export async function fetchPropertyById(id) {
   return data;
 }
 
-export async function createProperty(payload) {
+export async function createProperty(payload: any) {
   const { data: { user } } = await supabase.client.auth.getUser();
   const { error } = await supabase.client.from("properties").insert({
     ...payload,
@@ -29,7 +29,7 @@ export async function createProperty(payload) {
   if (error) console.error("Error creating:", error);
 }
 
-export async function updateProperty(id, payload) {
+export async function updateProperty(id: string, payload: any) {
   const { error } = await supabase.client
     .from("properties")
     .update(payload)
@@ -37,7 +37,7 @@ export async function updateProperty(id, payload) {
   if (error) console.error("Error updating:", error);
 }
 
-export async function deleteProperty(id) {
+export async function deleteProperty(id: string) {
   const property = await fetchPropertyById(id);
   if (property?.fotos_urls?.length) {
     await deleteCloudinaryImages(property.fotos_urls);
@@ -46,7 +46,7 @@ export async function deleteProperty(id) {
   if (error) console.error("Error deleting:", error);
 }
 
-export async function updatePropertyStatus(id, estado) {
+export async function updatePropertyStatus(id: string, estado: string) {
   const { error } = await supabase.client
     .from("properties")
     .update({ estado })
