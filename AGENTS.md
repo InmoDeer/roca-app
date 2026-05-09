@@ -2,136 +2,107 @@
 
 ## Descripción
 - Nombre: ROCA App
-- Tipo: React 19 + Vite + Supabase
+- Tipo: Next.js 15 + React 19 + TypeScript + Supabase
 - Propósito: Gestión de propiedades inmobiliarias para agentes
 
 ---
 
 ## Stack
-- React 19 + Vite
+- Next.js 15 (App Router)
+- React 19
+- TypeScript
 - Supabase (DB + Auth)
 - Cloudinary (fotos)
-- Vercel (deploy)
 - Radix UI (dialog, dropdown, select, tabs, toast)
+- Lucide React (iconos)
 
 ---
 
 ## Estructura
+```
 src/
+├── app/                    # Next.js App Router
+│   ├── layout.tsx          # Root layout
+│   ├── page.tsx            # Home (lista de propiedades)
+│   └── propiedad/[id]/     # Detalle de propiedad
 ├── components/
-│   ├── ui/              # Gallery, CopyShareBtns, dialog, dropdown, select, skeleton, tabs, ToastProvider
-│   └── formFields/      # Field, Select, Checkbox
-├── features/
-│   ├── contacts/
-│   │   ├── contactsview.jsx     # Vista CRM (leads + propietarios)
-│   │   ├── contactForm.jsx     # Form unificado (lead o propietario)
-│   │   └── PropietarioModal.jsx  # Asignar propietario desde PropertyDetail
-│   └── properties/
-│       ├── PropertyForm.jsx
-│       ├── PropertyDetail.jsx
-│       └── PublicGallery.jsx
+│   ├── ui/                 # Gallery, CopyShareBtns, dialog, dropdown, select, skeleton, tabs, ToastProvider
+│   └── formFields/         # Field, Select, Checkbox
 ├── hooks/
-│   ├── useAuth.js
-│   ├── useProperties.js    # CRUD propiedades
-│   ├── useContacts.js     # CRUD contactos (leads + propietarios)
-│   ├── useTheme.jsx      # Tema (t, mode, toggle)
-│   ├── useStatus.js      # Colores dinámicos por estado/pipeline
-│   ├── useToast.js      # (no existe — usar desde ToastProvider.jsx)
-│   └── useSwipeBack.js
-├── utils/
-│   ├── api.js             # CRUD propiedades
-│   ├── contactsApi.js     # CRUD contactos + funciones de sync
-│   ├── cloudinary.js      # Upload fotos
-│   ├── messageFormatter.js # Generar mensajes WhatsApp
-│   └── constants.js      # Estados, pipelines, display helpers
+│   ├── useAuth.ts          # Auth (login/logout)
+│   ├── useProperties.ts    # CRUD propiedades
+│   ├── useStatus.ts        # Colores dinámicos por estado
+│   ├── useTheme.tsx        # Tema (t, mode, toggle)
+│   └── useSwipeBack.ts
+├── lib/
+│   ├── api.ts              # CRUD propiedades
+│   ├── supabase.ts         # Cliente Supabase
+│   ├── cloudinary.ts       # Upload fotos
+│   ├── constants.ts         # Estados, tipos, monedas
+│   └── messageFormatter.ts # Generar mensajes WhatsApp
 ├── styles/
-│   ├── theme.js        # darkTheme, lightTheme
-│   ├── componentStyles.js # getXxxStyles para cada componente
-│   ├── statusColors.js  # Motor de gradiente de estado (getStatusColors, getPipelineForEntity)
-│   └── animations.css  # Animaciones (fadeIn, slideUp, spin, shimmer, etc.)
-├── config/
-│   └── supabase.js    # Cliente Supabase
-├── App.jsx
-├── main.jsx
-└── index.css
+│   ├── theme.ts            # darkTheme, lightTheme
+│   ├── componentStyles.ts  # getXxxStyles para cada componente
+│   └── statusColors.ts     # Motor de gradiente de estado
+├── middleware.ts          # Auth middleware
+└── globals.css
+```
 
 ---
 
 ## REGLAS OBLIGATORIAS
 
-### 1. Estilos — siempre componentStyles.js
-- NUNCA estilos inline en JSX salvo valores dinámicos puntuales (ej: color calculado)
-- Cada componente usa su función: getXxxStyles(t, mode)
+### 1. Estilos — siempre componentStyles.ts
+- NUNCA estilos inline en JSX salvo valores dinámicos puntuales
+- Cada componente usa su función: `getXxxStyles(t, mode)`
 - t viene de useTheme(), nunca hardcodear colores
-- Colores del tema: t.colors.primary, t.colors.bg, t.colors.text, etc.
+- Colores del tema: `t.colors.primary`, `t.colors.bg`, `t.colors.text`, etc.
 
-### 2. Constantes — siempre constants.js
+### 2. Constantes — siempre constants.ts
 - NUNCA definir arrays de estados o colores dentro de componentes
-- Estados en PIPELINE_PROPERTY, ESTADOS_LEAD, ESTADOS_PROPIETARIO
-- Tipos, monedas, opciones de formulario: todo en constants.js
+- Estados en `PIPELINE_PROPERTY`
+- Tipos, monedas, opciones de formulario: todo en constants.ts
 
-### 3. API / Supabase — siempre a través de utils
-- NUNCA llamar supabase directo desde un componente
-- Propiedades → utils/api.js
-- Contactos → utils/contactsApi.js
+### 3. API / Supabase — siempre a través de lib/api.ts
+- NUNCA llamar supabase directo desde componentes
+- Propiedades → lib/api.ts
 - Si necesitás una query nueva, agregás la función al util correspondiente
 
 ### 4. Lógica de estado — siempre en hooks
 - NUNCA fetch + useState + useEffect dentro de un componente
 - Propiedades → useProperties
-- Contactos → useContacts
 - Los componentes solo llaman al hook y renderizan
 
 ### 5. Tema
 - Siempre usar useTheme() para obtener t y mode
 - t.colors.primary = dorado (#d4af37)
 - mode = "dark" | "light"
-- Nunca hardcodear "#0a0a0a" o "#ffffff" en componentes, usar t.colors.bg / t.colors.text
+- Nunca hardcodear "#0a0a0a" o "#ffffff" — usar t.colors.bg / t.colors.text
 
-### 6. Iconos y Emojis
-- NUNCA emojis en código — usar siempre iconos de lucide-react
-- NUNCA caracteres Unicode como ✓, ✏️, 🏢 en JSX — usar Lucide icons
+### 6. Iconos
+- NUNCA emojis en código — usar iconos de lucide-react
 - Todos los iconos vienen de "lucide-react"
 
 ---
 
-## Flujo correcto al crear un componente nuevo
+## Pipeline de propiedades
 
-1. Agregar estilos en componentStyles.js → getNuevoStyles(t, mode)
-2. Agregar constantes necesarias en constants.js
-3. Si necesita datos de Supabase → agregar función en api.js o contactsApi.js
-4. Si maneja estado propio de fetch → crear useNuevo.js en hooks/
-5. El componente solo: importa hook + styles + constants, renderiza
-
----
-
-## Pipelines de estado
-
-### Propiedades
-`["Descartado", "Mantenimiento", "Disponible", "Reservado", "Cerrado"]`
-
-### Leads (clientes que buscan comprar/alquilar)
-`["Descartado", "Interesado", "Seguimiento", "Visita", "Seguimiento post-visita", "Cerrado"]`
-
-### Propietarios (captación)
-`["Descartado", "Contactado", "Propuesta/Tasación", "Seguimiento", "Cerrado"]`
+```ts
+["Descartado", "Mantenimiento", "Disponible", "Reservado", "Cerrado"]
+```
 
 ### Colores de estado
-- Generados automáticamente por getStatusColors(status, pipeline, t, mode, variant) en statusColors.js
-- getPipelineForEntity(entityType) para obtener el pipeline correcto
-- Nunca definir colores de estado fuera de statusColors.js
+- Generados automáticamente por `getStatusColors()` en statusColors.ts
+- Nunca definir colores de estado fuera de statusColors.ts
 
 ---
 
 ## useStatus — Hook de colores de estado
 
-```js
-import { useStatus } from "../hooks/useStatus.js";
+```ts
+import { useStatus } from "../hooks/useStatus.ts";
 
-// Uso: ec = useStatus(estado, tipo, variant)
-// tipos: "property" | "lead" | "propietario"
-// variant: "solid" (badges, cards) | "subtle" (selects)
-
+const ec = useStatus("Disponible", "property", "solid");
 // ec devuelve: { bg, text, dot, border, progress }
 ```
 
@@ -140,8 +111,8 @@ import { useStatus } from "../hooks/useStatus.js";
 ## Componentes UI disponibles
 
 ### RocaDialog
-```jsx
-import { RocaDialog } from "./components/ui/dialog.jsx";
+```tsx
+import { RocaDialog } from "./components/ui/dialog.tsx";
 
 <RocaDialog
   open={isOpen}
@@ -154,18 +125,16 @@ import { RocaDialog } from "./components/ui/dialog.jsx";
 </RocaDialog>
 ```
 
-### RocaSelect
-```jsx
-import { StatusSelect, RocaSelect } from "./components/ui/select.jsx";
+### RocaSelect / StatusSelect
+```tsx
+import { StatusSelect, RocaSelect } from "./components/ui/select.tsx";
 
-// Select de estado con colores automáticos (usa pipeline)
 <StatusSelect
   value={estado}
   onValueChange={setEstado}
   pipeline={PIPELINE_PROPERTY}
 />
 
-// Select genérico
 <RocaSelect
   value={value}
   onValueChange={setValue}
@@ -175,8 +144,8 @@ import { StatusSelect, RocaSelect } from "./components/ui/select.jsx";
 ```
 
 ### Dropdown
-```jsx
-import { Dropdown } from "./components/ui/dropdown.jsx";
+```tsx
+import { Dropdown } from "./components/ui/dropdown.tsx";
 
 <Dropdown
   trigger={<Button>Menú</Button>}
@@ -190,12 +159,9 @@ import { Dropdown } from "./components/ui/dropdown.jsx";
 ```
 
 ### ToastProvider + useToast
-```jsx
-import { ToastProvider, useToast } from "./components/ui/ToastProvider.jsx";
-
-// En App.jsx:
+```tsx
+// En layout.tsx:
 <ToastProvider>
-// ...
 
 // En cualquier componente:
 const { toast } = useToast();
@@ -206,8 +172,8 @@ toast.warning("Cuidado");
 ```
 
 ### Gallery
-```jsx
-import { Gallery } from "./components/ui/Gallery.jsx";
+```tsx
+import { Gallery } from "./components/ui/Gallery.tsx";
 
 <Gallery
   fotos={["url1", "url2"]}
@@ -218,46 +184,33 @@ import { Gallery } from "./components/ui/Gallery.jsx";
 
 ---
 
-## Relaciones en base de datos
-- propiedades.propietario_id → FK a contactos
-- contactos.propiedad_id → FK a propiedades
-- Asignación/desasignación siempre via contactsApi: assignPropietario / unassignPropietario
-
----
-
 ## Anti-patrones prohibidos
-- ❌ Estilos inline en JSX (salvo valor 100% dinámico)
-- ❌ supabase.from() dentro de componentes
-- ❌ Arrays de estados definidos en componentes
-- ❌ Colores hardcodeados fuera de theme.js / statusColors.js
-- ❌ Lógica de fetch fuera de hooks
-- ❌ Duplicar funciones que ya existen en utils
-- ❌ Emojis o caracteres Unicode (✓, ✏️, 🏢, etc.) — usar Lucide icons
+- Estilos inline en JSX (salvo valor 100% dinámico)
+- supabase.from() dentro de componentes
+- Arrays de estados definidos en componentes
+- Colores hardcodeados fuera de theme.ts / statusColors.ts
+- Lógica de fetch fuera de hooks
+- Duplicar funciones que ya existen en lib/
+- Emojis en código — usar Lucide icons
 
 ---
 
 ## Funciones de estilos disponibles
 
-### componentStyles.js
+### componentStyles.ts
 | Función | Uso |
 |---------|-----|
 | getPropertyCardStyles | Card de propiedad en lista |
 | getPropertyDetailStyles | Vista detalle de propiedad |
 | getFormStyles | Formulario de propiedad |
-| getClientsViewStyles | Vista CRM (lista de contactos) |
-| getContactFormStyles | Formulario de contacto |
-| getContactCardStyles | Card de contacto (con color por estado) |
-| getPropietarioModalStyles | Modal de asignación de propietario |
 | getAppStyles | App principal (topBar, list, empty, etc.) |
-| getProfileMenuStyles | Drawer de perfil |
 | getDialogStyles | RocaDialog |
 | createShadow | Sombras dinámicas |
 | glassSurface | Efecto glass con blur |
-| focusRing | Anillo dorado para focus |
 
-### statusColors.js
+### statusColors.ts
 | Función | Uso |
 |---------|-----|
-| getStatusColors | Colores interpolados por estado/pipeline |
-| getPipelineForEntity | Obtener pipeline por tipo de entidad |
-| generateStatusPalette | Debug/visualización de paleta |
+| getStatusColors | Colores interpolados por estado |
+| getPipelineForEntity | Obtener pipeline para entity |
+| generateStatusPalette | Debug de paleta |
