@@ -689,14 +689,14 @@ export const getProfileMenuStyles = (t: any) => ({
   drawer: {
     position: "fixed",
     top: 0,
-    right: 0,
+    left: 0,
     bottom: 0,
     width: 280,
     background: t.colors.bgCard,
-    borderLeft: `1px solid ${t.colors.border}`,
+    borderRight: `1px solid ${t.colors.border}`,
     padding: "24px 20px",
     zIndex: 50,
-    animation: "slideInRight 0.3s ease",
+    animation: "slideInLeft 0.3s ease",
   },
   header: {
     marginBottom: 24,
