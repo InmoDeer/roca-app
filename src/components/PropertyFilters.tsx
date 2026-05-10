@@ -39,6 +39,7 @@ export function PropertyFilters({ filters, setFilters, loading, filteredCount }:
     },
     filterRow: {
       display: "flex",
+      justifyContent: "space-between",
       gap: 10,
       padding: "12px 20px",
       overflowX: "auto",
@@ -68,27 +69,33 @@ export function PropertyFilters({ filters, setFilters, loading, filteredCount }:
       </div>
 
       <div style={styles.filterRow}>
-        <RocaSelect
-          label=""
-          value={filters.operacion}
-          onValueChange={(v: string) => setFilters((f: any) => ({ ...f, operacion: v }))}
-          options={["Venta", "Alquiler"]}
-          placeholder="Operación"
-        />
-        <RocaSelect
-          label=""
-          value={filters.tipo}
-          onValueChange={(v: string) => setFilters((f: any) => ({ ...f, tipo: v }))}
-          options={["Departamento", "Casa", "Local", "Oficina", "Terreno"]}
-          placeholder="Tipo"
-        />
-        <RocaSelect
-          label=""
-          value={filters.estado}
-          onValueChange={(v: string) => setFilters((f: any) => ({ ...f, estado: v }))}
-          options={["Disponible", "Reservado", "Cerrado"]}
-          placeholder="Estado"
-        />
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <RocaSelect
+            label=""
+            value={filters.operacion}
+            onValueChange={(v: string) => setFilters((f: any) => ({ ...f, operacion: v }))}
+            options={["Venta", "Alquiler"]}
+            placeholder="Operación"
+          />
+        </div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <RocaSelect
+            label=""
+            value={filters.tipo}
+            onValueChange={(v: string) => setFilters((f: any) => ({ ...f, tipo: v }))}
+            options={["Departamento", "Casa", "Local", "Oficina", "Terreno"]}
+            placeholder="Tipo"
+          />
+        </div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <RocaSelect
+            label=""
+            value={filters.estado}
+            onValueChange={(v: string) => setFilters((f: any) => ({ ...f, estado: v }))}
+            options={["Disponible", "Reservado", "Cerrado"]}
+            placeholder="Estado"
+          />
+        </div>
       </div>
 
       {!loading && (
