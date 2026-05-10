@@ -81,6 +81,22 @@ function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete, onRefresh }: an
         <CopyShareBtns text={tab === "corto" ? out.mensajeCorto : out.mensajeLargo} />
       </div>
 
+      {out.ubicacion && (
+        <div style={detailStyles.msgBox}>
+          <div style={{ fontSize: 12, color: t.colors.textMuted, marginBottom: 8, fontWeight: 600, textTransform: "uppercase" }}>📍 Ubicación</div>
+          <pre style={{ ...detailStyles.msgPre, whiteSpace: "pre-wrap" }}>{out.ubicacion}</pre>
+          <CopyShareBtns text={out.ubicacion} />
+        </div>
+      )}
+
+      {out.multimedia && (
+        <div style={detailStyles.msgBox}>
+          <div style={{ fontSize: 12, color: t.colors.textMuted, marginBottom: 8, fontWeight: 600, textTransform: "uppercase" }}>📸 Multimedia</div>
+          <pre style={{ ...detailStyles.msgPre, whiteSpace: "pre-wrap" }}>{out.multimedia}</pre>
+          <CopyShareBtns text={out.multimedia} />
+        </div>
+      )}
+
       {showGallery && <Gallery fotos={out.fotos} onClose={() => setGallery(false)} />}
     </div>
   );
