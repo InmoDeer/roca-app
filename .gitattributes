@@ -1,0 +1,3 @@
+graphify-out/* linguist-vendored
+graphify-out/**/* linguist-vendored
+package-lock.json linguist-generated
