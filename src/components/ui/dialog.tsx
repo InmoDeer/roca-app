@@ -4,7 +4,16 @@ import { X } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
 import { getDialogStyles } from "@/styles/componentStyles";
 
-export function RocaDialog({ open, onOpenChange, title, children, footer, variant = "bottom" }) {
+interface RocaDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  title: string;
+  children: React.ReactNode;
+  footer?: React.ReactNode;
+  variant?: "bottom" | "center";
+}
+
+export function RocaDialog({ open, onOpenChange, title, children, footer, variant = "bottom" }: RocaDialogProps) {
   const { t, mode } = useTheme();
   const styles = getDialogStyles(t, mode, variant);
 
@@ -12,7 +21,7 @@ export function RocaDialog({ open, onOpenChange, title, children, footer, varian
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay style={styles.overlay} />
-        <Dialog.Content style={styles.content} onOpenAutoFocus={(e) => e.preventDefault()}>
+        <Dialog.Content style={styles.content} aria-describedby={undefined}>
           <div style={styles.header}>
             <Dialog.Title style={styles.title}>{title}</Dialog.Title>
             <Dialog.Close style={styles.closeBtn}>

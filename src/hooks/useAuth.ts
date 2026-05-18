@@ -8,12 +8,12 @@ export function useAuth() {
   const [password, setPassword] = useState("");
 
   useEffect(() => {
-    supabase.client.auth.getSession().then(({ data: { session } }) => {
+    supabase.client.auth.getSession().then(({ data: { session } }: { data: { session: any } }) => {
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
-    const { data: { subscription } } = supabase.client.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.client.auth.onAuthStateChange((_event: any, session: any) => {
       setUser(session?.user ?? null);
     });
 

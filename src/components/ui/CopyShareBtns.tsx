@@ -48,16 +48,6 @@ export function CopyShareBtns({ text }: { text: string }) {
       fontSize: 14,
       cursor: "pointer",
     },
-    landingBtn: {
-      padding: "12px",
-      background: "transparent",
-      color: t.colors.primary,
-      border: `1px solid ${t.colors.primary}`,
-      borderRadius: 12,
-      fontWeight: 600,
-      fontSize: 14,
-      cursor: "pointer",
-    },
   };
 
   return (

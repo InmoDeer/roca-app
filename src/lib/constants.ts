@@ -6,9 +6,6 @@ export const PIPELINE_PROPERTY = [
   "Cerrado",
 ];
 
-export const ESTADOS_PROPERTY = PIPELINE_PROPERTY;
-export const ESTADOS = PIPELINE_PROPERTY;
-
 export const PROPERTY_TYPES = [
   "Departamento",
   "Casa",

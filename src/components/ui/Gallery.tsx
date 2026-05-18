@@ -5,7 +5,7 @@ import { X, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
 
 export function Gallery({ fotos, onClose, initialIndex = 0 }: any) {
-  const { mode } = useTheme();
+  const { t, mode } = useTheme();
   const [idx, setIdx] = useState(initialIndex);
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -110,7 +110,7 @@ export function Gallery({ fotos, onClose, initialIndex = 0 }: any) {
               style={{
                 ...galleryStyles.thumb,
                 outline:
-                  i === idx ? "2px solid #e8ff4f" : "none",
+                  i === idx ? `2px solid ${t.colors.primary}` : "none",
               }}
             />
           ))}

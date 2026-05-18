@@ -3,8 +3,11 @@ import { useEffect, useState } from "react";
 import { fetchPropertyById } from "@/lib/api";
 import { buildOutputs } from "@/lib/messageFormatter";
 import { Gallery } from "@/components/ui/Gallery";
+import { Camera } from "lucide-react";
+import { useTheme } from "@/hooks/useTheme";
 
 export default function PublicPropertyPage({ params }: { params: { id: string } }) {
+  const { t } = useTheme();
   const [property, setProperty] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -19,11 +22,11 @@ export default function PublicPropertyPage({ params }: { params: { id: string } 
     return (
       <div style={{ 
         minHeight: "100vh", 
-        background: "#000", 
+        background: t.colors.bg, 
         display: "flex", 
         alignItems: "center", 
         justifyContent: "center",
-        color: "#fff"
+        color: t.colors.text
       }}>
         Cargando...
       </div>
@@ -34,16 +37,16 @@ export default function PublicPropertyPage({ params }: { params: { id: string } 
     return (
       <div style={{ 
         minHeight: "100vh", 
-        background: "#000", 
+        background: t.colors.bg, 
         display: "flex", 
         flexDirection: "column",
         alignItems: "center", 
         justifyContent: "center",
-        color: "#fff"
+        color: t.colors.text
       }}>
-        <div style={{ fontSize: 48, marginBottom: 16 }}>📷</div>
+        <Camera size={48} strokeWidth={1} style={{ marginBottom: 16 }} />
         <p style={{ marginBottom: 16 }}>Propiedad no encontrada</p>
-        <a href="/" style={{ color: "#d4af37", textDecoration: "underline" }}>Volver a la app</a>
+        <a href="/" style={{ color: t.colors.primary, textDecoration: "underline" }}>Volver a la app</a>
       </div>
     );
   }
@@ -55,15 +58,15 @@ export default function PublicPropertyPage({ params }: { params: { id: string } 
     return (
       <div style={{ 
         minHeight: "100vh", 
-        background: "#000", 
+        background: t.colors.bg, 
         display: "flex", 
         flexDirection: "column",
         alignItems: "center", 
         justifyContent: "center",
-        color: "#666"
+        color: t.colors.textMuted
       }}>
         <p>No hay fotos disponibles</p>
-        <a href="/" style={{ color: "#d4af37", marginTop: 20 }}>Volver</a>
+        <a href="/" style={{ color: t.colors.primary, marginTop: 20 }}>Volver</a>
       </div>
     );
   }
@@ -71,7 +74,7 @@ export default function PublicPropertyPage({ params }: { params: { id: string } 
   return (
     <div style={{ 
       minHeight: "100vh", 
-      background: "#000", 
+      background: t.colors.bg, 
       position: "relative" 
     }}>
       <Gallery fotos={fotos} onClose={() => window.close()} />

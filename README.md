@@ -9,7 +9,7 @@ ROCA te permite gestionar tus propiedades, generar mensajes profesionales para W
 ## Que puedes hacer con ROCA
 
 - **Gestionar inmuebles**: Agrega, edita y organiza todas tus propiedades (departamentos, casas, oficinas, locales, terrenos).
-- **Generar mensajes listos para WhatsApp**: Con un solo toque, copia un mensaje atractivo con fotos, características destacadas y ubicación.
+- **Generar mensajes listos para WhatsApp**: Con un solo toque, copia un mensaje atractivo con fotos, características destacadas y ubicación. Los destacados se generan automáticamente según los datos del inmueble (piso, área, amenities, etc.)
 - **Estados visuales**: Colores dinámicos que muestran el estado de cada propiedad.
 - **Modo claro / oscuro**: Trabaja cómodo a cualquier hora. Tu preferencia se guarda.
 
@@ -27,8 +27,22 @@ ROCA te permite gestionar tus propiedades, generar mensajes profesionales para W
 
 ## Características destacadas
 
-### Fotos y multimedia
-Sube todas las fotos que quieras, ordénalas y añade enlaces a tour 360° o video de YouTube.
+### Formulario completo
+Todas las secciones en un solo formulario: datos generales, ubicación, precio, características físicas, amenities, calidad y confort, áreas comunes, multimedia y propietario.
+
+### Fotos con drag & drop
+Sube todas las fotos que quieras, reordenalas arrastrándolas y eliminalas individualmente. La primera foto se marca como principal.
+
+### Mensajes inteligentes
+Los mensajes de WhatsApp se generan automáticamente con frases cualitativas según:
+- **Piso**: vista panorámica, iluminación
+- **Área**: amplitud, distribución
+- **Antigüedad**: a estrenar, buen estado
+- **Amenities**: piscina, gimnasio, parrilla, etc.
+- **Vista**: parque, mar, panorámica
+- **Ubicación**: sobre avenida, zona residencial, distritos top
+
+Además puedes elegir manualmente hasta 3 características para destacar primero.
 
 ### Estados de propiedad
 Organiza tu cartera con estados visuales:
@@ -38,7 +52,7 @@ Organiza tu cartera con estados visuales:
 - **Reservado** (amarillo)
 - **Cerrado** (verde intenso - Alquilado/Vendido)
 
-### Filtros inteligentes
+### Filtros
 Encuentra rápido lo que buscas filtrando por:
 - Texto (nombre o distrito)
 - Operación (Alquiler / Venta)
@@ -52,8 +66,8 @@ Elige entre modo claro u oscuro. Tu preferencia se guarda automáticamente.
 
 ## Stack Tecnológico
 
-- **Frontend**: Next.js 15, React 19
-- **UI**: Radix UI (dialog, dropdown, select, tabs, toast)
+- **Frontend**: Next.js 16, React 19
+- **UI**: Radix UI (dialog, select, toast)
 - **Iconos**: Lucide React
 - **Backend**: Supabase (Auth + Database)
 - **Imágenes**: Cloudinary

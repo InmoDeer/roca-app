@@ -19,10 +19,10 @@ export function Checkbox({ label, k, form, setForm, icon: Icon }: any) {
       />
       <span style={{
         ...styles.checkmark,
-        background: isChecked ? "linear-gradient(135deg, #d4af37 0%, #b8962e 100%)" : t.colors.bgSecondary,
-        borderColor: isChecked ? "#d4af37" : t.colors.border,
+        background: isChecked ? `linear-gradient(135deg, ${t.colors.primary} 0%, ${t.colors.primaryDark} 100%)` : t.colors.bgSecondary,
+        borderColor: isChecked ? t.colors.primary : t.colors.border,
       }}>
-        {isChecked && <Check size={14} strokeWidth={2.5} style={{ color: "#0a0a0a" }} />}
+        {isChecked && <Check size={14} strokeWidth={2.5} style={{ color: t.colors.bg }} />}
       </span>
       {Icon && (
         <span style={styles.icon}>

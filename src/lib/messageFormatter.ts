@@ -5,9 +5,172 @@ export function buildOutputs(p: any) {
 
   const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
   const propiedadUrl = `${baseUrl}/?id=${p.id}`;
-  const mapsLink = p.maps_url || `https://maps.google.com/?q=${encodeURIComponent((p.direccion || "") + " " + (p.distrito || "") + " Lima Peru")}`;
+  const mapsLink =
+    p.maps_url ||
+    `https://maps.google.com/?q=${encodeURIComponent(
+      (p.direccion || "") + " " + (p.distrito || "") + " Lima Peru"
+    )}`;
 
   const fotos = Array.isArray(p.fotos_urls) ? p.fotos_urls : [];
+
+  function mapKeyToPhrase(key: string, prop: any) {
+    const map: Record<string, string> = {
+      balcon: "🌿 Balcón privado",
+      ventanas_amplias: "🪟 Ventanas amplias",
+      cocina_equipada: "🍳 Cocina equipada",
+      closet: "🚪 Closets empotrados",
+      recepcion: "🛎️ Recepción 24h",
+      cochera: "🚗 Estacionamiento incluido",
+      ascensor: "🛗 Edificio con ascensor",
+      amoblado: "🛋️ Totalmente amoblado",
+      area_servicio: "🧺 Cuarto y baño de servicio",
+      mascotas: "🐾 Pet friendly",
+      gas_natural: "🔥 Gas natural",
+      tendal: "🧺 Tendal",
+      piscina: "🏊 Piscina",
+      gimnasio: "💪 Gimnasio",
+      terraza: "🌇 Terraza común",
+      jardin: "🌳 Jardín",
+      parrilla: "🔥 Parrilla / BBQ",
+      juegos_ninos: "🧸 Juegos infantiles",
+    };
+    const vistaKey = `vista_${prop.vista}`;
+    map[vistaKey] = `🏞️ Vista ${prop.vista?.toLowerCase()}`;
+    return map[key] || null;
+  }
+
+  function generateAutoHighlights(prop: any): string[] {
+    const highlights: string[] = [];
+
+    if (prop.destacados_manuales && prop.destacados_manuales.length > 0) {
+      prop.destacados_manuales.slice(0, 3).forEach((key: string) => {
+        const phrase = mapKeyToPhrase(key, prop);
+        if (phrase) highlights.push(phrase);
+      });
+    }
+
+    const area = prop.area_m2 || 0;
+    const ambientes = prop.ambientes || 0;
+    if (area >= 120) highlights.push("🏰 Muy amplio y espacioso");
+    else if (area >= 90) highlights.push("📐 Ambientes amplios");
+    else if (area >= 60) highlights.push("✨ Bien distribuido");
+    if (ambientes >= 4) highlights.push("🛋️ Múltiples ambientes");
+
+    const piso = prop.piso || 0;
+    if (piso >= 15) {
+      highlights.push("🌇 Vista panorámica de la ciudad");
+      highlights.push("☀️ Iluminación natural todo el día");
+    } else if (piso >= 10) {
+      highlights.push("🏙️ Vista despejada");
+      highlights.push("☀️ Muy iluminado");
+    } else if (piso >= 6) {
+      highlights.push("🌳 Buena iluminación y ventilación");
+    } else if (piso >= 2) {
+      highlights.push("🍃 Vista a zona tranquila");
+    }
+    if (piso < 6 && area >= 70) {
+      highlights.push("💡 Ambientes luminosos");
+    }
+
+    if (prop.ventanas_amplias) highlights.push("🪟 Ventanas amplias, excelente iluminación natural");
+    if (prop.balcon) highlights.push("🌿 Balcón privado");
+
+    if (prop.vista) {
+      const vistaMap: Record<string, string> = {
+        Parque: "🌳 Vista directa al parque",
+        Panorámica: "🏙️ Vista panorámica despejada",
+        Mar: "🌊 Vista al mar",
+        "Jardín interior": "🌸 Tranquilidad con vista a jardín interior",
+        Avenida: "🏢 Vista a avenida principal",
+        Calle: "🏘️ Vista a calle residencial",
+      };
+      highlights.push(vistaMap[prop.vista] || `👀 Vista a ${prop.vista.toLowerCase()}`);
+    }
+
+    if (prop.cocina_equipada) highlights.push("🍳 Cocina completamente equipada");
+    if (prop.closet) highlights.push("🚪 Closets empotrados en dormitorios");
+    if (prop.recepcion) highlights.push("🛎️ Recepción / Seguridad 24h");
+
+    const antiguedad = prop.antiguedad || "";
+    if (antiguedad === "A estrenar") highlights.push("✨ A estrenar, acabados de lujo");
+    else if (antiguedad === "1-5 años") highlights.push("🆕 Como nuevo, muy bien conservado");
+    else if (antiguedad === "5-10 años") highlights.push("🏗 Buen estado general");
+
+    if (prop.amoblado) {
+      highlights.push("🛋️ Totalmente amoblado y equipado");
+      if (!prop.cocina_equipada) highlights.push("🍳 Cocina equipada");
+      if (!prop.closet) highlights.push("🚪 Closets empotrados");
+    }
+
+    if (prop.cochera) highlights.push("🚗 Estacionamiento privado incluido");
+    if (prop.ascensor && piso > 1) highlights.push("🛗 Edificio con ascensor");
+    if (prop.area_servicio) highlights.push("🧺 Cuarto y baño de servicio");
+    if (prop.mascotas === "Sí") highlights.push("🐾 Pet friendly");
+
+    const areas: string[] = [];
+    if (prop.piscina) areas.push("piscina");
+    if (prop.terraza) areas.push("terraza");
+    if (prop.jardin) areas.push("jardín");
+    if (prop.sum) areas.push("SUM");
+    if (prop.parrilla) areas.push("parrilla / BBQ");
+    if (prop.juegos_ninos) areas.push("juegos infantiles");
+    if (prop.gimnasio) areas.push("gimnasio");
+    if (areas.length > 0) highlights.push(`🏊 Áreas comunes: ${areas.join(", ")}`);
+
+    if (prop.dormitorios >= 3 && prop.banos >= 2) {
+      highlights.push("🚿 Baños completos para cada dormitorio");
+    } else if (prop.dormitorios >= 2) {
+      highlights.push("🛏 Ideal para familias o roommates");
+    }
+
+    if (area >= 80 && prop.dormitorios >= 3 && prop.banos >= 2) {
+      if (!highlights.includes("🛏 Ideal para familias o roommates")) {
+        highlights.push("👨‍👩‍👧‍👦 Perfecto para familias");
+      }
+    }
+
+    const unique = [...new Set(highlights)];
+    return unique.slice(0, 8);
+  }
+
+  function getLocationHighlight(prop: any) {
+    const lines: string[] = [];
+
+    if (prop.direccion) {
+      const dir = prop.direccion.toLowerCase();
+      if (dir.includes("av.")) {
+        lines.push("🛣️ Sobre avenida principal, excelente conectividad");
+      } else if (dir.includes("jr.") || dir.includes("calle")) {
+        lines.push("🏘️ Zona residencial tranquila y segura");
+      } else if (dir.includes("parque") || dir.includes("plaza")) {
+        lines.push("🌳 Frente a área verde");
+      }
+    }
+
+    if (prop.cerca_a) {
+      lines.push(`🚶 A pasos de ${prop.cerca_a}`);
+    }
+
+    if (lines.length === 0) {
+      const distritosTop = ["Miraflores", "San Isidro", "Barranco", "Surco", "La Molina"];
+      if (distritosTop.includes(prop.distrito)) {
+        lines.push(`📍 Ubicación privilegiada en ${prop.distrito}`);
+      } else {
+        lines.push(`📍 Céntrico en ${prop.distrito}, cerca a todo`);
+      }
+    }
+
+    return lines.join("\n");
+  }
+
+  const autoHighlights = generateAutoHighlights(p);
+  const locationHighlight = getLocationHighlight(p);
+
+  const multimedia = [
+    fotos.length > 0 ? `📸 Galería:\n${propiedadUrl}` : "",
+    p.tour360_url ? `🌐 Tour 360°:\n${p.tour360_url}` : "",
+    p.video_url ? `🎥 Video:\n${p.video_url}` : "",
+  ].filter(Boolean).join("\n");
 
   const specsLine = [
     p.dormitorios ? `🛏 ${p.dormitorios}` : "",
@@ -23,17 +186,33 @@ export function buildOutputs(p: any) {
     p.mascotas === "Sí" ? "🐶 Mascotas OK" : "",
   ].filter(Boolean).join(" · ");
 
+  const hookPhrase = autoHighlights.length > 0 ? `✨ ${autoHighlights[0]}` : "✨ Excelente oportunidad";
   const mensajeCorto = [
     `🏠 *${p.tipo} en ${p.distrito}*`,
-    `💰 *${precioFormatted}}`,
+    `💰 *${precioFormatted}*`,
     "",
     specsLine,
     extras,
     "",
-    "✨ Excelente oportunidad",
+    hookPhrase,
     "",
     "¿Te gustaría ver fotos? 📸",
   ].filter(Boolean).join("\n").trim();
+
+  const caracteristicasCompletas = [
+    specsLine,
+    extras,
+    p.antiguedad ? `🏗 ${p.antiguedad}` : "",
+    "",
+    autoHighlights.length > 0 ? "✨ *Destacados:*" : "",
+    ...autoHighlights.map((f) => `• ${f}`),
+  ].filter(Boolean).join("\n");
+
+  const ubicacion = [
+    `📍 ${p.distrito}${p.direccion ? ", " + p.direccion : ""}`,
+    locationHighlight,
+    `🗺 Maps: ${mapsLink}`,
+  ].filter(Boolean).join("\n");
 
   const mensajeLargo = [
     `🏠 *${p.tipo} en ${p.distrito}*`,
@@ -41,18 +220,13 @@ export function buildOutputs(p: any) {
     `💰 *${p.operacion}:* ${precioFormatted}`,
     p.mantenimiento ? `🧾 Mantenimiento: S/ ${p.mantenimiento}/mes` : "",
     "",
-    specsLine,
-    extras,
-    p.antiguedad ? `🏗 ${p.antiguedad}` : "",
+    caracteristicasCompletas,
     "",
     "━━━━━━━━━━━",
-    fotos.length > 0 ? `📸 Galería:\n${propiedadUrl}` : "",
-    p.tour360_url ? `🌐 Tour 360°:\n${p.tour360_url}` : "",
-    p.video_url ? `🎥 Video:\n${p.video_url}` : "",
+    multimedia,
     "━━━━━━━━━━━",
     "",
-    `📍 ${p.distrito}${p.direccion ? ", " + p.direccion : ""}`,
-    `🗺 Maps: ${mapsLink}`,
+    ubicacion,
     "",
     "¿Cuándo podés pasar a verla? 📅",
   ].filter(Boolean).join("\n").trim();
@@ -62,17 +236,16 @@ export function buildOutputs(p: any) {
     precioRaw: p.precio,
     precioFormatted,
     specsLine,
+    caracteristicasCompletas,
+    multimedia,
+    ubicacion,
     mensajeCorto,
     mensajeLargo,
     fotos,
     mapsLink,
     propiedadUrl,
-    tituloDinamico: `🏠 ${p.tipo} en ${p.distrito}`,
-    ubicacion: `📍 ${p.distrito}${p.direccion ? ", " + p.direccion : ""}\n🗺 Maps: ${mapsLink}`,
-    multimedia: [
-      fotos.length > 0 ? `📸 Galería:\n${propiedadUrl}` : "",
-      p.tour360_url ? `🌐 Tour 360°:\n${p.tour360_url}` : "",
-      p.video_url ? `🎥 Video:\n${p.video_url}` : "",
-    ].filter(Boolean).join("\n"),
+    tituloDinamico: p.nombre,
   };
 }
+
+

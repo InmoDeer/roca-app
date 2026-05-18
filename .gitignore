@@ -29,3 +29,9 @@ dist-ssr
 *.sw?
 .next
 .continue
+
+# Build artifacts
+tsconfig.tsbuildinfo
+
+# Graphify cache
+graphify-out/cache/

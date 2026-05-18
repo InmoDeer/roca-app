@@ -3,7 +3,7 @@ import { useTheme } from "@/hooks/useTheme";
 
 export function Field({ label, k, form, setForm, type = "text", placeholder = "" }: any) {
   const { t } = useTheme();
-  const styles = getFieldStyles(t);
+  const styles = getFieldStyles(t) as Record<string, React.CSSProperties>;
   
   return (
     <div style={styles.container}>

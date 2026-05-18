@@ -46,6 +46,18 @@ export async function deleteProperty(id: string) {
   if (error) console.error("Error deleting:", error);
 }
 
+export async function fetchPropietarios(userId: string) {
+  const { data, error } = await supabase.client
+    .from("contacts")
+    .select("id, nombre, telefono")
+    .eq("tipo", "propietario")
+    .eq("estado", "Cerrado")
+    .eq("user_id", userId)
+    .order("nombre");
+  if (error) console.error("Error fetching propietarios:", error);
+  return data || [];
+}
+
 export async function updatePropertyStatus(id: string, estado: string) {
   const { error } = await supabase.client
     .from("properties")

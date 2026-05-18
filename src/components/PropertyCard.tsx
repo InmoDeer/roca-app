@@ -18,7 +18,7 @@ export function PropertyCard({
   const isMenuOpen = openMenu === property.id;
   const ec = useStatus(property.estado, "property", "solid");
 
-  const styles = getPropertyCardStyles(t, ec);
+  const styles = getPropertyCardStyles(t, ec) as Record<string, React.CSSProperties>;
 
   return (
     <div style={styles.card} onClick={onClick}>

@@ -40,7 +40,7 @@ export const getPropertyCardStyles = (t: any, ec: any) => ({
   cardMain: {
     display: "flex",
     justifyContent: "space-between",
-    alignItems: "flex-start",
+    alignItems: "center",
     padding: 16,
     gap: 12,
   },
@@ -71,25 +71,6 @@ export const getPropertyCardStyles = (t: any, ec: any) => ({
     gap: 8,
     position: "relative",
   },
-  statusBadge: (ec: any) => ({
-    fontSize: 11,
-    fontWeight: 700,
-    borderRadius: 20,
-    padding: "4px 10px",
-    display: "flex",
-    alignItems: "center",
-    whiteSpace: "nowrap",
-    backgroundColor: ec?.bg || t.colors.success,
-    color: ec?.text || t.colors.text,
-  }),
-  statusDot: (ec: any) => ({
-    width: 6,
-    height: 6,
-    borderRadius: "50%",
-    background: ec?.dot || t.colors.text,
-    display: "inline-block",
-    marginRight: 4,
-  }),
   dropdown: {
     background: t.colors.bgCard,
     borderRadius: 12,
@@ -488,7 +469,7 @@ export const getFormStyles = (theme: any) => ({
     cursor: "grab",
     zIndex: 5,
     letterSpacing: 1,
-    pointerEvents: "auto",
+    pointerEvents: "auto" as const,
     border: "1px solid rgba(255,255,255,0.2)",
   },
   mainPhotoBadge: {
@@ -537,6 +518,7 @@ export const getDialogStyles = (t: any, mode: string, variant: string) => {
           display: "flex",
           flexDirection: "column" as const,
           animation: "slideUp 0.3s ease",
+          zIndex: 101,
         }
       : {
           position: "fixed" as const,
@@ -551,6 +533,7 @@ export const getDialogStyles = (t: any, mode: string, variant: string) => {
           display: "flex",
           flexDirection: "column" as const,
           animation: "scaleIn 0.2s ease",
+          zIndex: 101,
         },
     header: {
       display: "flex",

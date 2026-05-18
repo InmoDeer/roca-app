@@ -3,7 +3,7 @@ import { useTheme } from "@/hooks/useTheme";
 
 export function Select({ label, k, form, setForm, opts }: any) {
   const { t } = useTheme();
-  const styles = getSelectStyles(t);
+  const styles = getSelectStyles(t) as Record<string, React.CSSProperties>;
 
   return (
     <div style={styles.container}>

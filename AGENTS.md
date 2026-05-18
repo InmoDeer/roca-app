@@ -2,18 +2,18 @@
 
 ## Descripción
 - Nombre: ROCA App
-- Tipo: Next.js 15 + React 19 + TypeScript + Supabase
+- Tipo: Next.js 16 + React 19 + TypeScript + Supabase
 - Propósito: Gestión de propiedades inmobiliarias para agentes
 
 ---
 
 ## Stack
-- Next.js 15 (App Router)
+- Next.js 16 (App Router, Turbopack)
 - React 19
-- TypeScript
+- TypeScript (strict)
 - Supabase (DB + Auth)
 - Cloudinary (fotos)
-- Radix UI (dialog, dropdown, select, tabs, toast)
+- Radix UI (dialog, select, toast)
 - Lucide React (iconos)
 
 ---
@@ -21,30 +21,35 @@
 ## Estructura
 ```
 src/
-├── app/                    # Next.js App Router
-│   ├── layout.tsx          # Root layout
-│   ├── page.tsx            # Home (lista de propiedades)
-│   └── propiedad/[id]/     # Detalle de propiedad
+├── app/                       # Next.js App Router
+│   ├── layout.tsx             # Root layout
+│   ├── page.tsx               # Home (lista + detalle + formulario)
+│   ├── propiedad/[id]/        # Ruta pública de propiedad
+│   └── api/cloudinary/delete/ # API route para eliminar fotos
 ├── components/
-│   ├── ui/                 # Gallery, CopyShareBtns, dialog, dropdown, select, skeleton, tabs, ToastProvider
-│   └── formFields/         # Field, Select, Checkbox
+│   ├── ui/                    # Dialog, Gallery, CopyShareBtns, ToastProvider, Select
+│   ├── formFields/            # Field, Select, Checkbox
+│   ├── ManualHighlightsSelector.tsx
+│   ├── PropertyCard.tsx
+│   ├── PropertyDetail.tsx
+│   ├── PropertyFilters.tsx
+│   └── PropertyForm.tsx
 ├── hooks/
-│   ├── useAuth.ts          # Auth (login/logout)
-│   ├── useProperties.ts    # CRUD propiedades
-│   ├── useStatus.ts        # Colores dinámicos por estado
-│   ├── useTheme.tsx        # Tema (t, mode, toggle)
-│   └── useSwipeBack.ts
+│   ├── useAuth.ts             # Auth (login/logout)
+│   ├── useProperties.ts       # CRUD propiedades
+│   ├── useStatus.ts           # Colores dinámicos por estado
+│   └── useTheme.tsx           # Tema (t, mode, toggle)
 ├── lib/
-│   ├── api.ts              # CRUD propiedades
-│   ├── supabase.ts         # Cliente Supabase
-│   ├── cloudinary.ts       # Upload fotos
-│   ├── constants.ts         # Estados, tipos, monedas
-│   └── messageFormatter.ts # Generar mensajes WhatsApp
+│   ├── api.ts                 # CRUD propiedades + fetchPropietarios
+│   ├── supabase.ts            # Cliente Supabase (browser)
+│   ├── cloudinary.ts          # Upload + delete fotos (vía API route)
+│   ├── constants.ts           # Estados, tipos, monedas, opciones
+│   └── messageFormatter.ts    # Generar mensajes WhatsApp con auto-highlights
 ├── styles/
-│   ├── theme.ts            # darkTheme, lightTheme
-│   ├── componentStyles.ts  # getXxxStyles para cada componente
-│   └── statusColors.ts     # Motor de gradiente de estado
-├── middleware.ts          # Auth middleware
+│   ├── theme.ts               # darkTheme, lightTheme
+│   ├── componentStyles.ts     # getXxxStyles para cada componente
+│   └── statusColors.ts        # Motor de gradiente de estado
+├── middleware.ts              # Auth middleware
 └── globals.css
 ```
 
@@ -64,7 +69,7 @@ src/
 - Tipos, monedas, opciones de formulario: todo en constants.ts
 
 ### 3. API / Supabase — siempre a través de lib/api.ts
-- NUNCA llamar supabase directo desde componentes
+- NUNCA llamar supabase directo desde componentes (excepción: PropertyForm usa `supabase.client.from("contacts")` para vincular propietario post-save)
 - Propiedades → lib/api.ts
 - Si necesitás una query nueva, agregás la función al util correspondiente
 
@@ -75,13 +80,15 @@ src/
 
 ### 5. Tema
 - Siempre usar useTheme() para obtener t y mode
-- t.colors.primary = dorado (#d4af37)
+- `t.colors.primary` = dorado (#d4af37)
+- `t.colors.primaryDark` = #b8962e
 - mode = "dark" | "light"
 - Nunca hardcodear "#0a0a0a" o "#ffffff" — usar t.colors.bg / t.colors.text
 
 ### 6. Iconos
 - NUNCA emojis en código — usar iconos de lucide-react
 - Todos los iconos vienen de "lucide-react"
+- Excepción: mensajes WhatsApp (messageFormatter.ts) pueden usar emojis
 
 ---
 
@@ -97,14 +104,36 @@ src/
 
 ---
 
-## useStatus — Hook de colores de estado
+## Componentes principales
 
-```ts
-import { useStatus } from "../hooks/useStatus.ts";
+### PropertyForm (`src/components/PropertyForm.tsx`)
+Formulario completo para crear/editar propiedades con todas las secciones:
+- General (nombre, tipo, operación)
+- Ubicación (distrito, dirección, maps_url, cerca_a)
+- Precio (precio, moneda, mantenimiento)
+- Características físicas (dormitorios, ambientes, baños, área, piso, antigüedad)
+- Amenities y extras (cochera, ascensor, amoblado, etc. con iconos)
+- Calidad y confort (balcón, ventanas, closet, cocina, seguridad)
+- Áreas comunes (sub-checkboxes condicionales)
+- Destacar en mensaje (ManualHighlightsSelector)
+- Multimedia (fotos con drag & drop + reorden, video_url, tour360_url)
+- Propietario (selector desde DB)
 
-const ec = useStatus("Disponible", "property", "solid");
-// ec devuelve: { bg, text, dot, border, progress }
-```
+### PropertyDetail (`src/components/PropertyDetail.tsx`)
+Vista detalle de propiedad con:
+- Header con botones eliminar/editar
+- Hero image + galería
+- Info principal (título, tipo, distrito, precio)
+- StatusSelect para cambiar estado
+- Tabs mensaje corto/largo con CopyShareBtns
+- ActionGrid (ver fotos, tour 360, video, mapa)
+- Cards de ubicación y multimedia
+
+### PropertyCard (`src/components/PropertyCard.tsx`)
+Card de propiedad en lista con menú de 3 puntitos (editar, duplicar, eliminar).
+
+### PropertyFilters (`src/components/PropertyFilters.tsx`)
+Barra de búsqueda por nombre/distrito + selects de operación, tipo y estado.
 
 ---
 
@@ -112,14 +141,14 @@ const ec = useStatus("Disponible", "property", "solid");
 
 ### RocaDialog
 ```tsx
-import { RocaDialog } from "./components/ui/dialog.tsx";
+import { RocaDialog } from "./components/ui/dialog";
 
 <RocaDialog
   open={isOpen}
   onOpenChange={setIsOpen}
   title="Mi título"
   variant="bottom" | "center"
-  footer={<Button>Guardar</Button>}
+  footer={<button>Guardar</button>}
 >
   {children}
 </RocaDialog>
@@ -127,35 +156,11 @@ import { RocaDialog } from "./components/ui/dialog.tsx";
 
 ### RocaSelect / StatusSelect
 ```tsx
-import { StatusSelect, RocaSelect } from "./components/ui/select.tsx";
+import { StatusSelect, RocaSelect } from "./components/ui/select";
 
-<StatusSelect
-  value={estado}
-  onValueChange={setEstado}
-  pipeline={PIPELINE_PROPERTY}
-/>
+<StatusSelect value={estado} onValueChange={setEstado} pipeline={PIPELINE_PROPERTY} />
 
-<RocaSelect
-  value={value}
-  onValueChange={setValue}
-  options={["Opción 1", "Opción 2"]}
-  placeholder="Seleccionar"
-/>
-```
-
-### Dropdown
-```tsx
-import { Dropdown } from "./components/ui/dropdown.tsx";
-
-<Dropdown
-  trigger={<Button>Menú</Button>}
-  items={[
-    { label: "Editar", icon: PencilLine, onClick: handleEdit },
-    { label: "Eliminar", icon: Trash2, onClick: handleDelete, danger: true },
-    { divider: true },
-    { label: "Cerrar", icon: X, onClick: handleClose },
-  ]}
-/>
+<RocaSelect value={value} onValueChange={setValue} options={["A", "B"]} placeholder="Seleccionar" />
 ```
 
 ### ToastProvider + useToast
@@ -167,31 +172,25 @@ import { Dropdown } from "./components/ui/dropdown.tsx";
 const { toast } = useToast();
 toast.success("¡Guardado!");
 toast.error("Error");
-toast.info("Info");
-toast.warning("Cuidado");
 ```
 
 ### Gallery
 ```tsx
-import { Gallery } from "./components/ui/Gallery.tsx";
+import { Gallery } from "./components/ui/Gallery";
 
-<Gallery
-  fotos={["url1", "url2"]}
-  onClose={handleClose}
-  initialIndex={0}
-/>
+<Gallery fotos={["url1", "url2"]} onClose={handleClose} initialIndex={0} />
 ```
 
 ---
 
 ## Anti-patrones prohibidos
 - Estilos inline en JSX (salvo valor 100% dinámico)
-- supabase.from() dentro de componentes
+- supabase.from() dentro de componentes (excepción documentada)
 - Arrays de estados definidos en componentes
 - Colores hardcodeados fuera de theme.ts / statusColors.ts
 - Lógica de fetch fuera de hooks
 - Duplicar funciones que ya existen en lib/
-- Emojis en código — usar Lucide icons
+- Emojis en código — usar Lucide icons (excepción: mensajes WhatsApp)
 
 ---
 
@@ -204,6 +203,7 @@ import { Gallery } from "./components/ui/Gallery.tsx";
 | getPropertyDetailStyles | Vista detalle de propiedad |
 | getFormStyles | Formulario de propiedad |
 | getAppStyles | App principal (topBar, list, empty, etc.) |
+| getProfileMenuStyles | Menú de perfil (toggle tema, cerrar sesión) |
 | getDialogStyles | RocaDialog |
 | createShadow | Sombras dinámicas |
 | glassSurface | Efecto glass con blur |

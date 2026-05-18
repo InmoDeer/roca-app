@@ -1,6 +1,5 @@
 const CLOUDINARY_CLOUD = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD || "dzqfw8hm3";
 const CLOUDINARY_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_PRESET || "roca_fotos";
-const CLOUDINARY_API_SECRET = process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET || "nyX4Plsbh1AauomXksDw35Ec2wA";
 
 export async function uploadToCloudinary(file: File) {
   const form = new FormData();
@@ -17,66 +16,21 @@ export async function uploadToCloudinary(file: File) {
   return data.secure_url;
 }
 
-function getPublicIdFromUrl(url: string) {
-  if (!url) return null;
-  try {
-    const parts = url.split("/");
-    const uploadIndex = parts.indexOf("upload");
-    if (uploadIndex === -1) return null;
-    const afterUpload = parts.slice(uploadIndex + 1);
-    const versionIndex = afterUpload.findIndex(p => p.match(/^v\d+$/));
-    if (versionIndex > -1) {
-      afterUpload.splice(versionIndex, 1);
-    }
-    const publicId = afterUpload.join("/").replace(/\.[^.]+$/, "");
-    return publicId;
-  } catch {
-    return null;
-  }
-}
-
 export async function deleteCloudinaryImage(url: string) {
-  if (!url || !url.includes("cloudinary")) {
-    console.log("No es imagen de Cloudinary, saltando:", url);
-    return;
-  }
-
-  const publicId = getPublicIdFromUrl(url);
-  if (!publicId) {
-    console.log("No se pudo obtener publicId de:", url);
-    return;
-  }
-
-  const timestamp = Math.floor(Date.now() / 1000);
-  const signature = await generateSignature(publicId, timestamp);
-
-  const form = new FormData();
-  form.append("public_id", publicId);
-  form.append("timestamp", timestamp.toString());
-  form.append("signature", signature);
-  form.append("api_key", "213115298379474");
+  if (!url || !url.includes("cloudinary")) return;
 
   try {
-    const res = await fetch(
-      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/destroy`,
-      { method: "POST", body: form }
-    );
+    const res = await fetch("/api/cloudinary/delete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url }),
+    });
     const data = await res.json();
-    console.log("Cloudinary delete response:", data);
+    if (!res.ok) console.error("Error eliminando de Cloudinary:", data.error);
     return data;
   } catch (error) {
     console.error("Error eliminando imagen de Cloudinary:", error);
   }
-}
-
-async function generateSignature(publicId: string, timestamp: number) {
-  const str = `public_id=${publicId}&timestamp=${timestamp}${CLOUDINARY_API_SECRET}`;
-  const encoder = new TextEncoder();
-  const data = encoder.encode(str);
-  const hashBuffer = await crypto.subtle.digest("SHA-1", data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
-  return hashHex;
 }
 
 export async function deleteCloudinaryImages(urls: string | string[]) {
