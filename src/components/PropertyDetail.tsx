@@ -56,7 +56,7 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete, onRefres
       <div style={detailStyles.card}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
           <div>
-            <div style={detailStyles.name}>{out.tituloDinamico}</div>
+            <div style={detailStyles.name}>{p.nombre}</div>
             <div style={detailStyles.sub}>{p.tipo} · {p.distrito}</div>
           </div>
           <StatusSelect value={p.estado} onValueChange={(v: string) => onEstado(p.id, v)} pipeline={PIPELINE_PROPERTY} operacion={p.operacion} />
