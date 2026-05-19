@@ -3,7 +3,7 @@
  * @param {Object} p - Property object from Supabase
  * @returns {Object} Formatted outputs (price, features, messages, links, etc)
  */
-export function buildOutputs(p) {
+export function buildOutputs(p: any) {
   const sym = p.moneda === "USD" ? "$" : "S/ ";
   const precioRaw = Number(p.precio)?.toLocaleString();
   const precioFormatted = `${sym}${precioRaw}`;
