@@ -85,7 +85,7 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete, onRefres
       <div style={detailStyles.actionGrid}>
         {out.fotos.length > 0 && (
           <button onClick={() => setMediaViewer({ open: true, initialTab: "fotos" })} style={{ ...detailStyles.actionBtn, cursor: "pointer" }}>
-            <Images size={16} strokeWidth={1.5} /> Ver fotos ({out.fotos.length})
+            <Images size={16} strokeWidth={1.5} /> Ver fotos
           </button>
         )}
         {p.tour360_url && (

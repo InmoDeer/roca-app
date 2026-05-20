@@ -1,64 +1,7 @@
 "use client";
 import { useMemo } from "react";
 import { useTheme } from "@/hooks/useTheme";
-
-// Grupos visuales — las claves dentro de cada grupo se muestran juntas
-// y se fusionan en una sola frase al generar el mensaje
-const GROUPS = [
-  {
-    label: "Equipamiento interior",
-    keys: ["amoblado", "cocina_equipada", "closet"],
-    hint: "Se fusionan en una sola frase",
-  },
-  {
-    label: "Vista e iluminación",
-    keys: ["vista", "balcon", "ventanas_amplias"],
-    hint: "Se fusionan en una sola frase",
-  },
-  {
-    label: "Estado y dimensiones",
-    keys: ["antiguedad", "amplitud"],
-    hint: "Se adaptan al valor del inmueble",
-  },
-  {
-    label: "Extras y servicios",
-    keys: [
-      "cochera", "ascensor", "recepcion", "area_servicio",
-      "gas_natural", "lavanderia", "tendal", "mascotas",
-    ],
-  },
-  {
-    label: "Áreas comunes",
-    keys: ["areas_comunes"],
-    hint: "Se fusionan en una sola frase",
-  },
-];
-
-const LABELS: Record<string, string> = {
-  amoblado:        "Amoblado",
-  cocina_equipada: "Cocina equipada",
-  closet:          "Closets empotrados",
-  vista:           "Vista (según selección)",
-  balcon:          "Balcón privado",
-  ventanas_amplias:"Ventanas amplias",
-  antiguedad:      "Antigüedad (según valor)",
-  amplitud:        "Amplitud (según metraje)",
-  cochera:         "Estacionamiento",
-  ascensor:        "Ascensor",
-  recepcion:       "Recepción 24h",
-  area_servicio:   "Cuarto de servicio",
-  gas_natural:     "Gas natural",
-  lavanderia:      "Lavandería",
-  tendal:          "Tendal",
-  mascotas:        "Pet friendly",
-  piscina:         "Piscina",
-  gimnasio:        "Gimnasio",
-  terraza:         "Terraza",
-  jardin:          "Jardín",
-  parrilla:        "Parrilla",
-  juegos_ninos:    "Juegos infantiles",
-  areas_comunes:   "Áreas comunes (según disponibilidad)",
-};
+import { HIGHLIGHT_GROUPS, LABELS } from "@/lib/highlights";
 
 export function ManualHighlightsSelector({ form, setForm }: any) {
   const { t } = useTheme();
@@ -84,14 +27,6 @@ export function ManualHighlightsSelector({ form, setForm }: any) {
     if (p.mascotas === "Sí") keys.add("mascotas");
     if (p.antiguedad && p.antiguedad !== "") keys.add("antiguedad");
     if (p.area_m2 && p.area_m2 >= 60) keys.add("amplitud");
-    if (p.piscina)         keys.add("piscina");
-    if (p.gimnasio)        keys.add("gimnasio");
-    if (p.terraza)         keys.add("terraza");
-    if (p.jardin)          keys.add("jardin");
-    if (p.parrilla)        keys.add("parrilla");
-    if (p.juegos_ninos)    keys.add("juegos_ninos");
-    const hasAnyArea = p.piscina || p.gimnasio || p.terraza || p.jardin || p.parrilla || p.juegos_ninos;
-    if (hasAnyArea) keys.add("areas_comunes");
 
     return keys;
   }, [form]);
@@ -116,14 +51,12 @@ export function ManualHighlightsSelector({ form, setForm }: any) {
     );
     const hasVistaGroup = ["balcon","ventanas_amplias"].some(k => selected.includes(k)) ||
       selected.some(k => k.startsWith("vista_"));
-    const hasAreasComunes = selected.includes("areas_comunes");
     const singles = selected.filter(k =>
       !["amoblado","cocina_equipada","closet"].includes(k) &&
       !["balcon","ventanas_amplias"].includes(k) &&
-      !k.startsWith("vista_") &&
-      k !== "areas_comunes"
+      !k.startsWith("vista_")
     ).length;
-    return (hasEquipGroup ? 1 : 0) + (hasVistaGroup ? 1 : 0) + (hasAreasComunes ? 1 : 0) + singles;
+    return (hasEquipGroup ? 1 : 0) + (hasVistaGroup ? 1 : 0) + singles;
   }
 
   function toggleKey(key: string) {
@@ -143,7 +76,7 @@ export function ManualHighlightsSelector({ form, setForm }: any) {
     setForm({ ...form, destacados_manuales: next });
   }
 
-  const visibleGroups = GROUPS.map((g) => ({
+  const visibleGroups = HIGHLIGHT_GROUPS.map((g) => ({
     ...g,
     items: g.keys.filter((k) => availableKeys.has(k)),
   })).filter((g) => g.items.length > 0);

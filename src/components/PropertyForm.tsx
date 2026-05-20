@@ -213,9 +213,9 @@ export function PropertyForm({ initial, onSave, onClose, propietarioId }: any) {
           <Field label="Distrito*" k="distrito" form={form} setForm={setForm} />
           <Field label="Dirección" k="direccion" form={form} setForm={setForm} />
         </div>
-        <Field label="Google Maps URL (opcional)" k="maps_url" form={form} setForm={setForm} placeholder="Se genera automático" />
-        <Field label="Cerca de..." k="cerca_a" form={form} setForm={setForm} placeholder="Ej: Metro, Wong, Parque Kennedy" />
         <Field label="Limita con distrito..." k="limita_con" form={form} setForm={setForm} placeholder="Ej: San Isidro, San Miguel, Pueblo Libre" />
+        <Field label="Cerca de..." k="cerca_a" form={form} setForm={setForm} placeholder="Ej: Metro, Wong, Parque Kennedy" />
+        <Field label="Google Maps URL (opcional)" k="maps_url" form={form} setForm={setForm} placeholder="Se genera automático" />
 
         <div style={formStyles.section}>Precio</div>
         <div style={formStyles.row2}>

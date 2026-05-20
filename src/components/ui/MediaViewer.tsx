@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { X, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
@@ -25,6 +25,19 @@ export function MediaViewer({
   const [idx, setIdx] = useState(initialIndex);
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [swipeOffset, setSwipeOffset] = useState(0);
+  const [zoom, setZoom] = useState({ scale: 1, x: 0, y: 0 });
+
+  const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
+  const touchPrevX = useRef(0);
+  const touchPrevY = useRef(0);
+  const isTouching = useRef(false);
+  const lastTapTime = useRef(0);
+  const lastTapX = useRef(0);
+  const lastTapY = useRef(0);
+  const initialPinchDist = useRef(0);
+  const initialZoomScale = useRef(1);
 
   const availableTabs = [
     fotos.length > 0 ? "fotos" : null,
@@ -43,11 +56,25 @@ export function MediaViewer({
   }, []);
 
   useEffect(() => {
+    document.body.style.overflow = "hidden";
+    document.body.style.height = "100%";
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.height = "";
+    };
+  }, []);
+
+  useEffect(() => {
     setLoading(true);
     const img = new Image();
     img.src = fotos[idx];
     img.onload = () => setLoading(false);
   }, [idx, fotos]);
+
+  useEffect(() => {
+    setZoom({ scale: 1, x: 0, y: 0 });
+    setSwipeOffset(0);
+  }, [idx]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -59,6 +86,95 @@ export function MediaViewer({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [fotos.length, onClose, tab]);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (tab !== "fotos") return;
+
+    if (e.touches.length === 1) {
+      const t = e.touches[0];
+      touchStartX.current = t.clientX;
+      touchStartY.current = t.clientY;
+      touchPrevX.current = t.clientX;
+      touchPrevY.current = t.clientY;
+      isTouching.current = true;
+    } else if (e.touches.length === 2) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      initialPinchDist.current = Math.sqrt(dx * dx + dy * dy);
+      initialZoomScale.current = zoom.scale;
+      isTouching.current = false;
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (tab !== "fotos") return;
+
+    if (e.touches.length === 1 && zoom.scale > 1) {
+      const t = e.touches[0];
+      const deltaX = (t.clientX - touchPrevX.current) / zoom.scale;
+      const deltaY = (t.clientY - touchPrevY.current) / zoom.scale;
+      setZoom((z) => ({ ...z, x: z.x + deltaX, y: z.y + deltaY }));
+      touchPrevX.current = t.clientX;
+      touchPrevY.current = t.clientY;
+      isTouching.current = false;
+    } else if (e.touches.length === 1 && zoom.scale === 1) {
+      touchPrevX.current = e.touches[0].clientX;
+      setSwipeOffset(e.touches[0].clientX - touchStartX.current);
+      isTouching.current = true;
+    } else if (e.touches.length === 2) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const ratio = initialPinchDist.current > 0 ? dist / initialPinchDist.current : 1;
+      const newScale = Math.max(1, Math.min(4, initialZoomScale.current * ratio));
+      setZoom((z) => ({ ...z, scale: newScale }));
+      isTouching.current = false;
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (tab !== "fotos") {
+      isTouching.current = false;
+      return;
+    }
+
+    if (zoom.scale === 1) {
+      const deltaX = touchPrevX.current - touchStartX.current;
+      const deltaY = Math.abs(touchPrevY.current - touchStartY.current);
+
+      if (isTouching.current && Math.abs(deltaX) > 50 && Math.abs(deltaX) > deltaY) {
+        if (deltaX < -50) {
+          setIdx((i: number) => (i + 1) % fotos.length);
+        } else {
+          setIdx((i: number) => (i - 1 + fotos.length) % fotos.length);
+        }
+      } else if (isTouching.current && Math.abs(deltaX) < 10 && Math.abs(touchPrevY.current - touchStartY.current) < 10) {
+        const now = Date.now();
+        const timeSince = now - lastTapTime.current;
+        if (timeSince < 300 && timeSince > 0) {
+          if (zoom.scale > 1) {
+            setZoom({ scale: 1, x: 0, y: 0 });
+          } else {
+            setZoom({ scale: 2, x: 0, y: 0 });
+          }
+          lastTapTime.current = 0;
+        } else {
+          lastTapTime.current = now;
+        }
+      } else {
+        lastTapTime.current = 0;
+      }
+    }
+
+    setSwipeOffset(0);
+    isTouching.current = false;
+  };
+
+  const imgTransform = zoom.scale > 1
+    ? `scale(${zoom.scale}) translate(${zoom.x}px, ${zoom.y}px)`
+    : swipeOffset !== 0
+      ? `translateX(${swipeOffset}px)`
+      : "none";
 
   return (
     <div
@@ -108,7 +224,12 @@ export function MediaViewer({
 
         {tab === "fotos" && (
           <>
-            <div style={mediaStyles.imgContainer}>
+            <div
+              style={{ ...mediaStyles.imgContainer, maxHeight: zoom.scale > 1 ? "none" : "70vh" }}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+            >
               {loading && (
                 <div style={mediaStyles.loader}>
                   <Loader2 size={32} strokeWidth={1.5} className="spin" />
@@ -117,79 +238,82 @@ export function MediaViewer({
               <img
                 src={fotos[idx]}
                 alt=""
+                draggable={false}
                 style={{
                   ...mediaStyles.img,
                   opacity: loading ? 0 : 1,
+                  transform: imgTransform,
+                  cursor: zoom.scale > 1 ? "grab" : "default",
                 }}
                 onLoad={() => setLoading(false)}
               />
             </div>
 
-            <div style={mediaStyles.count}>
-              {idx + 1} / {fotos.length}
-            </div>
+            {zoom.scale === 1 && (
+              <>
+                <div style={mediaStyles.count}>
+                  {idx + 1} / {fotos.length}
+                </div>
 
-            {fotos.length > 1 && (
-              <div style={mediaStyles.nav}>
-                <button
-                  onClick={() => setIdx((i: number) => (i - 1 + fotos.length) % fotos.length)}
-                  style={mediaStyles.arrow}
-                >
-                  <ChevronLeft size={24} strokeWidth={1.5} />
-                </button>
-                <button
-                  onClick={() => setIdx((i: number) => (i + 1) % fotos.length)}
-                  style={mediaStyles.arrow}
-                >
-                  <ChevronRight size={24} strokeWidth={1.5} />
-                </button>
-              </div>
+                {fotos.length > 1 && (
+                  <div style={mediaStyles.nav}>
+                    <button
+                      onClick={() => setIdx((i: number) => (i - 1 + fotos.length) % fotos.length)}
+                      style={mediaStyles.arrow}
+                    >
+                      <ChevronLeft size={24} strokeWidth={1.5} />
+                    </button>
+                    <button
+                      onClick={() => setIdx((i: number) => (i + 1) % fotos.length)}
+                      style={mediaStyles.arrow}
+                    >
+                      <ChevronRight size={24} strokeWidth={1.5} />
+                    </button>
+                  </div>
+                )}
+
+                <div style={mediaStyles.thumbs}>
+                  {fotos.map((f: string, i: number) => (
+                    <img
+                      key={i}
+                      src={f}
+                      alt=""
+                      loading="lazy"
+                      draggable={false}
+                      onClick={() => setIdx(i)}
+                      style={{
+                        ...mediaStyles.thumb,
+                        outline:
+                          i === idx ? `2px solid ${t.colors.primary}` : "none",
+                      }}
+                    />
+                  ))}
+                </div>
+              </>
             )}
-
-            <div style={mediaStyles.thumbs}>
-              {fotos.map((f: string, i: number) => (
-                <img
-                  key={i}
-                  src={f}
-                  alt=""
-                  loading="lazy"
-                  onClick={() => setIdx(i)}
-                  style={{
-                    ...mediaStyles.thumb,
-                    outline:
-                      i === idx ? `2px solid ${t.colors.primary}` : "none",
-                  }}
-                />
-              ))}
-            </div>
           </>
         )}
 
         {tab === "video" && videoUrl && (
-          <iframe
-            src={getYoutubeEmbed(videoUrl)}
-            allowFullScreen
-            style={{
-              width: "100%",
-              height: "65vh",
-              border: "none",
-              borderRadius: 16,
-            }}
-          />
+          <div style={mediaStyles.iframeWrap}>
+            <iframe
+              src={getYoutubeEmbed(videoUrl)}
+              allowFullScreen
+              style={mediaStyles.iframe}
+              title="Video"
+            />
+          </div>
         )}
 
         {tab === "tour" && tour360Url && (
-          <iframe
-            src={tour360Url}
-            allowFullScreen
-            style={{
-              width: "100%",
-              height: "65vh",
-              border: "none",
-              borderRadius: 16,
-              background: "#000",
-            }}
-          />
+          <div style={mediaStyles.iframeWrap}>
+            <iframe
+              src={tour360Url}
+              allowFullScreen
+              style={{ ...mediaStyles.iframe, background: "#000" }}
+              title="Tour 360"
+            />
+          </div>
         )}
       </div>
     </div>
@@ -207,6 +331,10 @@ const mediaStyles: any = {
     alignItems: "center",
     justifyContent: "center",
     transition: "opacity 0.3s ease",
+    touchAction: "none",
+    overscrollBehavior: "none",
+    WebkitOverflowScrolling: "none",
+    height: "100dvh",
   },
   box: {
     width: "100%",
@@ -214,12 +342,16 @@ const mediaStyles: any = {
     padding: 20,
     position: "relative",
     transition: "opacity 0.3s ease, transform 0.3s ease",
+    maxHeight: "100dvh",
+    display: "flex",
+    flexDirection: "column",
   },
   tabs: {
     display: "flex",
     gap: 8,
     marginBottom: 16,
     justifyContent: "center",
+    flexShrink: 0,
   },
   tab: {
     padding: "10px 16px",
@@ -235,7 +367,7 @@ const mediaStyles: any = {
   },
   imgContainer: {
     width: "100%",
-    maxHeight: "65vh",
+    minHeight: 0,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -243,6 +375,21 @@ const mediaStyles: any = {
     background: "rgba(255,255,255,0.02)",
     borderRadius: 16,
     overflow: "hidden",
+    flex: 1,
+  },
+  iframeWrap: {
+    width: "100%",
+    minHeight: 0,
+    flex: 1,
+    borderRadius: 16,
+    overflow: "hidden",
+  },
+  iframe: {
+    width: "100%",
+    height: "100%",
+    minHeight: "60vh",
+    border: "none",
+    borderRadius: 16,
   },
   loader: {
     position: "absolute",
@@ -252,30 +399,34 @@ const mediaStyles: any = {
     color: "#d4af37",
   },
   closeBtn: {
-    position: "absolute",
-    top: 10,
-    right: 10,
-    background: "rgba(255,255,255,0.1)",
+    position: "fixed",
+    top: 16,
+    right: 16,
+    background: "rgba(0,0,0,0.5)",
     border: "none",
     color: "#ffffff",
     fontSize: 22,
     cursor: "pointer",
-    zIndex: 10,
+    zIndex: 210,
     width: 40,
     height: 40,
     borderRadius: "50%",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    transition: "all 0.3s ease",
+    WebkitBackdropFilter: "blur(8px)",
+    backdropFilter: "blur(8px)",
   },
   img: {
     maxWidth: "100%",
-    maxHeight: "65vh",
+    maxHeight: "70vh",
     objectFit: "contain",
     borderRadius: 16,
     display: "block",
     transition: "opacity 0.3s ease",
+    userSelect: "none",
+    WebkitUserSelect: "none",
+    willChange: "transform",
   },
   count: {
     textAlign: "center",
@@ -283,12 +434,14 @@ const mediaStyles: any = {
     fontSize: 13,
     marginTop: 12,
     fontWeight: 500,
+    flexShrink: 0,
   },
   nav: {
     display: "flex",
     justifyContent: "center",
     gap: 20,
     marginTop: 16,
+    flexShrink: 0,
   },
   arrow: {
     background: "rgba(255,255,255,0.08)",
@@ -308,6 +461,7 @@ const mediaStyles: any = {
     marginTop: 16,
     paddingBottom: 8,
     justifyContent: "center",
+    flexShrink: 0,
   },
   thumb: {
     width: 60,
