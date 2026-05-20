@@ -35,3 +35,6 @@ tsconfig.tsbuildinfo
 
 # Graphify cache
 graphify-out/cache/
+
+# opencode
+.opencode
