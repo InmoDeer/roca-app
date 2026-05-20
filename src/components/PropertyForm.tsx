@@ -33,7 +33,7 @@ export function PropertyForm({ initial, onSave, onClose, propietarioId }: any) {
     antiguedad: "", cochera: false, ascensor: false, amoblado: false,
     area_servicio: false, mascotas: "No", fotos_urls: [], video_url: "",
     tour360_url: "", estado: "Disponible", balcon: false, ventanas_amplias: false,
-    vista: "", cerca_a: "", cocina_equipada: false, closet: false, recepcion: false,
+    vista: "", cerca_a: "", limita_con: "", cocina_equipada: false, closet: false, recepcion: false,
     areas_comunes: false, piscina: false, terraza: false, jardin: false, sum: false,
     parrilla: false, juegos_ninos: false, gimnasio: false, tendal: false,
     gas_natural: false, lavanderia: false, destacados_manuales: [],
@@ -151,6 +151,7 @@ export function PropertyForm({ initial, onSave, onClose, propietarioId }: any) {
         ventanas_amplias: !!form.ventanas_amplias,
         vista: form.vista || null,
         cerca_a: form.cerca_a || null,
+        limita_con: form.limita_con || null,
         cocina_equipada: !!form.cocina_equipada,
         closet: !!form.closet,
         recepcion: !!form.recepcion,
@@ -214,6 +215,7 @@ export function PropertyForm({ initial, onSave, onClose, propietarioId }: any) {
         </div>
         <Field label="Google Maps URL (opcional)" k="maps_url" form={form} setForm={setForm} placeholder="Se genera automático" />
         <Field label="Cerca de..." k="cerca_a" form={form} setForm={setForm} placeholder="Ej: Metro, Wong, Parque Kennedy" />
+        <Field label="Limita con distrito..." k="limita_con" form={form} setForm={setForm} placeholder="Ej: San Isidro, San Miguel, Pueblo Libre" />
 
         <div style={formStyles.section}>Precio</div>
         <div style={formStyles.row2}>

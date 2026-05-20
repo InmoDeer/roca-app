@@ -20,9 +20,10 @@ export function buildOutputs(p: any) {
   // ---------- FUSIÓN INTELIGENTE DE MANUALES ----------
   // Antes de procesar, los grupos de claves manuales seleccionadas
   // se colapsan en una sola frase más completa.
-  function fuseManuales(manuales: string[], prop: any): { phrases: string[]; consumed: Set<string> } {
+  function fuseManuales(manuales: string[], prop: any): { phrases: string[]; consumed: Set<string>; areasPhrase: string | null } {
     const phrases: string[] = [];
     const consumed = new Set<string>();
+    let areasPhrase: string | null = null;
 
     // ── Grupo equipamiento: amoblado + cocina_equipada + closet ──────────────
     const tieneAmoblado  = manuales.includes("amoblado");
@@ -96,7 +97,7 @@ export function buildOutputs(p: any) {
     }
 
     // ── Resto de manuales: uno a uno ─────────────────────────────────────────
-    const remaining = manuales.filter((k) => !consumed.has(k));
+    const remaining = manuales.filter((k) => !consumed.has(k) && k !== "areas_comunes");
     for (const key of remaining) {
       let phrase: string | null = null;
 
@@ -113,25 +114,6 @@ export function buildOutputs(p: any) {
         if (area >= 120)      phrase = "🏰 Muy amplio y espacioso";
         else if (area >= 90)  phrase = "📐 Ambientes amplios";
         else if (area >= 60)  phrase = "✨ Bien distribuido";
-      } else if (key === "areas_comunes") {
-        const areaKeys = ["piscina","gimnasio","terraza","jardin","parrilla","juegos_ninos"];
-        const emojiMap: Record<string, string> = {
-          piscina: "🏊 Piscina", gimnasio: "💪 Gimnasio",
-          terraza: "🌇 Terraza", jardin: "🌳 Jardín",
-          parrilla: "🔥 Parrilla / BBQ", juegos_ninos: "🧸 Juegos infantiles",
-        };
-        const areaLabelMap: Record<string, string> = {
-          piscina: "piscina", gimnasio: "gimnasio", terraza: "terraza",
-          jardin: "jardín", parrilla: "parrilla / BBQ", juegos_ninos: "juegos infantiles",
-        };
-        const areas = areaKeys.filter((k) => prop[k]);
-        if (areas.length === 1) {
-          phrase = emojiMap[areas[0]];
-        } else if (areas.length > 1) {
-          phrase = `🏊 Áreas comunes: ${areas.map((k) => areaLabelMap[k]).join(", ")}`;
-        }
-        // Marcar todas como consumidas para que auto no las repita
-        areas.forEach((k) => consumed.add(k));
       } else {
         phrase = keyToPhraseSingle(key);
       }
@@ -142,7 +124,29 @@ export function buildOutputs(p: any) {
       }
     }
 
-    return { phrases: phrases.slice(0, 3), consumed };
+    // ── Áreas comunes siempre al final ──────────────────────────────────────
+    if (manuales.includes("areas_comunes") && !consumed.has("areas_comunes")) {
+      const areaKeys = ["piscina","gimnasio","terraza","jardin","parrilla","juegos_ninos"];
+      const emojiMap: Record<string, string> = {
+        piscina: "🏊 Piscina", gimnasio: "💪 Gimnasio",
+        terraza: "🌇 Terraza", jardin: "🌳 Jardín",
+        parrilla: "🔥 Parrilla / BBQ", juegos_ninos: "🧸 Juegos infantiles",
+      };
+      const areaLabelMap: Record<string, string> = {
+        piscina: "piscina", gimnasio: "gimnasio", terraza: "terraza",
+        jardin: "jardín", parrilla: "parrilla / BBQ", juegos_ninos: "juegos infantiles",
+      };
+      const areas = areaKeys.filter((k) => prop[k]);
+      if (areas.length === 1) {
+        areasPhrase = emojiMap[areas[0]];
+      } else if (areas.length > 1) {
+        areasPhrase = `🏊 Áreas comunes: ${areas.map((k) => areaLabelMap[k]).join(", ")}`;
+      }
+      areas.forEach((k) => consumed.add(k));
+      consumed.add("areas_comunes");
+    }
+
+    return { phrases: phrases.slice(0, 3), consumed, areasPhrase };
   }
 
   function cap(s: string) {
@@ -180,7 +184,7 @@ export function buildOutputs(p: any) {
       ? prop.destacados_manuales
       : [];
 
-    const { phrases: manualPhrases, consumed } = fuseManuales(manuales, prop);
+    const { phrases: manualPhrases, consumed, areasPhrase } = fuseManuales(manuales, prop);
     highlights.push(...manualPhrases);
     consumed.forEach((k) => covered.add(k));
 
@@ -203,7 +207,7 @@ export function buildOutputs(p: any) {
       if (vistaLibre) {
         highlights.push("🌇 Vista panorámica · Iluminación todo el día");
         covered.add("vista");
-      } else {
+      } else if (!covered.has("vista")) {
         highlights.push("🌇 Vista panorámica de la ciudad");
         if (iluminacionLibre) highlights.push("☀️ Iluminación natural todo el día");
       }
@@ -212,14 +216,14 @@ export function buildOutputs(p: any) {
       if (vistaLibre) {
         highlights.push("🏙️ Vista despejada · Muy iluminado");
         covered.add("vista");
-      } else {
+      } else if (!covered.has("vista")) {
         highlights.push("🏙️ Vista despejada y muy iluminado");
       }
       covered.add("iluminacion");
     } else if (piso >= 6) {
       highlights.push("🌳 Buena iluminación y ventilación");
       covered.add("iluminacion");
-    } else if (piso >= 2) {
+    } else if (piso >= 2 && !covered.has("vista")) {
       highlights.push("🍃 Vista a zona tranquila");
     }
 
@@ -293,25 +297,32 @@ export function buildOutputs(p: any) {
     if (prop.tendal        && !covered.has("tendal"))               highlights.push("🌬️ Tendal");
     if (prop.mascotas === "Sí" && !covered.has("mascotas"))         highlights.push("🐾 Pet friendly");
 
-    // ── 9. ÁREAS COMUNES ──────────────────────────────────────────────────────
-    const areasMap: Record<string, string> = {
-      piscina: "piscina", terraza: "terraza", jardin: "jardín",
-      sum: "SUM", parrilla: "parrilla / BBQ",
-      juegos_ninos: "juegos infantiles", gimnasio: "gimnasio",
-    };
-    const areasList = Object.keys(areasMap).filter((k) => prop[k] && !covered.has(k));
-    if (areasList.length > 0) {
-      highlights.push(`🏊 Áreas comunes: ${areasList.map((k) => areasMap[k]).join(", ")}`);
-    }
-
-    // ── 10. DORMITORIOS / BAÑOS ───────────────────────────────────────────────
+    // ── 9. DORMITORIOS / BAÑOS ───────────────────────────────────────────────
     if (prop.dormitorios >= 3 && prop.banos >= 2) {
       highlights.push("🚿 Baños completos para cada dormitorio");
     } else if (prop.dormitorios >= 2) {
       highlights.push("🛏 Ideal para familias o roommates");
     }
 
-    return [...new Set(highlights)].slice(0, 8);
+    // Aplicar límite de 8 antes de áreas comunes
+    const result = [...new Set(highlights)].slice(0, 8);
+
+    // ── 10. ÁREAS COMUNES (siempre al final, fuera del límite) ─────────────────
+    if (areasPhrase) {
+      result.push(areasPhrase);
+    } else {
+      const areasMap: Record<string, string> = {
+        piscina: "piscina", terraza: "terraza", jardin: "jardín",
+        sum: "SUM", parrilla: "parrilla / BBQ",
+        juegos_ninos: "juegos infantiles", gimnasio: "gimnasio",
+      };
+      const areasList = Object.keys(areasMap).filter((k) => prop[k] && !covered.has(k));
+      if (areasList.length > 0) {
+        result.push(`🏊 Áreas comunes: ${areasList.map((k) => areasMap[k]).join(", ")}`);
+      }
+    }
+
+    return result;
   }
 
   // ---------- UBICACIÓN ----------
@@ -329,6 +340,7 @@ export function buildOutputs(p: any) {
     }
 
     if (prop.cerca_a) lines.push(`🚶 A pasos de ${prop.cerca_a}`);
+    if (prop.limita_con) lines.push(`📍 En el límite con ${prop.limita_con}`);
 
     if (lines.length === 0) {
       const distritosTop = ["Miraflores", "San Isidro", "Barranco", "Surco", "La Molina"];
@@ -365,12 +377,16 @@ export function buildOutputs(p: any) {
     p.mascotas === "Sí" ? "🐶 Mascotas OK" : "",
   ].filter(Boolean).join(" · ");
 
+  const titleLine = p.limita_con
+    ? `🏠 *${p.tipo} en ${p.distrito} límite con ${p.limita_con}*`
+    : `🏠 *${p.tipo} en ${p.distrito}*`;
+
   const hookPhrase = autoHighlights.length > 0
     ? `✨ ${autoHighlights[0]}`
     : "✨ Excelente oportunidad";
 
   const mensajeCorto = [
-    `🏠 *${p.tipo} en ${p.distrito}*`,
+    titleLine,
     `💰 *${precioFormatted}*`,
     "",
     specsLine,
@@ -397,7 +413,7 @@ export function buildOutputs(p: any) {
   ].filter(Boolean).join("\n");
 
   const mensajeLargo = [
-    `🏠 *${p.tipo} en ${p.distrito}*`,
+    titleLine,
     "",
     `💰 *${p.operacion}:* ${precioFormatted}`,
     p.mantenimiento ? `🧾 Mantenimiento: S/ ${p.mantenimiento}/mes` : "",
