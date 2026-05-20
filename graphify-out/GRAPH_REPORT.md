@@ -1,200 +1,138 @@
-# Graph Report - roca-app  (2026-05-17)
+# Graph Report - .  (2026-05-19)
 
 ## Corpus Check
-- 42 files · ~19,877 words
-- Verdict: corpus is large enough that graph structure adds value.
+- Corpus is ~20,222 words - fits in a single context window. You may not need a graph.
 
 ## Summary
-- 527 nodes · 907 edges · 48 communities (28 shown, 20 thin omitted)
-- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 18 edges (avg confidence: 0.81)
+- 232 nodes · 362 edges · 24 communities (16 shown, 8 thin omitted)
+- Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 17 edges (avg confidence: 0.78)
 - Token cost: 0 input · 0 output
 
-## Graph Freshness
-- Built from commit: `951fd541`
-- Run `git rev-parse HEAD` and compare to check if the graph is stale.
-- Run `graphify update .` after code changes (no API cost).
-
 ## Community Hubs (Navigation)
-- [[_COMMUNITY_Community 0|Community 0]]
-- [[_COMMUNITY_Community 1|Community 1]]
-- [[_COMMUNITY_Community 2|Community 2]]
-- [[_COMMUNITY_Community 3|Community 3]]
-- [[_COMMUNITY_Community 4|Community 4]]
-- [[_COMMUNITY_Community 5|Community 5]]
-- [[_COMMUNITY_Community 6|Community 6]]
-- [[_COMMUNITY_Community 7|Community 7]]
-- [[_COMMUNITY_Community 8|Community 8]]
-- [[_COMMUNITY_Community 9|Community 9]]
-- [[_COMMUNITY_Community 10|Community 10]]
-- [[_COMMUNITY_Community 11|Community 11]]
-- [[_COMMUNITY_Community 12|Community 12]]
-- [[_COMMUNITY_Community 13|Community 13]]
-- [[_COMMUNITY_Community 14|Community 14]]
-- [[_COMMUNITY_Community 15|Community 15]]
-- [[_COMMUNITY_Community 16|Community 16]]
-- [[_COMMUNITY_Community 17|Community 17]]
-- [[_COMMUNITY_Community 18|Community 18]]
-- [[_COMMUNITY_Community 19|Community 19]]
-- [[_COMMUNITY_Community 20|Community 20]]
-- [[_COMMUNITY_Community 21|Community 21]]
-- [[_COMMUNITY_Community 27|Community 27]]
-- [[_COMMUNITY_Community 28|Community 28]]
-- [[_COMMUNITY_Community 29|Community 29]]
-- [[_COMMUNITY_Community 30|Community 30]]
-- [[_COMMUNITY_Community 31|Community 31]]
-- [[_COMMUNITY_Community 32|Community 32]]
-- [[_COMMUNITY_Community 33|Community 33]]
-- [[_COMMUNITY_Community 34|Community 34]]
-- [[_COMMUNITY_Community 35|Community 35]]
-- [[_COMMUNITY_Community 36|Community 36]]
-- [[_COMMUNITY_Community 37|Community 37]]
-- [[_COMMUNITY_Community 38|Community 38]]
-- [[_COMMUNITY_Community 39|Community 39]]
-- [[_COMMUNITY_Community 40|Community 40]]
-- [[_COMMUNITY_Community 41|Community 41]]
-- [[_COMMUNITY_Community 42|Community 42]]
-- [[_COMMUNITY_Community 43|Community 43]]
-- [[_COMMUNITY_Community 44|Community 44]]
-- [[_COMMUNITY_Community 45|Community 45]]
+- [[_COMMUNITY_Form Fields & Validation|Form Fields & Validation]]
+- [[_COMMUNITY_Property Features & Listing|Property Features & Listing]]
+- [[_COMMUNITY_TS Config & Build|TS Config & Build]]
+- [[_COMMUNITY_App Shell & Auth|App Shell & Auth]]
+- [[_COMMUNITY_UI Components & MediaViewer|UI Components & MediaViewer]]
+- [[_COMMUNITY_Package Dependencies|Package Dependencies]]
+- [[_COMMUNITY_Architectural Patterns|Architectural Patterns]]
+- [[_COMMUNITY_Runtime Dependencies|Runtime Dependencies]]
+- [[_COMMUNITY_Layout & Theme System|Layout & Theme System]]
+- [[_COMMUNITY_Project Docs & Rules|Project Docs & Rules]]
+- [[_COMMUNITY_Status Color Pipeline|Status Color Pipeline]]
+- [[_COMMUNITY_API & Data Layer|API & Data Layer]]
+- [[_COMMUNITY_Cloudinary API|Cloudinary API]]
+- [[_COMMUNITY_Build Configuration|Build Configuration]]
+- [[_COMMUNITY_OpenCode Plugin|OpenCode Plugin]]
+- [[_COMMUNITY_PostCSS Config|PostCSS Config]]
+- [[_COMMUNITY_OpenCode Schema|OpenCode Schema]]
+- [[_COMMUNITY_Next Config|Next Config]]
+- [[_COMMUNITY_Type Declarations|Type Declarations]]
+- [[_COMMUNITY_Select Components|Select Components]]
+- [[_COMMUNITY_Dialog Component|Dialog Component]]
+- [[_COMMUNITY_Toast Provider|Toast Provider]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `useTheme()` - 60 edges
+1. `useTheme()` - 34 edges
 2. `compilerOptions` - 16 edges
 3. `dependencies` - 16 edges
-4. `What You Must Do When Invoked` - 15 edges
-5. `/graphify` - 14 edges
-6. `ROCA App` - 13 edges
-7. `getStatusColors()` - 12 edges
-8. `PublicPropertyPage` - 11 edges
-9. `AGENTS.md - Reglas del Proyecto ROCA` - 10 edges
-10. `devDependencies` - 9 edges
+4. `devDependencies` - 9 edges
+5. `Use Theme Hook/Provider` - 9 edges
+6. `getStatusColors()` - 7 edges
+7. `PropertyForm Component` - 7 edges
+8. `buildOutputs()` - 6 edges
+9. `MediaViewer()` - 6 edges
+10. `useStatus()` - 6 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `PublicPropertyPage()` --calls--> `buildOutputs()`  [INFERRED]
-  /mnt/chromeos/removable/USB Drive/home/juan/Escritorio/ROCA/roca-app/docs/landing-archived/PublicPropertyPage.jsx → src/lib/messageFormatter.ts
-- `PublicPropertyPage` --conceptually_related_to--> `isMobile Helper`  [INFERRED]
-  src/app/propiedad/[id]/page.tsx → docs/landing-archived/PublicPropertyPage.jsx
-- `ManualHighlightsSelector()` --calls--> `useTheme()`  [EXTRACTED]
-  src/components/ManualHighlightsSelector.tsx → /mnt/chromeos/removable/USB Drive/home/juan/Escritorio/ROCA/roca-app/src/hooks/useTheme.tsx
-- `PropertyForm()` --calls--> `useTheme()`  [EXTRACTED]
-  src/components/PropertyForm.tsx → /mnt/chromeos/removable/USB Drive/home/juan/Escritorio/ROCA/roca-app/src/hooks/useTheme.tsx
-- `PropertyCard()` --calls--> `useTheme()`  [EXTRACTED]
-  src/components/PropertyCard.tsx → /mnt/chromeos/removable/USB Drive/home/juan/Escritorio/ROCA/roca-app/src/hooks/useTheme.tsx
+- `PropertyCard Component (list card)` --renders_status_via_hook--> `Property Pipeline: Descartado/Mantenimiento/Disponible/Reservado/Cerrado`  [EXTRACTED]
+  src/components/PropertyCard.tsx → AGENTS.md
+- `PropertyFilters Component` --filters_by_status--> `Property Pipeline: Descartado/Mantenimiento/Disponible/Reservado/Cerrado`  [EXTRACTED]
+  src/components/PropertyFilters.tsx → AGENTS.md
+- `Home Page (login + list + detail + form)` --invokes_via_buildOutputs--> `WhatsApp Auto-Messaging with highlights`  [EXTRACTED]
+  src/app/page.tsx → README.md
+- `Home Page (login + list + detail + form)` --sorts_by_status_order--> `Property Pipeline: Descartado/Mantenimiento/Disponible/Reservado/Cerrado`  [EXTRACTED]
+  src/app/page.tsx → AGENTS.md
+- `Public Property Page (MediaViewer)` --invokes_via_buildOutputs--> `WhatsApp Auto-Messaging with highlights`  [EXTRACTED]
+  src/app/propiedad/[id]/page.tsx → README.md
 
-## Hyperedges (group relationships)
-- **Tech Stack Foundation** — rocaapp_nextjs, rocaapp_react, rocaapp_typescript, rocaapp_supabase, rocaapp_cloudinary, rocaapp_radix_ui, rocaapp_lucide_react, rocaapp_vercel [EXTRACTED 1.00]
-- **Design System** — rocaapp_gold_identity, rocaapp_theme_system, rocaapp_component_styles, rocaapp_status_gradient [INFERRED 0.80]
-- **Architecture Conventions** — rocaapp_api_layer, rocaapp_hooks_layer, rocaapp_constants_layer, rocaapp_antipatterns [INFERRED 0.85]
+## Communities (24 total, 8 thin omitted)
 
-## Communities (48 total, 20 thin omitted)
-
-### Community 0 - "Community 0"
-Cohesion: 0.06
-Nodes (44): Business Name Config, Gallery Component, Helmet SEO Component, Home page (page.tsx), Loading Screen, Not Found, Photo Collage Grid, PropertyDetail (+36 more)
-
-### Community 1 - "Community 1"
-Cohesion: 0.09
-Nodes (30): metadata, RootLayout(), PropertyDetail(), PropertyFilters(), Checkbox(), getCheckboxStyles(), useSwipeBack(), ThemeContext (+22 more)
-
-### Community 2 - "Community 2"
+### Community 0 - "Form Fields & Validation"
 Cohesion: 0.1
-Nodes (29): Home(), LABELS, ManualHighlightsSelector(), PropertyForm(), useAuth(), useProperties(), createProperty(), deleteProperty() (+21 more)
+Nodes (22): GROUPS, LABELS, ManualHighlightsSelector(), Checkbox(), getCheckboxStyles(), Field(), getFieldStyles(), createProperty() (+14 more)
 
-### Community 3 - "Community 3"
-Cohesion: 0.2
-Nodes (11): supabase, collageStyles, isMobile(), LoadingScreen(), NotFound(), PhotoCollage(), PublicPropertyPage(), styles (+3 more)
+### Community 1 - "Property Features & Listing"
+Cohesion: 0.19
+Nodes (15): PropertyDetail(), PropertyFilters(), getSelectStyles(), Select(), useTheme(), PublicPropertyPage(), PIPELINE_PROPERTY, buildOutputs() (+7 more)
 
-### Community 4 - "Community 4"
-Cohesion: 0.11
-Nodes (22): AGENTS.md Developer Guide, Anti-pattern Prohibitions, API Layer (lib/api.ts), ROCA App, Cloudinary, Component Styles System, Constants Centralization, Gold Brand Identity (+14 more)
-
-### Community 5 - "Community 5"
-Cohesion: 0.14
-Nodes (14): Gallery (TSX), Toast Context, ToastProvider (JSX), ToastProvider (TSX), RocaDialog (JSX), RocaDialog (TSX), Dropdown (TSX), getDialogStyles Function (+6 more)
-
-### Community 6 - "Community 6"
-Cohesion: 0.1
-Nodes (23): Field(), getFieldStyles(), getSelectStyles(), Select(), createShadow(), getDialogStyles(), getFormStyles(), glassSurface() (+15 more)
-
-### Community 7 - "Community 7"
-Cohesion: 0.22
-Nodes (8): src/App.jsx, src/lib/constants.ts, src/lib/cloudinary.ts, src/main.jsx, src/lib/messageFormatter.ts, src/lib/api.ts, src/lib/supabase.ts, src/proxy.ts
-
-### Community 8 - "Community 8"
-Cohesion: 0.05
-Nodes (44): code:bash ($(cat graphify-out/.graphify_python) -c "), code:bash ($(cat graphify-out/.graphify_python) -c "), code:bash ($(cat graphify-out/.graphify_python) -c "), code:bash ($(cat graphify-out/.graphify_python) -c "), code:bash (mkdir -p graphify-out), code:bash ($(cat graphify-out/.graphify_python) -c "), code:bash ($(cat graphify-out/.graphify_python) -c "), code:bash ($(cat graphify-out/.graphify_python) -c ") (+36 more)
-
-### Community 9 - "Community 9"
-Cohesion: 0.29
-Nodes (13): PropertyCard(), useStatus(), useStatusPalette(), getPropertyCardStyles(), blend(), generateStatusPalette(), getContrastText(), getLuminance() (+5 more)
-
-### Community 10 - "Community 10"
-Cohesion: 0.06
-Nodes (33): 1. Estilos — siempre componentStyles.ts, 2. Constantes — siempre constants.ts, 3. API / Supabase — siempre a través de lib/api.ts, 4. Lógica de estado — siempre en hooks, 5. Tema, 6. Iconos, AGENTS.md - Reglas del Proyecto ROCA, Anti-patrones prohibidos (+25 more)
-
-### Community 11 - "Community 11"
-Cohesion: 0.53
-Nodes (4): Skeleton(), SkeletonCard(), SkeletonList(), SkeletonText()
-
-### Community 12 - "Community 12"
-Cohesion: 0.06
-Nodes (33): code:block1 (/graphify                                             # full), code:bash ($(cat graphify-out/.graphify_python) -c "), code:bash ($(cat graphify-out/.graphify_python) -c "), code:bash ($(cat graphify-out/.graphify_python) -c "), code:bash ($(cat graphify-out/.graphify_python) -c "), code:bash ($(cat graphify-out/.graphify_python) -c "), code:bash ($(cat graphify-out/.graphify_python) -c "), code:bash ($(cat graphify-out/.graphify_python) -c ") (+25 more)
-
-### Community 13 - "Community 13"
-Cohesion: 0.47
-Nodes (6): Component Styles (JS), Component Styles (TS), Status Color Engine (JS), Status Color Engine (TS), Theme Definitions (JS), Theme Definitions (TS)
-
-### Community 14 - "Community 14"
-Cohesion: 0.5
-Nodes (4): Branding Asset, Evan You (Creator), Vite Logo SVG, Vite Build Tool
-
-### Community 16 - "Community 16"
-Cohesion: 0.67
-Nodes (3): Hero Image, Hero Styles (componentStyles), Property Detail Hero Section
-
-### Community 38 - "Community 38"
-Cohesion: 0.06
-Nodes (33): dependencies, lucide-react, next, @radix-ui/react-dialog, @radix-ui/react-dropdown-menu, @radix-ui/react-select, @radix-ui/react-tabs, @radix-ui/react-toast (+25 more)
-
-### Community 39 - "Community 39"
+### Community 2 - "TS Config & Build"
 Cohesion: 0.1
 Nodes (19): compilerOptions, allowJs, esModuleInterop, incremental, isolatedModules, jsx, lib, module (+11 more)
 
-### Community 40 - "Community 40"
+### Community 3 - "App Shell & Auth"
+Cohesion: 0.18
+Nodes (13): Home(), PropertyCard(), PropertyForm(), useAuth(), useProperties(), getAppStyles(), getDialogStyles(), getFormStyles() (+5 more)
+
+### Community 4 - "UI Components & MediaViewer"
+Cohesion: 0.13
+Nodes (19): Checkbox Form Field Component, CopyShareBtns UI Component, Field Form Field Component, ManualHighlightsSelector Component, Manual Highlights Selection Groups, Manual Highlights Feature Labels, MediaViewer UI Component, MediaViewer Tabs (fotos/video/tour) (+11 more)
+
+### Community 5 - "Package Dependencies"
+Cohesion: 0.11
+Nodes (17): devDependencies, eslint, eslint-config-next, tailwindcss, @tailwindcss/postcss, @types/node, @types/react, @types/react-dom (+9 more)
+
+### Community 6 - "Architectural Patterns"
+Cohesion: 0.17
+Nodes (16): Arch: Context Provider Pattern, Arch: Status Color Pipeline, Arch: Theme-Aware Component Pattern, RocaDialog Component, RocaSelect Component, StatusSelect Component, ThemeProvider Component, ToastProvider (component) (+8 more)
+
+### Community 7 - "Runtime Dependencies"
 Cohesion: 0.12
-Nodes (15): Características destacadas, Como empezar, Diseño, Eres desarrollador?, Estados de propiedad, Filtros, Formulario completo, Fotos con drag & drop (+7 more)
+Nodes (16): dependencies, lucide-react, next, @radix-ui/react-dialog, @radix-ui/react-dropdown-menu, @radix-ui/react-select, @radix-ui/react-tabs, @radix-ui/react-toast (+8 more)
 
-### Community 41 - "Community 41"
-Cohesion: 0.5
-Nodes (6): createProperty(), deleteProperty(), fetchProperties(), fetchPropertyById(), updateProperty(), updatePropertyStatus()
+### Community 8 - "Layout & Theme System"
+Cohesion: 0.22
+Nodes (7): metadata, ThemeContext, ThemeProvider(), darkTheme, lightTheme, ToastContext, ToastProvider()
 
-### Community 42 - "Community 42"
+### Community 9 - "Project Docs & Rules"
+Cohesion: 0.24
+Nodes (13): AGENTS.md Developer Rules, Anti-patterns: no inline styles, no direct supabase, no emojis, Brand: Dorado #d4af37 primary, dark/light theme, Home Page (login + list + detail + form), Root Layout (Theme + Toast Providers), PropertyCard Component (list card), PropertyFilters Component, Property Pipeline: Descartado/Mantenimiento/Disponible/Reservado/Cerrado (+5 more)
+
+### Community 10 - "Status Color Pipeline"
+Cohesion: 0.32
+Nodes (9): useStatus(), blend(), getContrastText(), getLuminance(), getPipelineForEntity(), getStatusColors(), hexToRgb(), hexToRgba() (+1 more)
+
+### Community 11 - "API & Data Layer"
+Cohesion: 0.4
+Nodes (6): Arch: API Facade Pattern, Properties Feature (Form/Detail), Use Auth Hook, Use Properties Hook, API CRUD Module, Supabase Client Module
+
+### Community 12 - "Cloudinary API"
 Cohesion: 0.83
 Nodes (3): generateSignature(), getPublicIdFromUrl(), POST()
 
-## Ambiguous Edges - Review These
-- `src/lib/cloudinary.ts` → `PropertyCard.jsx`  [AMBIGUOUS]
-  src/components/PropertyCard.jsx · relation: calls
+### Community 13 - "Build Configuration"
+Cohesion: 0.67
+Nodes (3): ESLint Config, Next.js Config, PostCSS Config (Tailwind)
 
 ## Knowledge Gaps
-- **192 isolated node(s):** `nextConfig`, `rewrites`, `target`, `lib`, `allowJs` (+187 more)
+- **84 isolated node(s):** `nextConfig`, `config`, `target`, `lib`, `allowJs` (+79 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **20 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **What is the exact relationship between `src/lib/cloudinary.ts` and `PropertyCard.jsx`?**
-  _Edge tagged AMBIGUOUS (relation: calls) - confidence is low._
-- **Why does `lucide-react` connect `Community 38` to `Community 1`?**
-  _High betweenness centrality (0.050) - this node is a cross-community bridge._
-- **Why does `useTheme()` connect `Community 1` to `Community 9`, `Community 2`, `Community 11`, `Community 6`?**
-  _High betweenness centrality (0.047) - this node is a cross-community bridge._
-- **What connects `nextConfig`, `rewrites`, `target` to the rest of the system?**
-  _192 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.06 - nodes in this community are weakly interconnected._
-- **Should `Community 1` be split into smaller, more focused modules?**
-  _Cohesion score 0.09 - nodes in this community are weakly interconnected._
-- **Should `Community 2` be split into smaller, more focused modules?**
+- **Why does `useTheme()` connect `Property Features & Listing` to `Form Fields & Validation`, `Layout & Theme System`, `Status Color Pipeline`, `App Shell & Auth`?**
+  _High betweenness centrality (0.096) - this node is a cross-community bridge._
+- **Why does `dependencies` connect `Runtime Dependencies` to `Package Dependencies`?**
+  _High betweenness centrality (0.014) - this node is a cross-community bridge._
+- **Are the 5 inferred relationships involving `Use Theme Hook/Provider` (e.g. with `StatusSelect Component` and `RocaSelect Component`) actually correct?**
+  _`Use Theme Hook/Provider` has 5 INFERRED edges - model-reasoned connections that need verification._
+- **What connects `nextConfig`, `config`, `target` to the rest of the system?**
+  _84 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `Form Fields & Validation` be split into smaller, more focused modules?**
   _Cohesion score 0.1 - nodes in this community are weakly interconnected._
+- **Should `TS Config & Build` be split into smaller, more focused modules?**
+  _Cohesion score 0.1 - nodes in this community are weakly interconnected._
+- **Should `UI Components & MediaViewer` be split into smaller, more focused modules?**
+  _Cohesion score 0.13 - nodes in this community are weakly interconnected._

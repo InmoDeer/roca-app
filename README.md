@@ -9,7 +9,7 @@ ROCA te permite gestionar tus propiedades, generar mensajes profesionales para W
 ## Que puedes hacer con ROCA
 
 - **Gestionar inmuebles**: Agrega, edita y organiza todas tus propiedades (departamentos, casas, oficinas, locales, terrenos).
-- **Generar mensajes listos para WhatsApp**: Con un solo toque, copia un mensaje atractivo con fotos, características destacadas y ubicación. Los destacados se generan automáticamente según los datos del inmueble (piso, área, amenities, etc.)
+- **Generar mensajes listos para WhatsApp**: Con un solo toque, copia un mensaje atractivo con fotos, características destacadas y ubicación. Los destacados se generan automáticamente según los datos del inmueble (piso, área, amenities, etc.). Los enlaces de video y tour 360 apuntan a la app, no a URLs externas.
 - **Estados visuales**: Colores dinámicos que muestran el estado de cada propiedad.
 - **Modo claro / oscuro**: Trabaja cómodo a cualquier hora. Tu preferencia se guarda.
 
@@ -29,6 +29,9 @@ ROCA te permite gestionar tus propiedades, generar mensajes profesionales para W
 
 ### Formulario completo
 Todas las secciones en un solo formulario: datos generales, ubicación, precio, características físicas, amenities, calidad y confort, áreas comunes, multimedia y propietario.
+
+### Visor multimedia (MediaViewer)
+Reproductor con tabs para fotos, video (YouTube embed) y tour 360° inline. Se abre desde el detalle de la propiedad o desde enlaces compartidos, sin salir de la app. Navegación por teclado (← →) en fotos.
 
 ### Fotos con drag & drop
 Sube todas las fotos que quieras, reordenalas arrastrándolas y eliminalas individualmente. La primera foto se marca como principal.
@@ -71,6 +74,7 @@ Elige entre modo claro u oscuro. Tu preferencia se guarda automáticamente.
 - **Iconos**: Lucide React
 - **Backend**: Supabase (Auth + Database)
 - **Imágenes**: Cloudinary
+- **Multimedia**: Visor con tabs (fotos, video YouTube embed, tour 360 inline)
 - **Estilos**: CSS centralizado con soporte claro/oscuro + gradientes dinámicos por estado
 - **Deploy**: Vercel
 

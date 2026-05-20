@@ -2,97 +2,239 @@
 import { useMemo } from "react";
 import { useTheme } from "@/hooks/useTheme";
 
+// Grupos visuales — las claves dentro de cada grupo se muestran juntas
+// y se fusionan en una sola frase al generar el mensaje
+const GROUPS = [
+  {
+    label: "Equipamiento interior",
+    keys: ["amoblado", "cocina_equipada", "closet"],
+    hint: "Se fusionan en una sola frase",
+  },
+  {
+    label: "Vista e iluminación",
+    keys: ["vista", "balcon", "ventanas_amplias"],
+    hint: "Se fusionan en una sola frase",
+  },
+  {
+    label: "Estado y dimensiones",
+    keys: ["antiguedad", "amplitud"],
+    hint: "Se adaptan al valor del inmueble",
+  },
+  {
+    label: "Extras y servicios",
+    keys: [
+      "cochera", "ascensor", "recepcion", "area_servicio",
+      "gas_natural", "lavanderia", "tendal", "mascotas",
+    ],
+  },
+  {
+    label: "Áreas comunes",
+    keys: ["areas_comunes"],
+    hint: "Se fusionan en una sola frase",
+  },
+];
+
 const LABELS: Record<string, string> = {
-  balcon: "Balcón privado",
-  ventanas_amplias: "Ventanas amplias",
+  amoblado:        "Amoblado",
   cocina_equipada: "Cocina equipada",
-  closet: "Closets empotrados",
-  recepcion: "Recepción 24h",
-  cochera: "Estacionamiento",
-  ascensor: "Ascensor",
-  amoblado: "Amoblado",
-  area_servicio: "Cuarto de servicio",
-  gas_natural: "Gas natural",
-  lavanderia: "Lavandería",
-  piscina: "Piscina",
-  gimnasio: "Gimnasio",
-  tendal: "Tendal",
-  terraza: "Terraza",
-  jardin: "Jardín",
-  parrilla: "Parrilla",
-  juegos_ninos: "Juegos infantiles",
+  closet:          "Closets empotrados",
+  vista:           "Vista (según selección)",
+  balcon:          "Balcón privado",
+  ventanas_amplias:"Ventanas amplias",
+  antiguedad:      "Antigüedad (según valor)",
+  amplitud:        "Amplitud (según metraje)",
+  cochera:         "Estacionamiento",
+  ascensor:        "Ascensor",
+  recepcion:       "Recepción 24h",
+  area_servicio:   "Cuarto de servicio",
+  gas_natural:     "Gas natural",
+  lavanderia:      "Lavandería",
+  tendal:          "Tendal",
+  mascotas:        "Pet friendly",
+  piscina:         "Piscina",
+  gimnasio:        "Gimnasio",
+  terraza:         "Terraza",
+  jardin:          "Jardín",
+  parrilla:        "Parrilla",
+  juegos_ninos:    "Juegos infantiles",
+  areas_comunes:   "Áreas comunes (según disponibilidad)",
 };
 
 export function ManualHighlightsSelector({ form, setForm }: any) {
   const { t } = useTheme();
 
-  const availableOptions = useMemo(() => {
-    const options: { key: string; label: string }[] = [];
+  // Construir opciones disponibles según lo que tiene marcado el inmueble
+  const availableKeys = useMemo(() => {
     const p = form;
+    const keys = new Set<string>();
 
-    if (p.balcon) options.push({ key: "balcon", label: LABELS.balcon });
-    if (p.ventanas_amplias) options.push({ key: "ventanas_amplias", label: LABELS.ventanas_amplias });
-    if (p.vista && p.vista !== "") options.push({ key: `vista_${p.vista}`, label: `Vista ${p.vista.toLowerCase()}` });
-    if (p.cocina_equipada) options.push({ key: "cocina_equipada", label: LABELS.cocina_equipada });
-    if (p.closet) options.push({ key: "closet", label: LABELS.closet });
-    if (p.recepcion) options.push({ key: "recepcion", label: LABELS.recepcion });
-    if (p.cochera) options.push({ key: "cochera", label: LABELS.cochera });
-    if (p.ascensor) options.push({ key: "ascensor", label: LABELS.ascensor });
-    if (p.amoblado) options.push({ key: "amoblado", label: LABELS.amoblado });
-    if (p.area_servicio) options.push({ key: "area_servicio", label: LABELS.area_servicio });
-    if (p.mascotas === "Sí") options.push({ key: "mascotas", label: "Pet friendly" });
-    if (p.gas_natural) options.push({ key: "gas_natural", label: LABELS.gas_natural });
-    if (p.lavanderia) options.push({ key: "lavanderia", label: LABELS.lavanderia });
-    if (p.piscina) options.push({ key: "piscina", label: LABELS.piscina });
-    if (p.gimnasio) options.push({ key: "gimnasio", label: LABELS.gimnasio });
-    if (p.tendal) options.push({ key: "tendal", label: LABELS.tendal });
-    if (p.terraza) options.push({ key: "terraza", label: LABELS.terraza });
-    if (p.jardin) options.push({ key: "jardin", label: LABELS.jardin });
-    if (p.parrilla) options.push({ key: "parrilla", label: LABELS.parrilla });
-    if (p.juegos_ninos) options.push({ key: "juegos_ninos", label: LABELS.juegos_ninos });
+    if (p.amoblado)        keys.add("amoblado");
+    if (p.cocina_equipada) keys.add("cocina_equipada");
+    if (p.closet)          keys.add("closet");
+    if (p.vista)           keys.add("vista");
+    if (p.balcon)          keys.add("balcon");
+    if (p.ventanas_amplias) keys.add("ventanas_amplias");
+    if (p.cochera)         keys.add("cochera");
+    if (p.ascensor)        keys.add("ascensor");
+    if (p.recepcion)       keys.add("recepcion");
+    if (p.area_servicio)   keys.add("area_servicio");
+    if (p.gas_natural)     keys.add("gas_natural");
+    if (p.lavanderia)      keys.add("lavanderia");
+    if (p.tendal)          keys.add("tendal");
+    if (p.mascotas === "Sí") keys.add("mascotas");
+    if (p.antiguedad && p.antiguedad !== "") keys.add("antiguedad");
+    if (p.area_m2 && p.area_m2 >= 60) keys.add("amplitud");
+    if (p.piscina)         keys.add("piscina");
+    if (p.gimnasio)        keys.add("gimnasio");
+    if (p.terraza)         keys.add("terraza");
+    if (p.jardin)          keys.add("jardin");
+    if (p.parrilla)        keys.add("parrilla");
+    if (p.juegos_ninos)    keys.add("juegos_ninos");
+    const hasAnyArea = p.piscina || p.gimnasio || p.terraza || p.jardin || p.parrilla || p.juegos_ninos;
+    if (hasAnyArea) keys.add("areas_comunes");
 
-    return options;
+    return keys;
   }, [form]);
 
+  // La clave real que se guarda para "vista" es "vista_<valor>"
   const selected: string[] = form.destacados_manuales || [];
 
-  const toggleOption = (key: string) => {
-    let newSelected = [...selected];
-    if (newSelected.includes(key)) {
-      newSelected = newSelected.filter((k) => k !== key);
+  // Normaliza: "vista" en UI → "vista_Parque" etc. en el array guardado
+  function getStoredKey(key: string): string {
+    if (key === "vista" && form.vista) return `vista_${form.vista}`;
+    return key;
+  }
+
+  function isSelected(key: string): boolean {
+    return selected.includes(getStoredKey(key));
+  }
+
+  // Cuenta cuántos "slots" ocupa la selección actual
+  function countSlots(): number {
+    const hasEquipGroup = ["amoblado","cocina_equipada","closet"].some(k =>
+      selected.includes(k)
+    );
+    const hasVistaGroup = ["balcon","ventanas_amplias"].some(k => selected.includes(k)) ||
+      selected.some(k => k.startsWith("vista_"));
+    const hasAreasComunes = selected.includes("areas_comunes");
+    const singles = selected.filter(k =>
+      !["amoblado","cocina_equipada","closet"].includes(k) &&
+      !["balcon","ventanas_amplias"].includes(k) &&
+      !k.startsWith("vista_") &&
+      k !== "areas_comunes"
+    ).length;
+    return (hasEquipGroup ? 1 : 0) + (hasVistaGroup ? 1 : 0) + (hasAreasComunes ? 1 : 0) + singles;
+  }
+
+  function toggleKey(key: string) {
+    const storedKey = getStoredKey(key);
+    let next = [...selected];
+
+    if (next.includes(storedKey)) {
+      next = next.filter((k) => k !== storedKey);
     } else {
-      if (newSelected.length >= 3) {
-        alert("Puedes seleccionar máximo 3 destacados.");
+      if (countSlots() >= 3) {
+        alert("Podés seleccionar hasta 3 destacados (los grupos cuentan como 1).");
         return;
       }
-      newSelected.push(key);
+      next.push(storedKey);
     }
-    setForm({ ...form, destacados_manuales: newSelected });
-  };
 
-  if (availableOptions.length === 0) {
+    setForm({ ...form, destacados_manuales: next });
+  }
+
+  const visibleGroups = GROUPS.map((g) => ({
+    ...g,
+    items: g.keys.filter((k) => availableKeys.has(k)),
+  })).filter((g) => g.items.length > 0);
+
+  if (visibleGroups.length === 0) {
     return (
       <p style={{ color: t.colors.textMuted, fontSize: 13, marginBottom: 16 }}>
-        Completa las características del inmueble para poder destacarlas.
+        Completá las características del inmueble para poder destacarlas.
       </p>
     );
   }
 
+  const slots = countSlots();
+
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
-      {availableOptions.map((opt) => (
-        <label
-          key={opt.key}
-          style={{ display: "flex", alignItems: "center", gap: 8, color: t.colors.text, fontSize: 14, cursor: "pointer" }}
-        >
-          <input
-            type="checkbox"
-            checked={selected.includes(opt.key)}
-            onChange={() => toggleOption(opt.key)}
-            style={{ accentColor: t.colors.primary }}
-          />
-          {opt.label}
-        </label>
+    <div style={{ marginBottom: 20 }}>
+      {/* Contador de slots */}
+      <p style={{ fontSize: 12, color: slots >= 3 ? t.colors.primary : t.colors.textMuted, marginBottom: 12 }}>
+        {slots}/3 destacados seleccionados
+        {slots > 0 && " · Los grupos fusionados cuentan como 1"}
+      </p>
+
+      {visibleGroups.map((group) => (
+        <div key={group.label} style={{ marginBottom: 16 }}>
+          {/* Cabecera del grupo */}
+          <div style={{
+            fontSize: 11,
+            fontWeight: 700,
+            color: t.colors.textMuted,
+            textTransform: "uppercase",
+            letterSpacing: "0.5px",
+            marginBottom: 6,
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+          }}>
+            {group.label}
+            {group.hint && (
+              <span style={{
+                fontSize: 10,
+                fontWeight: 400,
+                color: t.colors.primary,
+                background: `${t.colors.primary}18`,
+                borderRadius: 4,
+                padding: "1px 6px",
+                textTransform: "none",
+                letterSpacing: 0,
+              }}>
+                {group.hint}
+              </span>
+            )}</div>
+
+          {/* Opciones del grupo */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 4, paddingLeft: 8 }}>
+            {group.items.map((key) => {
+              const checked = isSelected(key);
+              return (
+                <label
+                  key={key}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 10,
+                    padding: "8px 10px",
+                    borderRadius: 10,
+                    cursor: "pointer",
+                    background: checked ? `${t.colors.primary}18` : "transparent",
+                    border: `1px solid ${checked ? t.colors.primary : "transparent"}`,
+                    transition: "all 0.15s ease",
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={() => toggleKey(key)}
+                    style={{ accentColor: t.colors.primary, width: 16, height: 16 }}
+                  />
+                  <span style={{ fontSize: 14, color: t.colors.text }}>
+                    {key === "vista" && form.vista
+                      ? `Vista ${form.vista.toLowerCase()}`
+                      : key === "antiguedad" && form.antiguedad
+                      ? `Antigüedad: ${form.antiguedad}`
+                      : key === "amplitud" && form.area_m2
+                      ? (form.area_m2 >= 120 ? "Muy amplio" : form.area_m2 >= 90 ? "Amplio" : "Bien distribuido")
+                      : LABELS[key]}
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+        </div>
       ))}
     </div>
   );

@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { fetchPropertyById } from "@/lib/api";
 import { buildOutputs } from "@/lib/messageFormatter";
-import { Gallery } from "@/components/ui/Gallery";
+import { MediaViewer } from "@/components/ui/MediaViewer";
 import { Camera } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
 
@@ -54,30 +54,18 @@ export default function PublicPropertyPage({ params }: { params: { id: string } 
   const out = buildOutputs(property);
   const fotos = out.fotos;
 
-  if (fotos.length === 0) {
-    return (
-      <div style={{ 
-        minHeight: "100vh", 
-        background: t.colors.bg, 
-        display: "flex", 
-        flexDirection: "column",
-        alignItems: "center", 
-        justifyContent: "center",
-        color: t.colors.textMuted
-      }}>
-        <p>No hay fotos disponibles</p>
-        <a href="/" style={{ color: t.colors.primary, marginTop: 20 }}>Volver</a>
-      </div>
-    );
-  }
-
   return (
     <div style={{ 
       minHeight: "100vh", 
       background: t.colors.bg, 
       position: "relative" 
     }}>
-      <Gallery fotos={fotos} onClose={() => window.close()} />
+      <MediaViewer
+        fotos={fotos}
+        videoUrl={property.video_url}
+        tour360Url={property.tour360_url}
+        onClose={() => window.close()}
+      />
     </div>
   );
 }

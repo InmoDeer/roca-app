@@ -6,7 +6,7 @@ import { buildOutputs } from "@/lib/messageFormatter";
 import { PIPELINE_PROPERTY } from "@/lib/constants";
 import { StatusSelect } from "@/components/ui/select";
 import { CopyShareBtns } from "@/components/ui/CopyShareBtns";
-import { Gallery } from "@/components/ui/Gallery";
+import { MediaViewer } from "@/components/ui/MediaViewer";
 import {
   MapPin, PencilLine, Trash2, ArrowLeft,
   Eye, FileText, Globe, Video, Images, Zap, Flame,
@@ -16,7 +16,7 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete, onRefres
   const { t, mode } = useTheme();
   const out = buildOutputs(p);
   const [tab, setTab] = useState("corto");
-  const [showGallery, setGallery] = useState(false);
+  const [mediaViewer, setMediaViewer] = useState({ open: false, initialTab: "fotos" });
 
   const handleDelete = () => {
     if (confirm("¿Estás seguro de eliminar este inmueble? Esta acción no se puede deshacer.")) {
@@ -43,7 +43,7 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete, onRefres
       </div>
 
       {out.fotos.length > 0 && (
-        <div style={detailStyles.heroWrap} onClick={() => setGallery(true)}>
+        <div style={detailStyles.heroWrap} onClick={() => setMediaViewer({ open: true, initialTab: "fotos" })}>
           <img src={out.fotos[0]} alt="" style={detailStyles.heroImg} />
           {out.fotos.length > 1 && (
             <div style={{ ...detailStyles.heroBadge, display: "flex", alignItems: "center", gap: 4 }}>
@@ -84,19 +84,19 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete, onRefres
 
       <div style={detailStyles.actionGrid}>
         {out.fotos.length > 0 && (
-          <button onClick={() => setGallery(true)} style={{ ...detailStyles.actionBtn, cursor: "pointer" }}>
+          <button onClick={() => setMediaViewer({ open: true, initialTab: "fotos" })} style={{ ...detailStyles.actionBtn, cursor: "pointer" }}>
             <Images size={16} strokeWidth={1.5} /> Ver fotos ({out.fotos.length})
           </button>
         )}
         {p.tour360_url && (
-          <a href={p.tour360_url} target="_blank" rel="noreferrer" style={detailStyles.actionBtn}>
+          <button onClick={() => setMediaViewer({ open: true, initialTab: "tour" })} style={{ ...detailStyles.actionBtn, cursor: "pointer" }}>
             <Globe size={16} strokeWidth={1.5} /> Tour 360
-          </a>
+          </button>
         )}
         {p.video_url && (
-          <a href={p.video_url} target="_blank" rel="noreferrer" style={detailStyles.actionBtn}>
+          <button onClick={() => setMediaViewer({ open: true, initialTab: "video" })} style={{ ...detailStyles.actionBtn, cursor: "pointer" }}>
             <Video size={16} strokeWidth={1.5} /> Video
-          </a>
+          </button>
         )}
         <a href={out.mapsLink} target="_blank" rel="noreferrer" style={detailStyles.actionBtn}>
           <MapPin size={16} strokeWidth={1.5} /> Ver mapa
@@ -117,7 +117,15 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete, onRefres
         </div>
       )}
 
-      {showGallery && <Gallery fotos={out.fotos} onClose={() => setGallery(false)} />}
+      {mediaViewer.open && (
+        <MediaViewer
+          fotos={out.fotos}
+          videoUrl={p.video_url}
+          tour360Url={p.tour360_url}
+          initialTab={mediaViewer.initialTab}
+          onClose={() => setMediaViewer((s) => ({ ...s, open: false }))}
+        />
+      )}
     </div>
   );
 }

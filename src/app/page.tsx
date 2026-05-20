@@ -10,6 +10,7 @@ import { PropertyDetail } from "@/components/PropertyDetail";
 import { getAppStyles, getProfileMenuStyles } from "@/styles/componentStyles";
 import { buildOutputs } from "@/lib/messageFormatter";
 import { fetchPropertyById } from "@/lib/api";
+import { MediaViewer } from "@/components/ui/MediaViewer";
 import { Sun, Moon, LogOut, Mountain } from "lucide-react";
 
 export default function Home() {
@@ -73,13 +74,14 @@ export default function Home() {
   if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("id")) {
     if (publicLoading) return <div style={S.loadingWrap}>Cargando...</div>;
     if (publicProperty) {
-      const out = buildOutputs(publicProperty);
       return (
-        <div style={{ background: theme.colors.bg, minHeight: "100vh", padding: 20 }}>
-          <h1 style={{ color: theme.colors.text, marginBottom: 20 }}>{publicProperty.nombre}</h1>
-          {out.fotos.length > 0 && <img src={out.fotos[0]} alt="" style={{ width: "100%", maxWidth: 500, borderRadius: 16 }} />}
-          <p style={{ color: theme.colors.primary, fontSize: 24, marginTop: 20 }}>{out.precio}</p>
-          <a href="/" style={{ color: theme.colors.primary, display: "block", marginTop: 20 }}>← Volver</a>
+        <div style={{ background: theme.colors.bg, minHeight: "100vh", position: "relative" }}>
+          <MediaViewer
+            fotos={Array.isArray(publicProperty.fotos_urls) ? publicProperty.fotos_urls : []}
+            videoUrl={publicProperty.video_url}
+            tour360Url={publicProperty.tour360_url}
+            onClose={() => { window.location.href = "/"; }}
+          />
         </div>
       );
     }
