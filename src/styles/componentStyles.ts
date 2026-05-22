@@ -17,15 +17,15 @@ export function createShadow(mode: string, intensity = 1) {
   return `0 ${y}px ${blur}px rgba(0,0,0,${opacity * 0.15})`;
 }
 
-export function glassSurface(mode: string, opacity = 0.85) {
-  return {
-    background: mode === "dark"
-      ? `rgba(10,10,10,${opacity})`
-      : `rgba(255,255,255,${opacity})`,
-    backdropFilter: "blur(10px)",
-    WebkitBackdropFilter: "blur(10px)",
-  };
-}
+export const getLabelStyle = (t: any) => ({
+  display: "block",
+  fontSize: 12,
+  fontWeight: 600,
+  color: t.colors.textMuted,
+  marginBottom: 6,
+  textTransform: "uppercase",
+  letterSpacing: "0.5px",
+});
 
 export const getPropertyCardStyles = (t: any, ec: any) => ({
   card: {
@@ -242,7 +242,7 @@ export const getPropertyDetailStyles = (t: any, mode: string) => ({
     transition: "all 0.3s ease",
   },
   tabActive: {
-    background: "linear-gradient(135deg, #d4af37 0%, #b8962e 100%)",
+    background: primaryGradient,
     color: "#0a0a0a",
     border: "none",
     boxShadow: "0 4px 15px rgba(212,175,55,0.3)",
@@ -310,13 +310,18 @@ export const getPropertyDetailStyles = (t: any, mode: string) => ({
   },
 });
 
+const overlayBase = {
+  position: "fixed" as const,
+  inset: 0,
+  background: "rgba(0,0,0,0.8)",
+  backdropFilter: "blur(10px)",
+  WebkitBackdropFilter: "blur(10px)",
+  zIndex: 100,
+};
+
 export const getFormStyles = (theme: any) => ({
   overlay: {
-    position: "fixed",
-    inset: 0,
-    background: "rgba(0,0,0,0.8)",
-    backdropFilter: "blur(10px)",
-    zIndex: 100,
+    ...overlayBase,
     display: "flex",
     alignItems: "center",
   },
@@ -376,7 +381,7 @@ export const getFormStyles = (theme: any) => ({
   saveBtn: {
     flex: 2,
     padding: 14,
-    background: "linear-gradient(135deg, #d4af37 0%, #b8962e 100%)",
+    background: primaryGradient,
     color: "#0a0a0a",
     border: "none",
     borderRadius: 12,
@@ -480,7 +485,7 @@ export const getFormStyles = (theme: any) => ({
     fontSize: 9,
     fontWeight: 700,
     color: "#ffffff",
-    background: "linear-gradient(135deg, #d4af37 0%, #b8962e 100%)",
+    background: primaryGradient,
     borderRadius: 4,
     padding: "2px 8px",
     whiteSpace: "nowrap" as const,
@@ -498,13 +503,7 @@ export const getFormStyles = (theme: any) => ({
 export const getDialogStyles = (t: any, mode: string, variant: string) => {
   const isBottom = variant === "bottom";
   return {
-    overlay: {
-      position: "fixed" as const,
-      inset: 0,
-      background: "rgba(0,0,0,0.8)",
-      backdropFilter: "blur(10px)",
-      zIndex: 100,
-    },
+    overlay: { ...overlayBase },
     content: isBottom
       ? {
           position: "fixed" as const,
@@ -615,7 +614,7 @@ export const getAppStyles = (t: any, mode: string) => ({
     transition: "all 0.3s ease",
   },
   newBtn: {
-    background: "linear-gradient(135deg, #d4af37 0%, #b8962e 100%)",
+    background: primaryGradient,
     color: "#0a0a0a",
     border: "none",
     borderRadius: 12,

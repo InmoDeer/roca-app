@@ -3,6 +3,8 @@ import * as Select from "@radix-ui/react-select";
 import { ChevronDown, Check } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
 import { getStatusColors } from "@/styles/statusColors";
+import { getEstadoDisplay } from "@/lib/constants";
+import { getLabelStyle } from "@/styles/componentStyles";
 
 export function StatusSelect({ value, onValueChange, pipeline, operacion }: any) {
   const { t, mode } = useTheme();
@@ -40,13 +42,6 @@ export function StatusSelect({ value, onValueChange, pipeline, operacion }: any)
     minWidth: 180,
   };
 
-  function getLabel(estado: string) {
-    if (estado === "Cerrado") {
-      return operacion === "Alquiler" ? "Alquilado" : "Vendido";
-    }
-    return estado;
-  }
-
   return (
     <Select.Root value={value} onValueChange={onValueChange}>
       <Select.Trigger style={triggerStyle}>
@@ -54,7 +49,7 @@ export function StatusSelect({ value, onValueChange, pipeline, operacion }: any)
           width: 6, height: 6, borderRadius: "50%",
           background: ec.dot, flexShrink: 0,
         }} />
-        <Select.Value>{getLabel(value)}</Select.Value>
+        <Select.Value>{getEstadoDisplay(value, operacion)}</Select.Value>
         <Select.Icon>
           <ChevronDown size={12} strokeWidth={2} />
         </Select.Icon>
@@ -86,7 +81,7 @@ export function StatusSelect({ value, onValueChange, pipeline, operacion }: any)
                     width: 8, height: 8, borderRadius: "50%",
                     background: itemEc.dot, flexShrink: 0,
                   }} />
-                  <Select.ItemText>{getLabel(estado)}</Select.ItemText>
+                  <Select.ItemText>{getEstadoDisplay(estado, operacion)}</Select.ItemText>
                   <Select.ItemIndicator style={{ marginLeft: "auto" }}>
                     <Check size={13} color={t.colors.primary} strokeWidth={2.5} />
                   </Select.ItemIndicator>
@@ -140,11 +135,7 @@ export function RocaSelect({ label, value, onValueChange, options, placeholder =
   return (
     <div style={{ marginBottom: 12 }}>
       {label && (
-        <label style={{
-          display: "block", fontSize: 12, fontWeight: 600,
-          color: t.colors.textMuted, marginBottom: 6,
-          textTransform: "uppercase", letterSpacing: "0.5px",
-        }}>
+        <label style={getLabelStyle(t)}>
           {label}
         </label>
       )}

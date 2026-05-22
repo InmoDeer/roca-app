@@ -1,4 +1,13 @@
+import type { Property } from "@/core/entities/property";
+
 // ── Constantes compartidas entre ManualHighlightsSelector y messageFormatter ──
+
+export function getAmplitudLabel(area_m2: number): string | null {
+  if (area_m2 >= 120) return "Muy amplio";
+  if (area_m2 >= 90) return "Amplio";
+  if (area_m2 >= 60) return "Bien distribuido";
+  return null;
+}
 
 export const HIGHLIGHT_GROUPS = [
   {
@@ -26,28 +35,28 @@ export const HIGHLIGHT_GROUPS = [
 ];
 
 export const LABELS: Record<string, string> = {
-  amoblado:        "Amoblado",
-  cocina_equipada: "Cocina equipada",
-  closet:          "Closets empotrados",
-  vista:           "Vista (según selección)",
-  balcon:          "Balcón privado",
-  ventanas_amplias:"Ventanas amplias",
-  antiguedad:      "Antigüedad (según valor)",
-  amplitud:        "Amplitud (según metraje)",
-  cochera:         "Estacionamiento",
-  ascensor:        "Ascensor",
-  recepcion:       "Recepción 24h",
-  area_servicio:   "Cuarto de servicio",
-  gas_natural:     "Gas natural",
-  lavanderia:      "Lavandería",
-  tendal:          "Tendal",
-  mascotas:        "Pet friendly",
-  piscina:         "Piscina",
-  gimnasio:        "Gimnasio",
-  terraza:         "Terraza",
-  jardin:          "Jardín",
-  parrilla:        "Parrilla",
-  juegos_ninos:    "Juegos infantiles",
+  amoblado:         "Amoblado",
+  cocina_equipada:  "Cocina equipada",
+  closet:           "Closets empotrados",
+  vista:            "Vista (según selección)",
+  balcon:           "Balcón privado",
+  ventanas_amplias: "Ventanas amplias",
+  antiguedad:       "Antigüedad (según valor)",
+  amplitud:         "Amplitud (según metraje)",
+  cochera:          "Estacionamiento",
+  ascensor:         "Ascensor",
+  recepcion:        "Recepción 24h",
+  area_servicio:    "Cuarto de servicio",
+  gas_natural:      "Gas natural",
+  lavanderia:       "Lavandería",
+  tendal:           "Tendal",
+  mascotas:         "Pet friendly",
+  piscina:          "Piscina",
+  gimnasio:         "Gimnasio",
+  terraza:          "Terraza",
+  jardin:           "Jardín",
+  parrilla:         "Parrilla",
+  juegos_ninos:     "Juegos infantiles",
 };
 
 const VISTA_NATURE_MAP: Record<string, string> = {
@@ -69,9 +78,9 @@ const VISTA_FULL_MAP: Record<string, string> = {
 };
 
 const ANTIGUEDAD_MAP: Record<string, string> = {
-  "A estrenar":   "✨ A estrenar, acabados de lujo",
-  "1-5 años":     "🆕 Como nuevo, muy bien conservado",
-  "5-10 años":    "🏗 Buen estado general",
+  "A estrenar": "✨ A estrenar, acabados de lujo",
+  "1-5 años":   "🆕 Como nuevo, muy bien conservado",
+  "5-10 años":  "🏗 Buen estado general",
 };
 
 const KEY_TO_PHRASE_MAP: Record<string, string> = {
@@ -91,28 +100,37 @@ const KEY_TO_PHRASE_MAP: Record<string, string> = {
   juegos_ninos:  "🧸 Juegos infantiles",
 };
 
-function cap(s: string) {
-  return s.charAt(0).toUpperCase() + s.slice(1);
-}
-
 // ── FUSIÓN INTELIGENTE DE MANUALES ──────────────────────────────────────────
 
 export function fuseManuales(
   manuales: string[],
-  prop: any
+  prop: Property
 ): { phrases: string[]; consumed: Set<string> } {
   const phrases: string[] = [];
   const consumed = new Set<string>();
 
-  // ── Grupo equipamiento ──────────────────────────────────────────────────
-  const tieneAmoblado  = manuales.includes("amoblado");
-  const tieneCocina    = manuales.includes("cocina_equipada");
-  const tieneCloset    = manuales.includes("closet");
+  // ── Grupo equipamiento ───────────────────────────────────────────────────
+  const tieneAmoblado = manuales.includes("amoblado");
+  const tieneCocina   = manuales.includes("cocina_equipada");
+  const tieneCloset   = manuales.includes("closet");
 
   if (tieneAmoblado || tieneCocina || tieneCloset) {
     if (tieneAmoblado) {
-      phrases.push("🛋️ Totalmente amoblado y equipado");
+      // Amoblado solo → frase corta
+      // Amoblado + cocina y/o closet → frase detallada
+      const extras: string[] = [];
+      if (tieneCocina) extras.push("cocina equipada");
+      if (tieneCloset) extras.push("closets empotrados");
+
+      if (extras.length === 0) {
+        phrases.push("🛋️ Amoblado");
+      } else if (extras.length === 2) {
+        phrases.push("🛋️ Amoblado y equipado (cocina y closets)");
+      } else {
+        phrases.push(`🛋️ Amoblado con ${extras[0]}`);
+      }
     } else {
+      // Sin amoblado: cocina y/o closet solos
       if (tieneCocina && tieneCloset) {
         phrases.push("🍳 Cocina equipada y closets empotrados");
       } else if (tieneCocina) {
@@ -127,21 +145,22 @@ export function fuseManuales(
     consumed.add("equipamiento");
   }
 
-  // ── Grupo vista ─────────────────────────────────────────────────────────
-  const vistaKey       = manuales.find((k) => k.startsWith("vista_"));
-  const tieneVentanas  = manuales.includes("ventanas_amplias");
-  const tieneBalcon    = manuales.includes("balcon");
+  // ── Grupo vista / iluminación ────────────────────────────────────────────
+  const vistaKey      = manuales.find((k) => k.startsWith("vista_"));
+  const tieneVentanas = manuales.includes("ventanas_amplias");
+  const tieneBalcon   = manuales.includes("balcon");
 
   const vistaText = vistaKey
-    ? (VISTA_NATURE_MAP as Record<string, string>)[vistaKey] || `vista ${vistaKey.replace("vista_", "").toLowerCase()}`
+    ? VISTA_NATURE_MAP[vistaKey] || `vista ${vistaKey.replace("vista_", "").toLowerCase()}`
     : null;
 
   if (vistaKey || tieneVentanas || tieneBalcon) {
-    if (tieneBalcon && (vistaKey || tieneVentanas)) {
-      const extras: string[] = [];
-      if (vistaText) extras.push(vistaText);
-      if (tieneVentanas) extras.push("ventanas amplias");
-      phrases.push(`🌿 Balcón privado con ${extras.join(" y ")}`);
+    if (tieneBalcon && vistaKey && tieneVentanas) {
+      phrases.push(`🌿 Balcón con ${vistaText} y ventanas amplias`);
+    } else if (tieneBalcon && vistaKey) {
+      phrases.push(`🌿 Balcón privado con ${vistaText}`);
+    } else if (tieneBalcon && tieneVentanas) {
+      phrases.push("🌿 Balcón privado y ventanas amplias");
     } else if (tieneVentanas && vistaKey) {
       phrases.push(`🪟 Ventanas amplias con ${vistaText}`);
     } else if (tieneBalcon) {
@@ -149,7 +168,7 @@ export function fuseManuales(
     } else if (tieneVentanas) {
       phrases.push("🪟 Ventanas amplias, excelente iluminación natural");
     } else if (vistaKey) {
-      phrases.push((VISTA_FULL_MAP as Record<string, string>)[vistaKey] || `👀 Vista ${vistaKey.replace("vista_", "").toLowerCase()}`);
+      phrases.push(VISTA_FULL_MAP[vistaKey] || `👀 Vista ${vistaKey.replace("vista_", "").toLowerCase()}`);
     }
 
     consumed.add("ventanas_amplias");
@@ -159,19 +178,18 @@ export function fuseManuales(
     if (vistaKey) consumed.add(vistaKey);
   }
 
-  // ── Resto de manuales ─────────────────────────────────────────────────
+  // ── Resto de manuales uno a uno ──────────────────────────────────────────
   const remaining = manuales.filter((k) => !consumed.has(k));
   for (const key of remaining) {
     let phrase: string | null = null;
 
     if (key === "antiguedad") {
-      const antiguedad = prop.antiguedad || "";
-      phrase = ANTIGUEDAD_MAP[antiguedad] || null;
+      phrase = ANTIGUEDAD_MAP[prop.antiguedad || ""] || null;
     } else if (key === "amplitud") {
-      const area = prop.area_m2 || 0;
-      if (area >= 120)      phrase = "🏰 Muy amplio y espacioso";
-      else if (area >= 90)  phrase = "📐 Ambientes amplios";
-      else if (area >= 60)  phrase = "✨ Bien distribuido";
+      const label = getAmplitudLabel(prop.area_m2 || 0);
+      if (label === "Muy amplio") phrase = "🏰 Muy amplio y espacioso";
+      else if (label === "Amplio") phrase = "📐 Ambientes amplios";
+      else if (label === "Bien distribuido") phrase = "✨ Bien distribuido";
     } else {
       phrase = KEY_TO_PHRASE_MAP[key] || null;
     }

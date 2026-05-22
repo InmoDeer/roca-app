@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import type { Property } from "@/core/entities/property";
 import {
   fetchProperties,
   createProperty,
@@ -9,7 +10,7 @@ import {
 } from "@/lib/api";
 
 export function useProperties(userId: string | undefined) {
-  const [properties, setProperties] = useState<any[]>([]);
+  const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
 
   const loadProperties = async () => {
@@ -30,7 +31,7 @@ export function useProperties(userId: string | undefined) {
     return () => clearInterval(interval);
   }, [userId]);
 
-  const saveProperty = async (payload: any, id?: string) => {
+  const saveProperty = async (payload: Partial<Property>, id?: string) => {
     if (id) {
       await updateProperty(id, payload);
     } else {
@@ -49,7 +50,7 @@ export function useProperties(userId: string | undefined) {
     setProperties((ps) => ps.filter((p) => p.id !== id));
   };
 
-  const changeStatus = async (id: string, estado: string) => {
+  const changeStatus = async (id: string, estado: Property["estado"]) => {
     await updatePropertyStatus(id, estado);
     setProperties((ps) =>
       ps.map((p) => (p.id === id ? { ...p, estado } : p))

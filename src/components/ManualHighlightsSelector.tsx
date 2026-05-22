@@ -1,7 +1,7 @@
 "use client";
 import { useMemo } from "react";
 import { useTheme } from "@/hooks/useTheme";
-import { HIGHLIGHT_GROUPS, LABELS } from "@/lib/highlights";
+import { HIGHLIGHT_GROUPS, LABELS, getAmplitudLabel } from "@/lib/highlights";
 
 export function ManualHighlightsSelector({ form, setForm }: any) {
   const { t } = useTheme();
@@ -26,7 +26,7 @@ export function ManualHighlightsSelector({ form, setForm }: any) {
     if (p.tendal)          keys.add("tendal");
     if (p.mascotas === "Sí") keys.add("mascotas");
     if (p.antiguedad && p.antiguedad !== "") keys.add("antiguedad");
-    if (p.area_m2 && p.area_m2 >= 60) keys.add("amplitud");
+    if (getAmplitudLabel(p.area_m2)) keys.add("amplitud");
 
     return keys;
   }, [form]);
@@ -46,17 +46,17 @@ export function ManualHighlightsSelector({ form, setForm }: any) {
 
   // Cuenta cuántos "slots" ocupa la selección actual
   function countSlots(): number {
-    const hasEquipGroup = ["amoblado","cocina_equipada","closet"].some(k =>
-      selected.includes(k)
-    );
-    const hasVistaGroup = ["balcon","ventanas_amplias"].some(k => selected.includes(k)) ||
-      selected.some(k => k.startsWith("vista_"));
-    const singles = selected.filter(k =>
-      !["amoblado","cocina_equipada","closet"].includes(k) &&
-      !["balcon","ventanas_amplias"].includes(k) &&
-      !k.startsWith("vista_")
+    const groups = HIGHLIGHT_GROUPS.slice(0, 2);
+    const allGroupKeys = new Set(groups.flatMap(g => g.keys));
+    const groupSlots = groups.filter(g =>
+      g.keys.some(k => k === "vista"
+        ? selected.some(s => s.startsWith("vista_"))
+        : selected.includes(k))
     ).length;
-    return (hasEquipGroup ? 1 : 0) + (hasVistaGroup ? 1 : 0) + singles;
+    const singles = selected.filter(k =>
+      !allGroupKeys.has(k) && !k.startsWith("vista_")
+    ).length;
+    return groupSlots + singles;
   }
 
   function toggleKey(key: string) {
@@ -159,8 +159,7 @@ export function ManualHighlightsSelector({ form, setForm }: any) {
                       ? `Vista ${form.vista.toLowerCase()}`
                       : key === "antiguedad" && form.antiguedad
                       ? `Antigüedad: ${form.antiguedad}`
-                      : key === "amplitud" && form.area_m2
-                      ? (form.area_m2 >= 120 ? "Muy amplio" : form.area_m2 >= 90 ? "Amplio" : "Bien distribuido")
+                      : key === "amplitud" ? (getAmplitudLabel(form.area_m2) ?? LABELS[key])
                       : LABELS[key]}
                   </span>
                 </label>

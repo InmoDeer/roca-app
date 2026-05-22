@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
+import { isCloudinaryUrl } from "@/lib/cloudinary";
 
-const CLOUDINARY_CLOUD = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD || "dzqfw8hm3";
 const CLOUDINARY_API_KEY = "213115298379474";
 const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET || "";
 
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
   try {
     const { url } = await request.json();
 
-    if (!url || !url.includes("cloudinary")) {
+    if (!isCloudinaryUrl(url)) {
       return NextResponse.json({ error: "URL inválida" }, { status: 400 });
     }
 
@@ -54,8 +54,9 @@ export async function POST(request: Request) {
     form.append("signature", signature);
     form.append("api_key", CLOUDINARY_API_KEY);
 
+    const cloud = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD || "dzqfw8hm3";
     const res = await fetch(
-      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/destroy`,
+      `https://api.cloudinary.com/v1_1/${cloud}/image/destroy`,
       { method: "POST", body: form }
     );
     const data = await res.json();

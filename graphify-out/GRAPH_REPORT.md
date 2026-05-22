@@ -1,7 +1,8 @@
-# Graph Report - .  (2026-05-19)
+# Graph Report - .  (2026-05-22)
 
 ## Corpus Check
-- Corpus is ~20,222 words - fits in a single context window. You may not need a graph.
+- 93 files · ~63,964 words
+- Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
 - 232 nodes · 362 edges · 24 communities (16 shown, 8 thin omitted)
@@ -9,28 +10,28 @@
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
-- [[_COMMUNITY_Form Fields & Validation|Form Fields & Validation]]
-- [[_COMMUNITY_Property Features & Listing|Property Features & Listing]]
-- [[_COMMUNITY_TS Config & Build|TS Config & Build]]
-- [[_COMMUNITY_App Shell & Auth|App Shell & Auth]]
-- [[_COMMUNITY_UI Components & MediaViewer|UI Components & MediaViewer]]
-- [[_COMMUNITY_Package Dependencies|Package Dependencies]]
-- [[_COMMUNITY_Architectural Patterns|Architectural Patterns]]
-- [[_COMMUNITY_Runtime Dependencies|Runtime Dependencies]]
-- [[_COMMUNITY_Layout & Theme System|Layout & Theme System]]
-- [[_COMMUNITY_Project Docs & Rules|Project Docs & Rules]]
-- [[_COMMUNITY_Status Color Pipeline|Status Color Pipeline]]
-- [[_COMMUNITY_API & Data Layer|API & Data Layer]]
-- [[_COMMUNITY_Cloudinary API|Cloudinary API]]
-- [[_COMMUNITY_Build Configuration|Build Configuration]]
-- [[_COMMUNITY_OpenCode Plugin|OpenCode Plugin]]
-- [[_COMMUNITY_PostCSS Config|PostCSS Config]]
-- [[_COMMUNITY_OpenCode Schema|OpenCode Schema]]
-- [[_COMMUNITY_Next Config|Next Config]]
-- [[_COMMUNITY_Type Declarations|Type Declarations]]
-- [[_COMMUNITY_Select Components|Select Components]]
-- [[_COMMUNITY_Dialog Component|Dialog Component]]
-- [[_COMMUNITY_Toast Provider|Toast Provider]]
+- [[_COMMUNITY_Community 0|Community 0]]
+- [[_COMMUNITY_Community 1|Community 1]]
+- [[_COMMUNITY_Community 2|Community 2]]
+- [[_COMMUNITY_Community 3|Community 3]]
+- [[_COMMUNITY_Community 4|Community 4]]
+- [[_COMMUNITY_Community 5|Community 5]]
+- [[_COMMUNITY_Community 6|Community 6]]
+- [[_COMMUNITY_Community 7|Community 7]]
+- [[_COMMUNITY_Community 8|Community 8]]
+- [[_COMMUNITY_Community 9|Community 9]]
+- [[_COMMUNITY_Community 10|Community 10]]
+- [[_COMMUNITY_Community 11|Community 11]]
+- [[_COMMUNITY_Community 12|Community 12]]
+- [[_COMMUNITY_Community 13|Community 13]]
+- [[_COMMUNITY_Community 14|Community 14]]
+- [[_COMMUNITY_Community 15|Community 15]]
+- [[_COMMUNITY_Community 16|Community 16]]
+- [[_COMMUNITY_Community 17|Community 17]]
+- [[_COMMUNITY_Community 20|Community 20]]
+- [[_COMMUNITY_Community 21|Community 21]]
+- [[_COMMUNITY_Community 22|Community 22]]
+- [[_COMMUNITY_Community 23|Community 23]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `useTheme()` - 34 edges
@@ -58,59 +59,59 @@
 
 ## Communities (24 total, 8 thin omitted)
 
-### Community 0 - "Form Fields & Validation"
+### Community 0 - "Community 0"
 Cohesion: 0.1
 Nodes (22): GROUPS, LABELS, ManualHighlightsSelector(), Checkbox(), getCheckboxStyles(), Field(), getFieldStyles(), createProperty() (+14 more)
 
-### Community 1 - "Property Features & Listing"
+### Community 1 - "Community 1"
 Cohesion: 0.19
 Nodes (15): PropertyDetail(), PropertyFilters(), getSelectStyles(), Select(), useTheme(), PublicPropertyPage(), PIPELINE_PROPERTY, buildOutputs() (+7 more)
 
-### Community 2 - "TS Config & Build"
+### Community 2 - "Community 2"
 Cohesion: 0.1
 Nodes (19): compilerOptions, allowJs, esModuleInterop, incremental, isolatedModules, jsx, lib, module (+11 more)
 
-### Community 3 - "App Shell & Auth"
+### Community 3 - "Community 3"
 Cohesion: 0.18
 Nodes (13): Home(), PropertyCard(), PropertyForm(), useAuth(), useProperties(), getAppStyles(), getDialogStyles(), getFormStyles() (+5 more)
 
-### Community 4 - "UI Components & MediaViewer"
+### Community 4 - "Community 4"
 Cohesion: 0.13
 Nodes (19): Checkbox Form Field Component, CopyShareBtns UI Component, Field Form Field Component, ManualHighlightsSelector Component, Manual Highlights Selection Groups, Manual Highlights Feature Labels, MediaViewer UI Component, MediaViewer Tabs (fotos/video/tour) (+11 more)
 
-### Community 5 - "Package Dependencies"
+### Community 5 - "Community 5"
 Cohesion: 0.11
 Nodes (17): devDependencies, eslint, eslint-config-next, tailwindcss, @tailwindcss/postcss, @types/node, @types/react, @types/react-dom (+9 more)
 
-### Community 6 - "Architectural Patterns"
+### Community 6 - "Community 6"
 Cohesion: 0.17
 Nodes (16): Arch: Context Provider Pattern, Arch: Status Color Pipeline, Arch: Theme-Aware Component Pattern, RocaDialog Component, RocaSelect Component, StatusSelect Component, ThemeProvider Component, ToastProvider (component) (+8 more)
 
-### Community 7 - "Runtime Dependencies"
+### Community 7 - "Community 7"
 Cohesion: 0.12
 Nodes (16): dependencies, lucide-react, next, @radix-ui/react-dialog, @radix-ui/react-dropdown-menu, @radix-ui/react-select, @radix-ui/react-tabs, @radix-ui/react-toast (+8 more)
 
-### Community 8 - "Layout & Theme System"
+### Community 8 - "Community 8"
 Cohesion: 0.22
 Nodes (7): metadata, ThemeContext, ThemeProvider(), darkTheme, lightTheme, ToastContext, ToastProvider()
 
-### Community 9 - "Project Docs & Rules"
+### Community 9 - "Community 9"
 Cohesion: 0.24
 Nodes (13): AGENTS.md Developer Rules, Anti-patterns: no inline styles, no direct supabase, no emojis, Brand: Dorado #d4af37 primary, dark/light theme, Home Page (login + list + detail + form), Root Layout (Theme + Toast Providers), PropertyCard Component (list card), PropertyFilters Component, Property Pipeline: Descartado/Mantenimiento/Disponible/Reservado/Cerrado (+5 more)
 
-### Community 10 - "Status Color Pipeline"
+### Community 10 - "Community 10"
 Cohesion: 0.32
 Nodes (9): useStatus(), blend(), getContrastText(), getLuminance(), getPipelineForEntity(), getStatusColors(), hexToRgb(), hexToRgba() (+1 more)
 
-### Community 11 - "API & Data Layer"
+### Community 11 - "Community 11"
 Cohesion: 0.4
 Nodes (6): Arch: API Facade Pattern, Properties Feature (Form/Detail), Use Auth Hook, Use Properties Hook, API CRUD Module, Supabase Client Module
 
-### Community 12 - "Cloudinary API"
+### Community 12 - "Community 12"
 Cohesion: 0.83
 Nodes (3): generateSignature(), getPublicIdFromUrl(), POST()
 
-### Community 13 - "Build Configuration"
+### Community 13 - "Community 13"
 Cohesion: 0.67
 Nodes (3): ESLint Config, Next.js Config, PostCSS Config (Tailwind)
 
@@ -122,17 +123,17 @@ Nodes (3): ESLint Config, Next.js Config, PostCSS Config (Tailwind)
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `useTheme()` connect `Property Features & Listing` to `Form Fields & Validation`, `Layout & Theme System`, `Status Color Pipeline`, `App Shell & Auth`?**
+- **Why does `useTheme()` connect `Community 1` to `Community 0`, `Community 8`, `Community 10`, `Community 3`?**
   _High betweenness centrality (0.096) - this node is a cross-community bridge._
-- **Why does `dependencies` connect `Runtime Dependencies` to `Package Dependencies`?**
+- **Why does `dependencies` connect `Community 7` to `Community 5`?**
   _High betweenness centrality (0.014) - this node is a cross-community bridge._
 - **Are the 5 inferred relationships involving `Use Theme Hook/Provider` (e.g. with `StatusSelect Component` and `RocaSelect Component`) actually correct?**
   _`Use Theme Hook/Provider` has 5 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `nextConfig`, `config`, `target` to the rest of the system?**
   _84 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `Form Fields & Validation` be split into smaller, more focused modules?**
+- **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.1 - nodes in this community are weakly interconnected._
-- **Should `TS Config & Build` be split into smaller, more focused modules?**
+- **Should `Community 2` be split into smaller, more focused modules?**
   _Cohesion score 0.1 - nodes in this community are weakly interconnected._
-- **Should `UI Components & MediaViewer` be split into smaller, more focused modules?**
+- **Should `Community 4` be split into smaller, more focused modules?**
   _Cohesion score 0.13 - nodes in this community are weakly interconnected._

@@ -1,9 +1,16 @@
 "use client";
+import type { PropertyFilters as PropertyFiltersType } from "@/core/entities/property";
 import { Search } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
 import { RocaSelect } from "./ui/select";
+import { OPERATIONS, PROPERTY_TYPES, PIPELINE_PROPERTY } from "@/lib/constants";
 
-export function PropertyFilters({ filters, setFilters, loading, filteredCount }: any) {
+export function PropertyFilters({ filters, setFilters, loading, filteredCount }: {
+  filters: PropertyFiltersType;
+  setFilters: (f: PropertyFiltersType | ((prev: PropertyFiltersType) => PropertyFiltersType)) => void;
+  loading: boolean;
+  filteredCount: number;
+}) {
   const { t } = useTheme();
 
   const styles: any = {
@@ -74,7 +81,7 @@ export function PropertyFilters({ filters, setFilters, loading, filteredCount }:
             label=""
             value={filters.operacion}
             onValueChange={(v: string) => setFilters((f: any) => ({ ...f, operacion: v }))}
-            options={["Venta", "Alquiler"]}
+            options={OPERATIONS}
             placeholder="Operación"
           />
         </div>
@@ -83,7 +90,7 @@ export function PropertyFilters({ filters, setFilters, loading, filteredCount }:
             label=""
             value={filters.tipo}
             onValueChange={(v: string) => setFilters((f: any) => ({ ...f, tipo: v }))}
-            options={["Departamento", "Casa", "Local", "Oficina", "Terreno"]}
+            options={PROPERTY_TYPES}
             placeholder="Tipo"
           />
         </div>
@@ -92,7 +99,7 @@ export function PropertyFilters({ filters, setFilters, loading, filteredCount }:
             label=""
             value={filters.estado}
             onValueChange={(v: string) => setFilters((f: any) => ({ ...f, estado: v }))}
-            options={["Disponible", "Reservado", "Cerrado"]}
+            options={PIPELINE_PROPERTY.filter(s => s !== "Descartado" && s !== "Mantenimiento")}
             placeholder="Estado"
           />
         </div>

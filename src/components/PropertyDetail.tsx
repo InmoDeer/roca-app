@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import type { Property } from "@/core/entities/property";
 import { useTheme } from "@/hooks/useTheme";
 import { getPropertyDetailStyles } from "@/styles/componentStyles";
 import { buildOutputs } from "@/lib/messageFormatter";
@@ -12,7 +13,14 @@ import {
   Eye, FileText, Globe, Video, Images, Zap, Flame,
 } from "lucide-react";
 
-export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete, onRefresh }: any) {
+export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete, onRefresh }: {
+  p: Property;
+  onBack: () => void;
+  onEdit: () => void;
+  onEstado: (id: string, estado: Property["estado"]) => void;
+  onDelete: (id: string) => void;
+  onRefresh: () => Promise<void>;
+}) {
   const { t, mode } = useTheme();
   const out = buildOutputs(p);
   const [tab, setTab] = useState("corto");
@@ -59,42 +67,65 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete, onRefres
             <div style={detailStyles.name}>{p.nombre}</div>
             <div style={detailStyles.sub}>{p.tipo} · {p.distrito}</div>
           </div>
-          <StatusSelect value={p.estado} onValueChange={(v: string) => onEstado(p.id, v)} pipeline={PIPELINE_PROPERTY} operacion={p.operacion} />
+          <StatusSelect value={p.estado} onValueChange={(v: string) => onEstado(p.id, v as Property["estado"])} pipeline={PIPELINE_PROPERTY} operacion={p.operacion} />
         </div>
         <div style={detailStyles.precioBlock}>{out.precio}</div>
         {p.mantenimiento && (
           <div style={{ ...detailStyles.mantBlock, display: "flex", alignItems: "center", gap: 4 }}>
-            <FileText size={14} strokeWidth={1.5} /> Mantenimiento: S/ {p.mantenimiento}/mes
+            <FileText size={14} strokeWidth={1.5} /> + S/ {p.mantenimiento}/mes mantenimiento
           </div>
         )}
       </div>
 
+      {/* Tabs corto / largo */}
       <div style={detailStyles.tabRow}>
-        {["corto", "largo"].map((t: string) => (
-          <button key={t} onClick={() => setTab(t)} style={{ ...detailStyles.tab, ...(tab === t ? detailStyles.tabActive : {}), display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}>
-            {t === "corto" ? <><Zap size={14} strokeWidth={1.5} /> Corto</> : <><Flame size={14} strokeWidth={1.5} /> Largo</>}
+        {["corto", "largo"].map((tabKey: string) => (
+          <button
+            key={tabKey}
+            onClick={() => setTab(tabKey)}
+            style={{
+              ...detailStyles.tab,
+              ...(tab === tabKey ? detailStyles.tabActive : {}),
+              display: "flex", alignItems: "center", justifyContent: "center", gap: 4,
+            }}
+          >
+            {tabKey === "corto"
+              ? <><Zap size={14} strokeWidth={1.5} /> Corto</>
+              : <><Flame size={14} strokeWidth={1.5} /> Largo</>}
           </button>
         ))}
       </div>
 
       <div style={detailStyles.msgBox}>
-        <pre style={detailStyles.msgPre}>{tab === "corto" ? out.mensajeCorto : out.mensajeLargo}</pre>
+        <pre style={detailStyles.msgPre}>
+          {tab === "corto" ? out.mensajeCorto : out.mensajeLargo}
+        </pre>
         <CopyShareBtns text={tab === "corto" ? out.mensajeCorto : out.mensajeLargo} />
       </div>
 
+      {/* Botones de acción */}
       <div style={detailStyles.actionGrid}>
         {out.fotos.length > 0 && (
-          <button onClick={() => setMediaViewer({ open: true, initialTab: "fotos" })} style={{ ...detailStyles.actionBtn, cursor: "pointer" }}>
+          <button
+            onClick={() => setMediaViewer({ open: true, initialTab: "fotos" })}
+            style={{ ...detailStyles.actionBtn, cursor: "pointer" }}
+          >
             <Images size={16} strokeWidth={1.5} /> Ver fotos
           </button>
         )}
         {p.tour360_url && (
-          <button onClick={() => setMediaViewer({ open: true, initialTab: "tour" })} style={{ ...detailStyles.actionBtn, cursor: "pointer" }}>
+          <button
+            onClick={() => setMediaViewer({ open: true, initialTab: "tour" })}
+            style={{ ...detailStyles.actionBtn, cursor: "pointer" }}
+          >
             <Globe size={16} strokeWidth={1.5} /> Tour 360
           </button>
         )}
         {p.video_url && (
-          <button onClick={() => setMediaViewer({ open: true, initialTab: "video" })} style={{ ...detailStyles.actionBtn, cursor: "pointer" }}>
+          <button
+            onClick={() => setMediaViewer({ open: true, initialTab: "video" })}
+            style={{ ...detailStyles.actionBtn, cursor: "pointer" }}
+          >
             <Video size={16} strokeWidth={1.5} /> Video
           </button>
         )}
@@ -103,17 +134,19 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete, onRefres
         </a>
       </div>
 
+      {/* Bloque ubicación standalone */}
       <div style={detailStyles.card}>
         <div style={detailStyles.sectionTitle}>Ubicación</div>
         <pre style={detailStyles.msgPreNoBox}>{out.ubicacion}</pre>
-        <CopyShareBtns text={out.ubicacion} />
+        <CopyShareBtns text={out.ubicacionStandalone} />
       </div>
 
+      {/* Bloque multimedia standalone */}
       {out.multimedia && (
         <div style={detailStyles.card}>
           <div style={detailStyles.sectionTitle}>Multimedia</div>
           <pre style={detailStyles.msgPreNoBox}>{out.multimedia}</pre>
-          <CopyShareBtns text={out.multimedia} />
+          <CopyShareBtns text={out.multimediaStandalone} />
         </div>
       )}
 

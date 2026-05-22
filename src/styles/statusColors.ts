@@ -45,7 +45,7 @@ function hexToRgba(hex: string, alpha: number) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-export function getStatusColors(status: string, pipeline: string[], t: any, mode: string, variant = "solid") {
+export function getStatusColors(status: string, pipeline: readonly string[], t: any, mode: string, variant = "solid") {
   const total = pipeline.length;
   const index = pipeline.indexOf(status);
 
@@ -94,11 +94,13 @@ export function getStatusColors(status: string, pipeline: string[], t: any, mode
   };
 }
 
+import { PIPELINE_PROPERTY } from "@/lib/constants";
+
 export function getPipelineForEntity(entityType: string) {
-  return ["Descartado", "Mantenimiento", "Disponible", "Reservado", "Cerrado"];
+  return PIPELINE_PROPERTY;
 }
 
-export function generateStatusPalette(pipeline: string[], t: any, mode: string) {
+export function generateStatusPalette(pipeline: readonly string[], t: any, mode: string) {
   return pipeline.map((status, i) => ({
     status,
     index: i,

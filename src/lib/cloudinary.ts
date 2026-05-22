@@ -1,6 +1,10 @@
 const CLOUDINARY_CLOUD = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD || "dzqfw8hm3";
 const CLOUDINARY_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_PRESET || "roca_fotos";
 
+export function isCloudinaryUrl(url: string): boolean {
+  return !!url && url.includes("cloudinary");
+}
+
 export async function uploadToCloudinary(file: File) {
   const form = new FormData();
   form.append("file", file);
@@ -17,7 +21,7 @@ export async function uploadToCloudinary(file: File) {
 }
 
 export async function deleteCloudinaryImage(url: string) {
-  if (!url || !url.includes("cloudinary")) return;
+  if (!isCloudinaryUrl(url)) return;
 
   try {
     const res = await fetch("/api/cloudinary/delete", {
@@ -35,7 +39,7 @@ export async function deleteCloudinaryImage(url: string) {
 
 export async function deleteCloudinaryImages(urls: string | string[]) {
   const urlArray = Array.isArray(urls) ? urls : [urls];
-  const validUrls = urlArray.filter(url => url && typeof url === 'string' && url.includes('cloudinary'));
+  const validUrls = urlArray.filter(url => typeof url === 'string' && isCloudinaryUrl(url));
   
   if (validUrls.length === 0) {
     return { deleted: [], failed: [] };

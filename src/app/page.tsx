@@ -1,5 +1,6 @@
 "use client";
 import { useState, useMemo, useEffect } from "react";
+import type { Property, PropertyFilters as PropertyFiltersType } from "@/core/entities/property";
 import { useAuth } from "@/hooks/useAuth";
 import { useProperties } from "@/hooks/useProperties";
 import { useTheme } from "@/hooks/useTheme";
@@ -18,20 +19,20 @@ export default function Home() {
   const { properties, loading, saveProperty, removeProperty, changeStatus } = useProperties(user?.id);
   const { t: theme, mode, toggle: cycleTheme } = useTheme();
   
-  const [selected, setSelected] = useState<any>(null);
+  const [selected, setSelected] = useState<Property | null>(null);
   const [showForm, setShowForm] = useState(false);
-  const [editTarget, setEdit] = useState<any>(null);
-  const [openMenu, setOpenMenu] = useState<any>(null);
+  const [editTarget, setEdit] = useState<Partial<Property> | null>(null);
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
-  const [filters, setFilters] = useState({ q: "", operacion: "", tipo: "", estado: "" });
-  const [publicProperty, setPublicProperty] = useState<any>(null);
+  const [filters, setFilters] = useState<PropertyFiltersType>({ q: "", operacion: "", tipo: "", estado: "" });
+  const [publicProperty, setPublicProperty] = useState<Property | null>(null);
   const [publicLoading, setPublicLoading] = useState(false);
 
   const S = getAppStyles(theme, mode);
 
-  const handleDuplicate = (original: any) => {
+  const handleDuplicate = (original: Property) => {
     const { id: _id, created_at: _created, updated_at: _updated, ...rest } = original;
-    const duplicate = { ...rest, nombre: `${original.nombre} (copia)`, estado: "Disponible", fotos_urls: [], direccion: "", maps_url: "", video_url: "", tour360_url: "" };
+    const duplicate: Partial<Property> = { ...rest, nombre: `${original.nombre} (copia)`, estado: "Disponible" as Property["estado"], fotos_urls: [], direccion: "", maps_url: "", video_url: "", tour360_url: "" };
     setEdit(duplicate);
     setShowForm(true);
   };
@@ -43,7 +44,7 @@ export default function Home() {
   };
 
   const filtered = useMemo(() => {
-    const result = properties.filter((p: any) => {
+    const result = properties.filter((p) => {
       const q = filters.q.toLowerCase();
       if (q && !p.nombre?.toLowerCase().includes(q) && !p.distrito?.toLowerCase().includes(q)) return false;
       if (filters.operacion && p.operacion !== filters.operacion) return false;
@@ -53,7 +54,7 @@ export default function Home() {
       return true;
     });
     const order: any = { "Disponible": 1, "Reservado": 2, "Cerrado": 3 };
-    return result.sort((a: any, b: any) => {
+    return result.sort((a, b) => {
       const orderA = order[a.estado] || 99;
       const orderB = order[b.estado] || 99;
       if (orderA !== orderB) return orderA - orderB;
@@ -68,7 +69,7 @@ export default function Home() {
     const galleryId = params.get("id");
     if (!galleryId) return;
     setPublicLoading(true);
-    fetchPropertyById(galleryId).then((data: any) => { setPublicProperty(data); setPublicLoading(false); });
+    fetchPropertyById(galleryId).then((data) => { setPublicProperty(data); setPublicLoading(false); });
   }, []);
 
   if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("id")) {
@@ -106,7 +107,7 @@ export default function Home() {
   }
 
   if (selected) {
-    const current = properties.find((p: any) => p.id === selected.id) || selected;
+    const current = properties.find((p) => p.id === selected.id) || selected;
     return (
       <>
         <div style={S.app}>
@@ -146,7 +147,7 @@ export default function Home() {
 
       <div style={S.list as React.CSSProperties}>
         {!loading && filtered.length === 0 && <div style={S.empty}>Sin resultados. Toca + Nuevo para agregar.</div>}
-        {filtered.map((p: any) => {
+        {filtered.map((p) => {
           const out = buildOutputs(p);
           return (
             <PropertyCard key={p.id} property={p} out={out} onClick={() => setSelected(p)} onEdit={() => { setEdit(p); setShowForm(true); }} onDelete={() => removeProperty(p.id)} onDuplicate={() => handleDuplicate(p)} openMenu={openMenu} setOpenMenu={setOpenMenu} />

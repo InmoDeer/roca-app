@@ -1,3 +1,15 @@
+## graphify
+
+This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
+
+When the user types `/graphify`, invoke the `skill` tool with `skill: "graphify"` before doing anything else.
+
+Rules:
+- ALWAYS read graphify-out/GRAPH_REPORT.md before reading any source files, running grep/glob searches, or answering codebase questions. The graph is your primary map of the codebase.
+- IF graphify-out/wiki/index.md EXISTS, navigate it instead of reading raw files
+- For cross-module "how does X relate to Y" questions, prefer `graphify query "<question>"`, `graphify path "<A>" "<B>"`, or `graphify explain "<concept>"` over grep — these traverse the graph's EXTRACTED + INFERRED edges instead of scanning files
+- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
+
 # AGENTS.md - Reglas del Proyecto ROCA
 
 ## Descripción
@@ -27,23 +39,27 @@ src/
 │   ├── propiedad/[id]/        # Ruta pública de propiedad
 │   └── api/cloudinary/delete/ # API route para eliminar fotos
 ├── components/
-│   ├── ui/                    # Dialog, Gallery, CopyShareBtns, ToastProvider, Select
+│   ├── ui/                    # Dialog, MediaViewer, CopyShareBtns, ToastProvider, Select
 │   ├── formFields/            # Field, Select, Checkbox
 │   ├── ManualHighlightsSelector.tsx
 │   ├── PropertyCard.tsx
 │   ├── PropertyDetail.tsx
 │   ├── PropertyFilters.tsx
 │   └── PropertyForm.tsx
+├── core/
+│   └── entities/
+│               └── property.ts        # Interfaz Property (tipos importados de constants.ts)
 ├── hooks/
 │   ├── useAuth.ts             # Auth (login/logout)
 │   ├── useProperties.ts       # CRUD propiedades
 │   ├── useStatus.ts           # Colores dinámicos por estado
 │   └── useTheme.tsx           # Tema (t, mode, toggle)
 ├── lib/
-│   ├── api.ts                 # CRUD propiedades + fetchPropietarios
+│   ├── api.ts                 # CRUD propiedades + buildPropertyPayload + handleError
 │   ├── supabase.ts            # Cliente Supabase (browser)
-│   ├── cloudinary.ts          # Upload + delete fotos (vía API route)
+│   ├── cloudinary.ts          # Upload + delete fotos + isCloudinaryUrl
 │   ├── constants.ts           # Estados, tipos, monedas, opciones
+│   ├── highlights.ts          # Auto-highlights + HIGHLIGHT_GROUPS + getAmplitudLabel
 │   └── messageFormatter.ts    # Generar mensajes WhatsApp con auto-highlights
 ├── styles/
 │   ├── theme.ts               # darkTheme, lightTheme
@@ -69,7 +85,7 @@ src/
 - Tipos, monedas, opciones de formulario: todo en constants.ts
 
 ### 3. API / Supabase — siempre a través de lib/api.ts
-- NUNCA llamar supabase directo desde componentes (excepción: PropertyForm usa `supabase.client.from("contacts")` para vincular propietario post-save)
+- NUNCA llamar supabase directo desde componentes (excepción: PropertyForm puede usar supabase.client para vincular propietario post-save)
 - Propiedades → lib/api.ts
 - Si necesitás una query nueva, agregás la función al util correspondiente
 
@@ -174,11 +190,17 @@ toast.success("¡Guardado!");
 toast.error("Error");
 ```
 
-### Gallery
+### MediaViewer
 ```tsx
-import { Gallery } from "./components/ui/Gallery";
+import { MediaViewer } from "./components/ui/MediaViewer";
 
-<Gallery fotos={["url1", "url2"]} onClose={handleClose} initialIndex={0} />
+<MediaViewer
+  fotos={["url1", "url2"]}
+  videoUrl="https://youtube.com/..."
+  tourUrl="https://tour.com/..."
+  onClose={handleClose}
+  initialIndex={0}
+/>
 ```
 
 ---
@@ -205,8 +227,12 @@ import { Gallery } from "./components/ui/Gallery";
 | getAppStyles | App principal (topBar, list, empty, etc.) |
 | getProfileMenuStyles | Menú de perfil (toggle tema, cerrar sesión) |
 | getDialogStyles | RocaDialog |
+| getSelectStyles | RocaSelect / StatusSelect |
+| getCheckboxStyles | Checkbox en form |
+| getFieldStyles | Field en form |
 | createShadow | Sombras dinámicas |
-| glassSurface | Efecto glass con blur |
+| primaryGradient | Gradiente dorado reutilizable |
+| getLabelStyle | Estilo de label compartido |
 
 ### statusColors.ts
 | Función | Uso |

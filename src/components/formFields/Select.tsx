@@ -1,5 +1,6 @@
 "use client";
 import { useTheme } from "@/hooks/useTheme";
+import { getLabelStyle } from "@/styles/componentStyles";
 
 export function Select({ label, k, form, setForm, opts }: any) {
   const { t } = useTheme();
@@ -27,15 +28,7 @@ const getSelectStyles = (t: any) => ({
   container: {
     marginBottom: 14,
   },
-  label: {
-    display: "block",
-    fontSize: 12,
-    fontWeight: 600,
-    color: t.colors.textMuted,
-    marginBottom: 6,
-    textTransform: "uppercase",
-    letterSpacing: "0.5px",
-  },
+  label: getLabelStyle(t),
   select: {
     width: "100%",
     padding: "12px 14px",

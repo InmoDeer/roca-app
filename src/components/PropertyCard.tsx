@@ -1,4 +1,5 @@
 "use client";
+import type { Property } from "@/core/entities/property";
 import { MoreVertical, PencilLine, Trash2, Copy } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
 import { getPropertyCardStyles } from "@/styles/componentStyles";
@@ -13,7 +14,16 @@ export function PropertyCard({
   onDuplicate,
   openMenu, 
   setOpenMenu 
-}: any) {
+}: {
+  property: Property;
+  out: any;
+  onClick: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+  onDuplicate: () => void;
+  openMenu: string | null;
+  setOpenMenu: (id: string | null) => void;
+}) {
   const { t } = useTheme();
   const isMenuOpen = openMenu === property.id;
   const ec = useStatus(property.estado, "property", "solid");
