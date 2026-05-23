@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
 import type { Property } from "@/core/entities/property";
 import {
-  fetchProperties,
+  loadAllProperties,
   createProperty,
   updateProperty,
-  deleteProperty,
-  updatePropertyStatus,
-  fetchPropertyById,
-} from "@/lib/api";
+  deletePropertyById,
+  changePropertyStatus,
+} from "@/core/actions/properties";
 
 export function useProperties(userId: string | undefined) {
   const [properties, setProperties] = useState<Property[]>([]);
@@ -16,8 +15,12 @@ export function useProperties(userId: string | undefined) {
   const loadProperties = async () => {
     if (!userId) return;
     setLoading(true);
-    const data = await fetchProperties();
-    setProperties(data || []);
+    const result = await loadAllProperties();
+    if (result.ok) {
+      setProperties(result.data || []);
+    } else {
+      console.error("Error al cargar propiedades:", result.error);
+    }
     setLoading(false);
   };
 
@@ -33,25 +36,26 @@ export function useProperties(userId: string | undefined) {
 
   const saveProperty = async (payload: Partial<Property>, id?: string) => {
     if (id) {
-      await updateProperty(id, payload);
+      const result = await updateProperty(id, payload);
+      if (!result.ok) throw new Error(result.error);
+      await loadProperties();
+      return result.data;
     } else {
-      await createProperty(payload);
-    }
-    await loadProperties();
-
-    if (id) {
-      const updated = await fetchPropertyById(id);
-      return updated;
+      const result = await createProperty(payload);
+      if (!result.ok) throw new Error(result.error);
+      await loadProperties();
     }
   };
 
   const removeProperty = async (id: string) => {
-    await deleteProperty(id);
+    const result = await deletePropertyById(id);
+    if (!result.ok) throw new Error(result.error);
     setProperties((ps) => ps.filter((p) => p.id !== id));
   };
 
   const changeStatus = async (id: string, estado: Property["estado"]) => {
-    await updatePropertyStatus(id, estado);
+    const result = await changePropertyStatus(id, estado);
+    if (!result.ok) throw new Error(result.error);
     setProperties((ps) =>
       ps.map((p) => (p.id === id ? { ...p, estado } : p))
     );

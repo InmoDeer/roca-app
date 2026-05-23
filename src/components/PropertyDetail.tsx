@@ -134,20 +134,22 @@ export function PropertyDetail({ p, onBack, onEdit, onEstado, onDelete, onRefres
         </a>
       </div>
 
-      {/* Bloque ubicación standalone */}
-      <div style={detailStyles.card}>
-        <div style={detailStyles.sectionTitle}>Ubicación</div>
-        <pre style={detailStyles.msgPreNoBox}>{out.ubicacion}</pre>
-        <CopyShareBtns text={out.ubicacionStandalone} />
-      </div>
-
       {/* Bloque multimedia standalone */}
       {out.multimedia && (
-        <div style={detailStyles.card}>
-          <div style={detailStyles.sectionTitle}>Multimedia</div>
-          <pre style={detailStyles.msgPreNoBox}>{out.multimedia}</pre>
-          <CopyShareBtns text={out.multimediaStandalone} />
-        </div>
+        <>
+          <div style={detailStyles.card}>
+            <div style={detailStyles.sectionTitle}>Multimedia</div>
+            <pre style={detailStyles.msgPreNoBox}>{out.multimedia}</pre>
+            <CopyShareBtns text={out.multimediaStandalone} />
+          </div>
+
+          {/* Bloque ubicación standalone */}
+          <div style={detailStyles.card}>
+            <div style={detailStyles.sectionTitle}>Ubicación</div>
+            <pre style={detailStyles.msgPreNoBox}>{out.ubicacion}</pre>
+            <CopyShareBtns text={out.ubicacionStandalone} />
+          </div>
+        </>
       )}
 
       {mediaViewer.open && (

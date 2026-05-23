@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { fetchPropertyById } from "@/lib/api";
+import { getProperty } from "@/core/actions/properties";
 import { buildOutputs } from "@/lib/messageFormatter";
 import { MediaViewer } from "@/components/ui/MediaViewer";
 import { Camera } from "lucide-react";
@@ -12,8 +12,8 @@ export default function PublicPropertyPage({ params }: { params: { id: string } 
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchPropertyById(params.id).then((data) => {
-      setProperty(data);
+    getProperty(params.id).then((result) => {
+      if (result.ok) setProperty(result.data);
       setLoading(false);
     });
   }, [params.id]);

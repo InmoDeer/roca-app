@@ -33,11 +33,20 @@ Rules:
 ## Estructura
 ```
 src/
-├── app/                       # Next.js App Router
-│   ├── layout.tsx             # Root layout
-│   ├── page.tsx               # Home (lista + detalle + formulario)
-│   ├── propiedad/[id]/        # Ruta pública de propiedad
-│   └── api/cloudinary/delete/ # API route para eliminar fotos
+├── app/
+│   ├── layout.tsx
+│   ├── page.tsx               # ?id= galería pública; sin id → /propiedades
+│   ├── login/
+│   ├── (dashboard)/           # Rutas autenticadas + nav inferior
+│   │   ├── propiedades/
+│   │   └── ajustes/
+│   ├── propiedad/[id]/
+│   └── api/cloudinary/delete/
+├── features/
+│   ├── properties/views/      # PropertiesView
+│   ├── auth/views/            # LoginView
+│   ├── dashboard/components/  # DashboardNav, StubPage
+│   └── chat/components/       # ChatPanel, MessageBubble, ChatInput, etc.
 ├── components/
 │   ├── ui/                    # Dialog, MediaViewer, CopyShareBtns, ToastProvider, Select
 │   ├── formFields/            # Field, Select, Checkbox
@@ -47,13 +56,20 @@ src/
 │   ├── PropertyFilters.tsx
 │   └── PropertyForm.tsx
 ├── core/
-│   └── entities/
-│               └── property.ts        # Interfaz Property (tipos importados de constants.ts)
+│   ├── entities/property/     # types, constants, mapper
+│   ├── actions/properties/    # 1 archivo por acción (action-first)
+│   ├── actions/chat/          # parseIntent regex + IA fallback opcional
+│   ├── chat/                  # chatEngine, responseBuilder
+│   ├── presenters/            # propertyText, summaryText
+│   ├── repositories/          # I/O Supabase
+│   └── services/              # supabase, cloudinary, gemini
 ├── hooks/
 │   ├── useAuth.ts             # Auth (login/logout)
 │   ├── useProperties.ts       # CRUD propiedades
 │   ├── useStatus.ts           # Colores dinámicos por estado
-│   └── useTheme.tsx           # Tema (t, mode, toggle)
+│   ├── useTheme.tsx           # Tema (t, mode, toggle)
+│   ├── useChat.ts             # Chat: estado + sendMessage
+│   └── useVoiceRecognition.ts # Dictado por voz
 ├── lib/
 │   ├── api.ts                 # CRUD propiedades + buildPropertyPayload + handleError
 │   ├── supabase.ts            # Cliente Supabase (browser)
@@ -61,12 +77,10 @@ src/
 │   ├── constants.ts           # Estados, tipos, monedas, opciones
 │   ├── highlights.ts          # Auto-highlights + HIGHLIGHT_GROUPS + getAmplitudLabel
 │   └── messageFormatter.ts    # Generar mensajes WhatsApp con auto-highlights
-├── styles/
-│   ├── theme.ts               # darkTheme, lightTheme
-│   ├── componentStyles.ts     # getXxxStyles para cada componente
-│   └── statusColors.ts        # Motor de gradiente de estado
-├── middleware.ts              # Auth middleware
-└── globals.css
+└── styles/
+    ├── theme.ts
+    ├── componentStyles.ts
+    └── statusColors.ts
 ```
 
 ---
@@ -84,10 +98,10 @@ src/
 - Estados en `PIPELINE_PROPERTY`
 - Tipos, monedas, opciones de formulario: todo en constants.ts
 
-### 3. API / Supabase — siempre a través de lib/api.ts
-- NUNCA llamar supabase directo desde componentes (excepción: PropertyForm puede usar supabase.client para vincular propietario post-save)
-- Propiedades → lib/api.ts
-- Si necesitás una query nueva, agregás la función al util correspondiente
+### 3. Action-first — negocio en core/actions
+- UI, chat y automatizaciones → `core/actions/*` → `repositories/*` → `services/*`
+- NUNCA `lib/api` ni `supabase` desde componentes/features (excepción temporal: `useAuth`)
+- `lib/*` son re-exports legacy; código nuevo usa `core/`
 
 ### 4. Lógica de estado — siempre en hooks
 - NUNCA fetch + useState + useEffect dentro de un componente
@@ -226,6 +240,8 @@ import { MediaViewer } from "./components/ui/MediaViewer";
 | getFormStyles | Formulario de propiedad |
 | getAppStyles | App principal (topBar, list, empty, etc.) |
 | getProfileMenuStyles | Menú de perfil (toggle tema, cerrar sesión) |
+| getDashboardStyles | DashboardLayout + Nav inferior + stub |
+| getChatStyles | ChatPanel, MessageBubble, ChatInput |
 | getDialogStyles | RocaDialog |
 | getSelectStyles | RocaSelect / StatusSelect |
 | getCheckboxStyles | Checkbox en form |

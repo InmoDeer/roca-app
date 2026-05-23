@@ -3,12 +3,9 @@ import type {
   PropertyOperacion,
   PropertyEstado,
   PropertyMoneda,
-  PropertyAntiguedad,
   PropertyMascotas,
-  PropertyZona,
-  PropertyPerfilIdeal,
   PropertyVista,
-} from "@/lib/constants";
+} from "./constants";
 
 export interface Property {
   id: string;

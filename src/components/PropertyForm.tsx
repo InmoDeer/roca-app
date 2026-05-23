@@ -7,7 +7,7 @@ import { Select } from "@/components/formFields/Select";
 import { Checkbox } from "@/components/formFields/Checkbox";
 import { ManualHighlightsSelector } from "@/components/ManualHighlightsSelector";
 import { uploadToCloudinary, deleteCloudinaryImages } from "@/lib/cloudinary";
-import { buildPropertyPayload } from "@/lib/api";
+import { buildPropertyPayload } from "@/core/actions/properties";
 import { getFormStyles } from "@/styles/componentStyles";
 import {
   PROPERTY_TYPES, OPERATIONS, CURRENCIES,

@@ -1,111 +1,32 @@
-import { supabase } from "./supabase";
-import { deleteCloudinaryImages } from "./cloudinary";
-import type { Property } from "@/core/entities/property";
+/** @deprecated Import from `@/core/repositories/properties.repository` — re-export. */
+import {
+  fetchProperties,
+  fetchPropertyById,
+  createPropertyRow,
+  updatePropertyRow,
+  deletePropertyRow,
+  updatePropertyStatusRow,
+  buildPropertyPayload,
+} from "@/core/repositories/properties.repository";
 
-function handleError(context: string, error: any) {
-  console.error(`Error ${context}:`, error);
+export {
+  fetchProperties,
+  fetchPropertyById,
+  buildPropertyPayload,
+};
+
+export async function createProperty(payload: Parameters<typeof createPropertyRow>[0]) {
+  return createPropertyRow(payload);
 }
 
-export async function fetchProperties(): Promise<Property[]> {
-  const { data, error } = await supabase.client
-    .from("properties")
-    .select("*")
-    .order("created_at", { ascending: false });
-  if (error) handleError("fetching", error);
-  return (data as Property[]) || [];
-}
-
-export async function fetchPropertyById(id: string): Promise<Property | null> {
-  const { data, error } = await supabase.client
-    .from("properties")
-    .select("*")
-    .eq("id", id)
-    .single();
-  if (error) handleError("fetching by id", error);
-  return data as Property | null;
-}
-
-export async function createProperty(payload: Partial<Property>) {
-  const { data: { user } } = await supabase.client.auth.getUser();
-  const { error } = await supabase.client.from("properties").insert({
-    ...payload,
-    user_id: user.id
-  });
-  if (error) handleError("creating", error);
-}
-
-export async function updateProperty(id: string, payload: Partial<Property>) {
-  const { error } = await supabase.client
-    .from("properties")
-    .update(payload)
-    .eq("id", id);
-  if (error) handleError("updating", error);
+export async function updateProperty(id: string, payload: Parameters<typeof updatePropertyRow>[1]) {
+  return updatePropertyRow(id, payload);
 }
 
 export async function deleteProperty(id: string) {
-  const property = await fetchPropertyById(id);
-  if (property?.fotos_urls?.length) {
-    await deleteCloudinaryImages(property.fotos_urls);
-  }
-  const { error } = await supabase.client.from("properties").delete().eq("id", id);
-  if (error) handleError("deleting", error);
+  return deletePropertyRow(id);
 }
 
 export async function updatePropertyStatus(id: string, estado: string) {
-  const { error } = await supabase.client
-    .from("properties")
-    .update({ estado })
-    .eq("id", id);
-  if (error) handleError("updating status", error);
-}
-
-export function buildPropertyPayload(form: any) {
-  return {
-    nombre: form.nombre,
-    tipo: form.tipo,
-    operacion: form.operacion,
-    estado: form.estado || "Disponible",
-    distrito: form.distrito,
-    direccion: form.direccion || null,
-    maps_url: form.maps_url || null,
-    precio: Number(form.precio),
-    moneda: form.moneda,
-    mantenimiento: form.mantenimiento ? Number(form.mantenimiento) : null,
-    dormitorios: form.dormitorios ? Number(form.dormitorios) : null,
-    ambientes: form.ambientes ? Number(form.ambientes) : null,
-    banos: form.banos ? Number(form.banos) : null,
-    area_m2: form.area_m2 ? Number(form.area_m2) : null,
-    piso: form.piso ? Number(form.piso) : null,
-    antiguedad: form.antiguedad || null,
-    cochera: !!form.cochera,
-    ascensor: !!form.ascensor,
-    amoblado: !!form.amoblado,
-    area_servicio: !!form.area_servicio,
-    mascotas: form.mascotas || "No",
-    fotos_urls: form.fotos_urls || [],
-    video_url: form.video_url || null,
-    tour360_url: form.tour360_url || null,
-    balcon: !!form.balcon,
-    ventanas_amplias: !!form.ventanas_amplias,
-    vista: form.vista || null,
-    cerca_a: form.cerca_a || null,
-    limita_con: form.limita_con || null,
-    cocina_equipada: !!form.cocina_equipada,
-    closet: !!form.closet,
-    recepcion: !!form.recepcion,
-    areas_comunes: !!form.areas_comunes,
-    piscina: !!form.piscina,
-    terraza: !!form.terraza,
-    jardin: !!form.jardin,
-    sum: !!form.sum,
-    parrilla: !!form.parrilla,
-    juegos_ninos: !!form.juegos_ninos,
-    gimnasio: !!form.gimnasio,
-    gas_natural: !!form.gas_natural,
-    lavanderia: !!form.lavanderia,
-    tendal: !!form.tendal,
-    destacados_manuales: form.destacados_manuales || [],
-    zona: form.zona || null,
-    perfil_ideal: form.perfil_ideal || null,
-  };
+  return updatePropertyStatusRow(id, estado);
 }
