@@ -36,5 +36,8 @@ tsconfig.tsbuildinfo
 # Graphify cache
 graphify-out/cache/
 
+# Agent skills (local IDE config)
+.agents
+
 # opencode
 .opencode
