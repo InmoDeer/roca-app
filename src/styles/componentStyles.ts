@@ -1,22 +1,5 @@
 export const primaryGradient = "linear-gradient(135deg, #d4af37 0%, #b8962e 100%)";
 
-export const transitions = {
-  fast: "0.15s ease",
-  base: "0.2s ease",
-  slow: "0.3s ease",
-  bounce: "0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
-};
-
-export function createShadow(mode: string, intensity = 1) {
-  const opacity = Math.min(intensity * 0.15, 1);
-  const blur = 8 + intensity * 8;
-  const y = 4 + intensity * 4;
-  if (mode === "dark") {
-    return `0 ${y}px ${blur}px rgba(0,0,0,${opacity})`;
-  }
-  return `0 ${y}px ${blur}px rgba(0,0,0,${opacity * 0.15})`;
-}
-
 export const getLabelStyle = (t: any) => ({
   display: "block",
   fontSize: 12,
@@ -25,6 +8,44 @@ export const getLabelStyle = (t: any) => ({
   marginBottom: 6,
   textTransform: "uppercase",
   letterSpacing: "0.5px",
+});
+
+export const getFieldStyles = (t: any) => ({
+  container: { marginBottom: 14 },
+  label: getLabelStyle(t),
+  input: {
+    width: "100%", padding: "12px 14px", borderRadius: 12,
+    border: `1px solid ${t.colors.border}`, fontSize: 15,
+    boxSizing: "border-box", outline: "none",
+    background: t.colors.bgSecondary, color: t.colors.text,
+    transition: "all 0.3s ease",
+  },
+});
+
+export const getSelectStyles = (t: any) => ({
+  container: { marginBottom: 14 },
+  label: getLabelStyle(t),
+  select: {
+    width: "100%", padding: "12px 14px", borderRadius: 12,
+    border: `1px solid ${t.colors.border}`, fontSize: 15,
+    boxSizing: "border-box", outline: "none",
+    background: t.colors.bgSecondary, color: t.colors.text,
+    transition: "all 0.3s ease",
+  },
+});
+
+export const getCheckboxStyles = (t: any) => ({
+  container: { display: "flex", alignItems: "center", fontSize: 14, cursor: "pointer", padding: "10px 0" },
+  input: { display: "none" },
+  checkmark: {
+    width: 20, height: 20, borderRadius: 6,
+    border: `1px solid ${t.colors.border}`, marginRight: 10,
+    display: "flex", alignItems: "center", justifyContent: "center",
+    transition: "all 0.3s ease", flexShrink: 0,
+  },
+  check: { color: "#0a0a0a", fontSize: 14, fontWeight: 700 },
+  icon: { marginRight: 8, display: "flex", alignItems: "center" },
+  label: { flex: 1, color: t.colors.textSecondary },
 });
 
 export const getPropertyCardStyles = (t: any, ec: any) => ({

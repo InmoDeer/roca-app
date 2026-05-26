@@ -1,6 +1,6 @@
 "use client";
 import { useTheme } from "@/hooks/useTheme";
-import { getLabelStyle } from "@/styles/componentStyles";
+import { getSelectStyles } from "@/styles/componentStyles";
 
 export function Select({ label, k, form, setForm, opts }: any) {
   const { t } = useTheme();
@@ -23,22 +23,3 @@ export function Select({ label, k, form, setForm, opts }: any) {
     </div>
   );
 }
-
-const getSelectStyles = (t: any) => ({
-  container: {
-    marginBottom: 14,
-  },
-  label: getLabelStyle(t),
-  select: {
-    width: "100%",
-    padding: "12px 14px",
-    borderRadius: 12,
-    border: `1px solid ${t.colors.border}`,
-    fontSize: 15,
-    boxSizing: "border-box",
-    outline: "none",
-    background: t.colors.bgSecondary,
-    color: t.colors.text,
-    transition: "all 0.3s ease",
-  },
-});

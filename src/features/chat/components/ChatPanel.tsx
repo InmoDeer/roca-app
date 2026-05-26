@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import type { Property } from "@/core/entities/property";
 import { useTheme } from "@/hooks/useTheme";
 import { useToast } from "@/components/ui/ToastProvider";
@@ -36,6 +36,7 @@ export function ChatPanel({ properties, onSelectProperty, onRefresh, onClose }: 
   });
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const helpRef = useRef<HTMLDivElement>(null);
 
   const handleSend = useCallback(() => {
     sendMessage(input);
@@ -57,6 +58,21 @@ export function ChatPanel({ properties, onSelectProperty, onRefresh, onClose }: 
     if (voice.listening) voice.stopListening();
     else voice.startListening();
   }, [voice.supported, voice.listening, voice.startListening, voice.stopListening, toast]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  useEffect(() => {
+    if (!showHelp) return;
+    const handler = (e: MouseEvent) => {
+      if (helpRef.current && !helpRef.current.contains(e.target as Node)) {
+        setShowHelp(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [showHelp]);
 
   return (
     <div style={s.overlay}>
@@ -116,7 +132,9 @@ export function ChatPanel({ properties, onSelectProperty, onRefresh, onClose }: 
         </div>
 
         {showHelp && (
-          <HelpCommands t={t} mode={mode} onSelectExample={(ex) => setInput(ex)} />
+          <div ref={helpRef}>
+            <HelpCommands t={t} mode={mode} onSelectExample={(ex) => setInput(ex)} />
+          </div>
         )}
 
         <ChatInput

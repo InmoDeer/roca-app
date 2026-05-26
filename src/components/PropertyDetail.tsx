@@ -4,7 +4,7 @@ import type { Property } from "@/core/entities/property";
 import { useTheme } from "@/hooks/useTheme";
 import { getPropertyDetailStyles } from "@/styles/componentStyles";
 import { buildOutputs } from "@/lib/messageFormatter";
-import { PIPELINE_PROPERTY } from "@/lib/constants";
+import { PIPELINE_PROPERTY } from "@/core/entities/property";
 import { StatusSelect } from "@/components/ui/select";
 import { CopyShareBtns } from "@/components/ui/CopyShareBtns";
 import { MediaViewer } from "@/components/ui/MediaViewer";

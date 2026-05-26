@@ -71,10 +71,6 @@ src/
 │   ├── useChat.ts             # Chat: estado + sendMessage
 │   └── useVoiceRecognition.ts # Dictado por voz
 ├── lib/
-│   ├── api.ts                 # CRUD propiedades + buildPropertyPayload + handleError
-│   ├── supabase.ts            # Cliente Supabase (browser)
-│   ├── cloudinary.ts          # Upload + delete fotos + isCloudinaryUrl
-│   ├── constants.ts           # Estados, tipos, monedas, opciones
 │   ├── highlights.ts          # Auto-highlights + HIGHLIGHT_GROUPS + getAmplitudLabel
 │   └── messageFormatter.ts    # Generar mensajes WhatsApp con auto-highlights
 └── styles/
@@ -100,8 +96,8 @@ src/
 
 ### 3. Action-first — negocio en core/actions
 - UI, chat y automatizaciones → `core/actions/*` → `repositories/*` → `services/*`
-- NUNCA `lib/api` ni `supabase` desde componentes/features (excepción temporal: `useAuth`)
-- `lib/*` son re-exports legacy; código nuevo usa `core/`
+- NUNCA acceder a repositorios o servicios desde componentes/features — todo pasa por `core/actions/`
+- `lib/` solo contiene utilidades de formateo (`highlights`, `messageFormatter`); toda lógica nueva va en `core/`
 
 ### 4. Lógica de estado — siempre en hooks
 - NUNCA fetch + useState + useEffect dentro de un componente
@@ -225,7 +221,7 @@ import { MediaViewer } from "./components/ui/MediaViewer";
 - Arrays de estados definidos en componentes
 - Colores hardcodeados fuera de theme.ts / statusColors.ts
 - Lógica de fetch fuera de hooks
-- Duplicar funciones que ya existen en lib/
+- Duplicar lógica de estilos en componentes (usar componentStyles.ts)
 - Emojis en código — usar Lucide icons (excepción: mensajes WhatsApp)
 
 ---
@@ -246,7 +242,6 @@ import { MediaViewer } from "./components/ui/MediaViewer";
 | getSelectStyles | RocaSelect / StatusSelect |
 | getCheckboxStyles | Checkbox en form |
 | getFieldStyles | Field en form |
-| createShadow | Sombras dinámicas |
 | primaryGradient | Gradiente dorado reutilizable |
 | getLabelStyle | Estilo de label compartido |
 
@@ -255,4 +250,29 @@ import { MediaViewer } from "./components/ui/MediaViewer";
 |---------|-----|
 | getStatusColors | Colores interpolados por estado |
 | getPipelineForEntity | Obtener pipeline para entity |
-| generateStatusPalette | Debug de paleta |
+
+---
+
+## Cambios recientes (sesión 26/05/2026)
+
+### ChatPanel -- auto-scroll y click-fuera
+- `src/features/chat/components/ChatPanel.tsx`
+- **Auto-scroll**: `useEffect` con `scrollIntoView` cuando `messages` cambia
+- **Cerrar ayuda al click fuera**: `helpRef` + `useEffect` con `mousedown` en document, cierra `HelpCommands` si el target está fuera del ref
+
+### parseIntent.ts -- múltiples fixes al parser regex
+- **normalizeTipo** reescrita con mapa `TIPO_KEYWORDS`. Plurales generados automáticamente (`s?` / `es?`). Para agregar un tipo nuevo, solo añadir línea al mapa
+- **normalizeOperacion**: agregados `\bventas\b`, `\barriendos?\b`, restaurado `\balquileres\b`
+- **extractPrecio**: eliminado `!text.includes("crear")` que bloqueaba extracción de precio en comandos `create`
+- **buildCreateIntent**: ahora recibe `ctx`, usa `extractDistrito(text, ctx)` en vez de regex manual; precio ya no defaultea a `0`
+- **extractDistrito reescrito**: segmenta por palabras, encuentra TODOS los candidatos tras `en`/`de`, filtra por tipo/operación/precio, itera de atrás a adelante (último candidato suele ser el más específico)
+- **Create keywords**: agregados `"crea"`, `"nuevo"`
+- **Search keywords**: agregados `"departamentos en"`, `"locales en"`, `"oficinas en"`, `"terrenos en"`, `"ventas"`, `"arriendos"`
+
+### parseIntent.ts -- prompt Gemini mejorado
+- Ahora incluye estructura JSON completa de cada acción con campos opcionales y valores válidos, más ejemplos concretos
+
+### Archivos modificados en esta sesión
+- `src/features/chat/components/ChatPanel.tsx` — auto-scroll + click-fuera
+- `src/core/actions/chat/parseIntent.ts` — normalizeTipo, normalizeOperacion, extractDistrito, buildCreateIntent, extractPrecio, keywords
+- `src/core/services/gemini/parseIntent.ts` — prompt con estructura JSON

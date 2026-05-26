@@ -6,14 +6,14 @@ import { Field } from "@/components/formFields/Field";
 import { Select } from "@/components/formFields/Select";
 import { Checkbox } from "@/components/formFields/Checkbox";
 import { ManualHighlightsSelector } from "@/components/ManualHighlightsSelector";
-import { uploadToCloudinary, deleteCloudinaryImages } from "@/lib/cloudinary";
+import { uploadToCloudinary, deleteCloudinaryImages } from "@/core/services/cloudinary";
 import { buildPropertyPayload } from "@/core/actions/properties";
 import { getFormStyles } from "@/styles/componentStyles";
 import {
   PROPERTY_TYPES, OPERATIONS, CURRENCIES,
   ANTIGUEDAD_OPTIONS, MASCOTAS_OPTIONS,
   ZONA_OPTIONS, PERFIL_IDEAL_OPTIONS, VISTA_OPTIONS,
-} from "@/lib/constants";
+} from "@/core/entities/property";
 import {
   ArrowUp, Armchair, Sparkles, Camera, X, Car, Flame,
   Waves, WashingMachine, DoorOpen, Sun, Box, CookingPot,

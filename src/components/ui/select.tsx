@@ -3,7 +3,7 @@ import * as Select from "@radix-ui/react-select";
 import { ChevronDown, Check } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
 import { getStatusColors } from "@/styles/statusColors";
-import { getEstadoDisplay } from "@/lib/constants";
+import { getEstadoDisplay } from "@/core/entities/property";
 import { getLabelStyle } from "@/styles/componentStyles";
 
 export function StatusSelect({ value, onValueChange, pipeline, operacion }: any) {

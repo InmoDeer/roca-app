@@ -3,7 +3,7 @@ import type { PropertyFilters as PropertyFiltersType } from "@/core/entities/pro
 import { Search } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
 import { RocaSelect } from "./ui/select";
-import { OPERATIONS, PROPERTY_TYPES, PIPELINE_PROPERTY } from "@/lib/constants";
+import { OPERATIONS, PROPERTY_TYPES, PIPELINE_PROPERTY } from "@/core/entities/property";
 
 export function PropertyFilters({ filters, setFilters, loading, filteredCount }: {
   filters: PropertyFiltersType;

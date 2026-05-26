@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { isCloudinaryUrl } from "@/lib/cloudinary";
+import { isCloudinaryUrl } from "@/core/services/cloudinary";
 
 const CLOUDINARY_API_KEY = "213115298379474";
 const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET || "";

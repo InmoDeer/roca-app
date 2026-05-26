@@ -19,18 +19,30 @@ function matchesAny(text: string, keywords: string[]): boolean {
   return keywords.some((k) => text.includes(k));
 }
 
+const TIPO_KEYWORDS: Record<string, string[]> = {
+  Departamento: ["depa", "departamento", "depto"],
+  Casa:         ["casa"],
+  Local:        ["local"],
+  Oficina:      ["oficina"],
+  Terreno:      ["terreno"],
+};
+
 function normalizeTipo(text: string): string | undefined {
-  if (/\bdepa\b|\bdepartamento\b|\bdepto\b/.test(text)) return "Departamento";
-  if (/\bcasa\b/.test(text)) return "Casa";
-  if (/\blocal\b/.test(text)) return "Local";
-  if (/\boficina\b/.test(text)) return "Oficina";
-  if (/\bterreno\b/.test(text)) return "Terreno";
+  for (const [tipo, keywords] of Object.entries(TIPO_KEYWORDS)) {
+    const regex = new RegExp(
+      keywords.map(kw => {
+        const plural = /[aeiouáéíóú]$/i.test(kw) ? kw + "s" : kw + "es";
+        return `\\b(?:${kw}|${plural})\\b`;
+      }).join("|")
+    );
+    if (regex.test(text)) return tipo;
+  }
   return undefined;
 }
 
 function normalizeOperacion(text: string): string | undefined {
-  if (/\balquiler\b|\balquilar\b|\barriendo\b|\balquileres\b/.test(text)) return "Alquiler";
-  if (/\bventa\b|\bvender\b|\bvendo\b/.test(text)) return "Venta";
+  if (/\balquiler\b|\balquileres\b|\balquilar\b|\barriendo\b|\barriendos?\b/.test(text)) return "Alquiler";
+  if (/\bventa\b|\bventas\b|\bvender\b|\bvendo\b/.test(text)) return "Venta";
   return undefined;
 }
 
@@ -56,16 +68,40 @@ function extractPrecio(text: string): { min?: number; max?: number } {
   const out: { min?: number; max?: number } = {};
   if (hasta) out.max = parseNum(hasta[1]);
   if (desde) out.min = parseNum(desde[1]);
-  if (!out.max && !out.min && plain && !text.includes("crear")) {
+  if (!out.max && !out.min && plain) {
     out.max = parseNum(plain[1]);
   }
   return out;
 }
 
 function extractDistrito(text: string, ctx: ParseContext): string | undefined {
-  const enMatch = text.match(/(?:en|de)\s+([a-záéíóúñ\s]{3,30})(?:\s|$|,|\.|hasta|por|con)/i);
-  if (enMatch) {
-    const candidate = enMatch[1].trim();
+  for (const p of ctx.properties) {
+    if (p.distrito && text.includes(p.distrito.toLowerCase())) return p.distrito;
+  }
+
+  const words = text.split(/\s+/);
+  const candidates: string[] = [];
+  for (let i = 0; i < words.length - 1; i++) {
+    if (words[i] !== "en" && words[i] !== "de") continue;
+    const parts: string[] = [];
+    for (let j = i + 1; j < words.length; j++) {
+      const w = words[j];
+      if (w === "en" || w === "de") break;
+      if (!/^[a-záéíóúñ]+$/.test(w)) break;
+      parts.push(w);
+    }
+    if (parts.length >= 1) candidates.push(parts.join(" "));
+  }
+
+  const isInvalid = (c: string) =>
+    /^(hasta|desde|max|máximo|mínimo|menor|mayor|entre)$/i.test(c) ||
+    /\b(alquiler|venta|depa|departamentos?|dptos?|casa|local|oficina|terreno|nuevo|crear|crea)\b/i.test(c) ||
+    /\d/.test(c);
+
+  for (let i = candidates.length - 1; i >= 0; i--) {
+    const candidate = candidates[i].trim();
+    if (!candidate || isInvalid(candidate)) continue;
+
     const known = ctx.properties.find((p) =>
       p.distrito?.toLowerCase().includes(candidate.toLowerCase()) ||
       p.direccion?.toLowerCase().includes(candidate.toLowerCase()) ||
@@ -73,12 +109,17 @@ function extractDistrito(text: string, ctx: ParseContext): string | undefined {
       p.nombre?.toLowerCase().includes(candidate.toLowerCase())
     );
     if (known) return known.distrito;
-    if (candidate.length > 2) return candidate.replace(/\b(el|la|los|las)\b/g, "").trim();
+
+    const sub = ctx.properties.find((p) =>
+      p.distrito && candidate.toLowerCase().includes(p.distrito.toLowerCase())
+    );
+    if (sub) return sub.distrito;
+
+    if (candidate.length > 2) {
+      return candidate.replace(/\b(el|la|los|las)\b/g, "").trim();
+    }
   }
 
-  for (const p of ctx.properties) {
-    if (p.distrito && text.includes(p.distrito.toLowerCase())) return p.distrito;
-  }
   return undefined;
 }
 
@@ -145,10 +186,10 @@ function buildSearchIntent(text: string, ctx: ParseContext): PropertyIntent {
   return filters;
 }
 
-function buildCreateIntent(text: string): PropertyIntent {
+function buildCreateIntent(text: string, ctx: ParseContext): PropertyIntent {
   const tipo = normalizeTipo(text) || "Departamento";
   const operacion = normalizeOperacion(text) || "Alquiler";
-  const distrito = text.match(/(?:en|de)\s+([a-záéíóúñ\s]{3,25})/i)?.[1]?.trim() || "";
+  const distrito = extractDistrito(text, ctx) || "";
   const precio = extractPrecio(text);
   const nombre = `${tipo} en ${distrito || "Sin distrito"}`.trim();
 
@@ -159,7 +200,7 @@ function buildCreateIntent(text: string): PropertyIntent {
       tipo: tipo as Property["tipo"],
       operacion: operacion as Property["operacion"],
       distrito: distrito || "Por definir",
-      precio: precio.max || precio.min || 0,
+      precio: precio.max || precio.min,
       moneda: /\busd|\$\b/i.test(text) ? "USD" : "PEN",
       estado: "Disponible",
     },
@@ -203,12 +244,18 @@ export function parseIntent(raw: string, ctx: ParseContext): PropertyIntent {
       "propiedades en",
       "inmuebles en",
       "depas en",
+      "departamentos en",
       "casas en",
+      "locales en",
+      "oficinas en",
+      "terrenos en",
       "qué tengo en",
       "que tengo en",
       "disponibles en",
       "alquileres",
+      "ventas",
       "ventas en",
+      "arriendos",
     ])
   ) {
     return buildSearchIntent(text, ctx);
@@ -248,8 +295,8 @@ export function parseIntent(raw: string, ctx: ParseContext): PropertyIntent {
     if (estado && id) return { action: "changeStatus", id, estado };
   }
 
-  if (matchesAny(text, ["crear", "nuevo inmueble", "agregar", "añadir", "nueva propiedad"])) {
-    return buildCreateIntent(text);
+  if (matchesAny(text, ["crear", "crea", "nuevo", "nuevo inmueble", "agregar", "añadir", "nueva propiedad"])) {
+    return buildCreateIntent(text, ctx);
   }
 
   if (

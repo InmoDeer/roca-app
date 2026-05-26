@@ -94,17 +94,9 @@ export function getStatusColors(status: string, pipeline: readonly string[], t: 
   };
 }
 
-import { PIPELINE_PROPERTY } from "@/lib/constants";
+import { PIPELINE_PROPERTY } from "@/core/entities/property";
 
 export function getPipelineForEntity(entityType: string) {
   return PIPELINE_PROPERTY;
 }
 
-export function generateStatusPalette(pipeline: readonly string[], t: any, mode: string) {
-  return pipeline.map((status, i) => ({
-    status,
-    index: i,
-    solid: getStatusColors(status, pipeline, t, mode, "solid"),
-    subtle: getStatusColors(status, pipeline, t, mode, "subtle"),
-  }));
-}

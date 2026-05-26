@@ -1,6 +1,6 @@
 "use client";
 import { useTheme } from "@/hooks/useTheme";
-import { getLabelStyle } from "@/styles/componentStyles";
+import { getFieldStyles } from "@/styles/componentStyles";
 
 export function Field({ label, k, form, setForm, type = "text", placeholder = "" }: any) {
   const { t } = useTheme();
@@ -29,22 +29,3 @@ export function Field({ label, k, form, setForm, type = "text", placeholder = ""
     </div>
   );
 }
-
-const getFieldStyles = (t: any) => ({
-  container: {
-    marginBottom: 14,
-  },
-  label: getLabelStyle(t),
-  input: {
-    width: "100%",
-    padding: "12px 14px",
-    borderRadius: 12,
-    border: `1px solid ${t.colors.border}`,
-    fontSize: 15,
-    boxSizing: "border-box",
-    outline: "none",
-    background: t.colors.bgSecondary,
-    color: t.colors.text,
-    transition: "all 0.3s ease",
-  },
-});
