@@ -450,7 +450,13 @@ function CRMApp({ userId }: { userId: string }) {
         : opp.stage === 'Interesado' ? 'Visita'
         : opp.stage === 'Visita' ? 'Seguimiento'
         : 'Seguimiento'
-      abrirProgramador(opp, eventoDefault)
+      setProgramador({
+        open: true,
+        opp,
+        evento: eventoDefault,
+        fecha: getFechaLocalOffset(0),
+        nota: '',
+      })
     } finally {
       setLoadingActivity(null)
     }
