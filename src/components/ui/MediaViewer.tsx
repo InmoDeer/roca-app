@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { X, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
+import { getMediaViewerStyles } from "@/styles/componentStyles";
 
 const getYoutubeEmbed = (url: string) => {
   if (!url) return "";
@@ -22,6 +23,7 @@ export function MediaViewer({
   initialIndex = 0,
 }: any) {
   const { t, mode } = useTheme();
+  const s = getMediaViewerStyles(t);
   const [idx, setIdx] = useState(initialIndex);
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -178,10 +180,7 @@ export function MediaViewer({
 
   return (
     <div
-      style={{
-        ...mediaStyles.overlay,
-        opacity: visible ? 1 : 0,
-      }}
+      style={{ ...s.overlay, opacity: visible ? 1 : 0 } as any}
       onClick={onClose}
     >
       <VisuallyHidden.Root>
@@ -189,30 +188,23 @@ export function MediaViewer({
       </VisuallyHidden.Root>
       <button
         onClick={onClose}
-        style={mediaStyles.closeBtn}
+        style={s.closeBtn}
         aria-label="Cerrar"
       >
         <X size={20} strokeWidth={1.5} />
       </button>
 
       <div
-        style={{
-          ...mediaStyles.box,
-          opacity: visible ? 1 : 0,
-          transform: visible ? "scale(1)" : "scale(0.95)",
-        }}
+        style={{ ...s.box, opacity: visible ? 1 : 0, transform: visible ? "scale(1)" : "scale(0.95)" } as any}
         onClick={(e) => e.stopPropagation()}
       >
         {availableTabs.length > 1 && (
-          <div style={mediaStyles.tabs}>
+          <div style={s.tabs}>
             {availableTabs.map((t) => (
               <button
                 key={t}
                 onClick={() => setTab(t)}
-                style={{
-                  ...mediaStyles.tab,
-                  ...(tab === t ? mediaStyles.tabActive : {}),
-                }}
+                style={{ ...s.tab, ...(tab === t ? s.tabActive : {}) } as any}
               >
                 {t === "fotos" && "Fotos"}
                 {t === "video" && "Video"}
@@ -225,13 +217,13 @@ export function MediaViewer({
         {tab === "fotos" && (
           <>
             <div
-              style={{ ...mediaStyles.imgContainer, maxHeight: zoom.scale > 1 ? "none" : "70vh" }}
+              style={{ ...s.imgContainer, maxHeight: zoom.scale > 1 ? "none" : "70vh" } as any}
               onTouchStart={handleTouchStart}
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
             >
               {loading && (
-                <div style={mediaStyles.loader}>
+                <div style={s.loader}>
                   <Loader2 size={32} strokeWidth={1.5} className="spin" />
                 </div>
               )}
@@ -239,40 +231,35 @@ export function MediaViewer({
                 src={fotos[idx]}
                 alt=""
                 draggable={false}
-                style={{
-                  ...mediaStyles.img,
-                  opacity: loading ? 0 : 1,
-                  transform: imgTransform,
-                  cursor: zoom.scale > 1 ? "grab" : "default",
-                }}
+                style={{ ...s.img, opacity: loading ? 0 : 1, transform: imgTransform, cursor: zoom.scale > 1 ? "grab" : "default" } as any}
                 onLoad={() => setLoading(false)}
               />
             </div>
 
             {zoom.scale === 1 && (
               <>
-                <div style={mediaStyles.count}>
+                <div style={s.count}>
                   {idx + 1} / {fotos.length}
                 </div>
 
                 {fotos.length > 1 && (
-                  <div style={mediaStyles.nav}>
+                  <div style={s.nav}>
                     <button
                       onClick={() => setIdx((i: number) => (i - 1 + fotos.length) % fotos.length)}
-                      style={mediaStyles.arrow}
+                      style={s.arrow}
                     >
                       <ChevronLeft size={24} strokeWidth={1.5} />
                     </button>
                     <button
                       onClick={() => setIdx((i: number) => (i + 1) % fotos.length)}
-                      style={mediaStyles.arrow}
+                      style={s.arrow}
                     >
                       <ChevronRight size={24} strokeWidth={1.5} />
                     </button>
                   </div>
                 )}
 
-                <div style={mediaStyles.thumbs}>
+                <div style={s.thumbs}>
                   {fotos.map((f: string, i: number) => (
                     <img
                       key={i}
@@ -281,11 +268,7 @@ export function MediaViewer({
                       loading="lazy"
                       draggable={false}
                       onClick={() => setIdx(i)}
-                      style={{
-                        ...mediaStyles.thumb,
-                        outline:
-                          i === idx ? `2px solid ${t.colors.primary}` : "none",
-                      }}
+                      style={{ ...s.thumb, outline: i === idx ? `2px solid ${t.colors.primary}` : "none" } as any}
                     />
                   ))}
                 </div>
@@ -295,22 +278,22 @@ export function MediaViewer({
         )}
 
         {tab === "video" && videoUrl && (
-          <div style={mediaStyles.iframeWrap}>
+          <div style={s.iframeWrap}>
             <iframe
               src={getYoutubeEmbed(videoUrl)}
               allowFullScreen
-              style={mediaStyles.iframe}
+              style={s.iframe}
               title="Video"
             />
           </div>
         )}
 
         {tab === "tour" && tour360Url && (
-          <div style={mediaStyles.iframeWrap}>
+          <div style={s.iframeWrap}>
             <iframe
               src={tour360Url}
               allowFullScreen
-              style={{ ...mediaStyles.iframe, background: "#000" }}
+              style={{ ...s.iframe, background: "#000" } as any}
               title="Tour 360"
             />
           </div>
@@ -320,157 +303,4 @@ export function MediaViewer({
   );
 }
 
-const mediaStyles: any = {
-  overlay: {
-    position: "fixed",
-    inset: 0,
-    background: "rgba(0,0,0,0.95)",
-    backdropFilter: "blur(20px)",
-    zIndex: 200,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    transition: "opacity 0.3s ease",
-    touchAction: "none",
-    overscrollBehavior: "none",
-    WebkitOverflowScrolling: "none",
-    height: "100dvh",
-  },
-  box: {
-    width: "100%",
-    maxWidth: 500,
-    padding: 20,
-    position: "relative",
-    transition: "opacity 0.3s ease, transform 0.3s ease",
-    maxHeight: "100dvh",
-    display: "flex",
-    flexDirection: "column",
-  },
-  tabs: {
-    display: "flex",
-    gap: 8,
-    marginBottom: 16,
-    justifyContent: "center",
-    flexShrink: 0,
-  },
-  tab: {
-    padding: "10px 16px",
-    borderRadius: 999,
-    border: "none",
-    cursor: "pointer",
-    background: "rgba(255,255,255,0.08)",
-    color: "#fff",
-  },
-  tabActive: {
-    background: "#d4af37",
-    color: "#000",
-  },
-  imgContainer: {
-    width: "100%",
-    minHeight: 0,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    position: "relative",
-    background: "rgba(255,255,255,0.02)",
-    borderRadius: 16,
-    overflow: "hidden",
-    flex: 1,
-  },
-  iframeWrap: {
-    width: "100%",
-    minHeight: 0,
-    flex: 1,
-    borderRadius: 16,
-    overflow: "hidden",
-  },
-  iframe: {
-    width: "100%",
-    height: "100%",
-    minHeight: "60vh",
-    border: "none",
-    borderRadius: 16,
-  },
-  loader: {
-    position: "absolute",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    color: "#d4af37",
-  },
-  closeBtn: {
-    position: "fixed",
-    top: 16,
-    right: 16,
-    background: "rgba(0,0,0,0.5)",
-    border: "none",
-    color: "#ffffff",
-    fontSize: 22,
-    cursor: "pointer",
-    zIndex: 210,
-    width: 40,
-    height: 40,
-    borderRadius: "50%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    WebkitBackdropFilter: "blur(8px)",
-    backdropFilter: "blur(8px)",
-  },
-  img: {
-    maxWidth: "100%",
-    maxHeight: "70vh",
-    objectFit: "contain",
-    borderRadius: 16,
-    display: "block",
-    transition: "opacity 0.3s ease",
-    userSelect: "none",
-    WebkitUserSelect: "none",
-    willChange: "transform",
-  },
-  count: {
-    textAlign: "center",
-    color: "#666666",
-    fontSize: 13,
-    marginTop: 12,
-    fontWeight: 500,
-    flexShrink: 0,
-  },
-  nav: {
-    display: "flex",
-    justifyContent: "center",
-    gap: 20,
-    marginTop: 16,
-    flexShrink: 0,
-  },
-  arrow: {
-    background: "rgba(255,255,255,0.08)",
-    border: "1px solid rgba(255,255,255,0.1)",
-    color: "#ffffff",
-    borderRadius: "50%",
-    width: 48,
-    height: 48,
-    fontSize: 24,
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-  },
-  thumbs: {
-    display: "flex",
-    gap: 10,
-    overflowX: "auto",
-    marginTop: 16,
-    paddingBottom: 8,
-    justifyContent: "center",
-    flexShrink: 0,
-  },
-  thumb: {
-    width: 60,
-    height: 60,
-    objectFit: "cover",
-    borderRadius: 10,
-    flexShrink: 0,
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-    border: "2px solid transparent",
-  },
-};
+

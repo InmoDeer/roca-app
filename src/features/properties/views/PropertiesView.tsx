@@ -102,18 +102,7 @@ export function PropertiesView() {
 
         <button
           onClick={() => setChatOpen((v) => !v)}
-          style={{
-            position: "fixed", bottom: 88, right: 20,
-            zIndex: 140,
-            width: 52, height: 52, borderRadius: "50%",
-            background: "linear-gradient(135deg, #d4af37, #b8962e)",
-            border: "none",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow: "0 4px 16px rgba(212,175,55,0.4)",
-          }}
+          style={S.fabBtn}
         >
           <MessageCircle size={22} color="#0a0a0a" strokeWidth={1.5} />
         </button>
@@ -244,18 +233,7 @@ export function PropertiesView() {
 
       <button
         onClick={() => setChatOpen((v) => !v)}
-        style={{
-          position: "fixed", bottom: 88, right: 20,
-          zIndex: 140,
-          width: 52, height: 52, borderRadius: "50%",
-          background: "linear-gradient(135deg, #d4af37, #b8962e)",
-          border: "none",
-          cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          boxShadow: "0 4px 16px rgba(212,175,55,0.4)",
-        }}
+        style={S.fabBtn}
       >
         <MessageCircle size={22} color="#0a0a0a" strokeWidth={1.5} />
       </button>

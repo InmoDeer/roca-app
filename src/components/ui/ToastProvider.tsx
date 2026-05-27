@@ -38,7 +38,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     success: t.colors.success,
     error: t.colors.danger,
     info: t.colors.primary,
-    warning: "#f59e0b",
+    warning: t.colors.warning,
   };
 
   return (

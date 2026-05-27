@@ -7,10 +7,12 @@ import { getDashboardStyles } from "@/styles/componentStyles";
 import {
   Building2,
   Settings,
+  Users,
 } from "lucide-react";
 
 const NAV_ITEMS = [
   { href: "/propiedades", label: "Propiedades", icon: Building2 },
+  { href: "/crm", label: "CRM", icon: Users },
   { href: "/ajustes", label: "Ajustes", icon: Settings },
 ] as const;
 

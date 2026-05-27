@@ -1,4 +1,4 @@
-import { Sparkles } from "lucide-react";
+import { getChatStyles } from "@/styles/componentStyles";
 
 const HELP_COMMANDS = [
   { label: "Resumen", example: "resumen" },
@@ -19,71 +19,24 @@ export function HelpCommands({
   mode: string;
   onSelectExample: (text: string) => void;
 }) {
-  const isDark = mode === "dark";
+  const s = getChatStyles(t, mode);
 
   return (
-    <div
-      style={{
-        padding: "10px 14px",
-        borderTop: `1px solid ${t.colors.border}`,
-        background: isDark ? "#0a0a0a" : "#ececec",
-        flexShrink: 0,
-      }}
-    >
-      <div
-        style={{
-          fontSize: 11,
-          fontWeight: 700,
-          color: t.colors.textMuted,
-          textTransform: "uppercase",
-          letterSpacing: "0.5px",
-          marginBottom: 8,
-        }}
-      >
+    <div style={s.helpWrap}>
+      <div style={s.helpTitle}>
         Comandos disponibles
       </div>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 4,
-          maxHeight: 180,
-          overflowY: "auto",
-        }}
-      >
+      <div style={s.helpChips}>
         {HELP_COMMANDS.map((cmd) => (
           <button
             key={cmd.example}
             onClick={() => onSelectExample(cmd.example)}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              padding: "7px 10px",
-              borderRadius: 8,
-              background: isDark ? "#1a1a1a" : "#ffffff",
-              border: `1px solid ${t.colors.border}`,
-              cursor: "pointer",
-              textAlign: "left",
-              gap: 8,
-            }}
+            style={s.helpChip}
           >
-            <span
-              style={{
-                fontSize: 12,
-                fontWeight: 600,
-                color: t.colors.text,
-              }}
-            >
+            <span style={s.helpChipLabel}>
               {cmd.label}
             </span>
-            <span
-              style={{
-                fontSize: 11,
-                color: t.colors.textMuted,
-                fontStyle: "italic",
-              }}
-            >
+            <span style={s.helpChipExample}>
               {cmd.example}
             </span>
           </button>

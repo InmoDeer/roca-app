@@ -1,8 +1,8 @@
 {
   "/home/juan/Escritorio/ROCA/roca-app/next.config.ts": {
-    "mtime": 1779259926.0322907,
-    "ast_hash": "50c8b1068487699652f1c8a85c57c6a6",
-    "semantic_hash": "50c8b1068487699652f1c8a85c57c6a6"
+    "mtime": 1779852621.2486184,
+    "ast_hash": "e5443f9ad6457710c286084bb51a31ba",
+    "semantic_hash": "e5443f9ad6457710c286084bb51a31ba"
   },
   "/home/juan/Escritorio/ROCA/roca-app/eslint.config.js": {
     "mtime": 1778299684.267305,
@@ -15,9 +15,9 @@
     "semantic_hash": "39b2794b8aaffa5164964c282629a992"
   },
   "/home/juan/Escritorio/ROCA/roca-app/next-env.d.ts": {
-    "mtime": 1779775187.115497,
-    "ast_hash": "d0f8375ae1199dc7acd3977fc33b78b8",
-    "semantic_hash": ""
+    "mtime": 1779852772.215145,
+    "ast_hash": "2a74d3909800ca5467fa83b0ab4a4890",
+    "semantic_hash": "2a74d3909800ca5467fa83b0ab4a4890"
   },
   "/home/juan/Escritorio/ROCA/roca-app/tsconfig.json": {
     "mtime": 1778306958.6855376,
@@ -28,6 +28,11 @@
     "mtime": 1779259918.4036915,
     "ast_hash": "e2f98a6f1b15070b48ef173bfda1379d",
     "semantic_hash": "e2f98a6f1b15070b48ef173bfda1379d"
+  },
+  "/home/juan/Escritorio/ROCA/roca-app/src/lib/supabase.ts": {
+    "mtime": 1779844118.8713534,
+    "ast_hash": "9d78d2a55dd03733b5eaec200350d929",
+    "semantic_hash": "9d78d2a55dd03733b5eaec200350d929"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/lib/highlights.ts": {
     "mtime": 1779430306.509776,
@@ -47,12 +52,12 @@
   "/home/juan/Escritorio/ROCA/roca-app/src/components/PropertyDetail.tsx": {
     "mtime": 1779774101.1396227,
     "ast_hash": "6caeb6b982e56b1f888d8ae3be41e694",
-    "semantic_hash": ""
+    "semantic_hash": "6caeb6b982e56b1f888d8ae3be41e694"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/components/PropertyForm.tsx": {
     "mtime": 1779774140.304617,
     "ast_hash": "cb745aec89bb2ca0b987fa352307a04b",
-    "semantic_hash": ""
+    "semantic_hash": "cb745aec89bb2ca0b987fa352307a04b"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/components/PropertyCard.tsx": {
     "mtime": 1779430341.5082421,
@@ -60,29 +65,34 @@
     "semantic_hash": "832640e5fec57ca5bc83529067416907"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/components/PropertyFilters.tsx": {
-    "mtime": 1779774101.7676234,
-    "ast_hash": "a8b67b3bfd22c33db0005f6a9f5e64ca",
-    "semantic_hash": ""
+    "mtime": 1779850960.583769,
+    "ast_hash": "cf8b224e7adc18607c6aeef31dd84086",
+    "semantic_hash": "cf8b224e7adc18607c6aeef31dd84086"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/components/formFields/Select.tsx": {
     "mtime": 1779774096.8526177,
     "ast_hash": "ccee6479278b6c3bcaa26dddf65a0a6b",
-    "semantic_hash": ""
+    "semantic_hash": "ccee6479278b6c3bcaa26dddf65a0a6b"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/components/formFields/Field.tsx": {
     "mtime": 1779774100.8386223,
     "ast_hash": "6d0888e9f7f3807a4a7b8c1f95b868c5",
-    "semantic_hash": ""
+    "semantic_hash": "6d0888e9f7f3807a4a7b8c1f95b868c5"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/components/formFields/Checkbox.tsx": {
     "mtime": 1779774099.0796204,
     "ast_hash": "d70462bd34d0c6056a785c6903220ca7",
-    "semantic_hash": ""
+    "semantic_hash": "d70462bd34d0c6056a785c6903220ca7"
+  },
+  "/home/juan/Escritorio/ROCA/roca-app/src/components/crm/AuthGate.tsx": {
+    "mtime": 1779847882.5794125,
+    "ast_hash": "cda45f114ac7843d30450e468f5b2d34",
+    "semantic_hash": "cda45f114ac7843d30450e468f5b2d34"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/components/ui/CopyShareBtns.tsx": {
-    "mtime": 1779067768.116969,
-    "ast_hash": "60fa0789a832ffba7903fc362adb0900",
-    "semantic_hash": "60fa0789a832ffba7903fc362adb0900"
+    "mtime": 1779850059.6284244,
+    "ast_hash": "0cf9fc46f23ce4147986d588130ccbe7",
+    "semantic_hash": "0cf9fc46f23ce4147986d588130ccbe7"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/components/ui/dialog.tsx": {
     "mtime": 1779068627.6773245,
@@ -90,34 +100,39 @@
     "semantic_hash": "4537e366192affd07907e0e5716e8330"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/components/ui/select.tsx": {
-    "mtime": 1779774102.2826238,
-    "ast_hash": "e68fce43e617250709fa1a655da38576",
-    "semantic_hash": ""
+    "mtime": 1779849989.4491239,
+    "ast_hash": "4e26d904b565e2a91c50b213f398d166",
+    "semantic_hash": "4e26d904b565e2a91c50b213f398d166"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/components/ui/MediaViewer.tsx": {
-    "mtime": 1779256672.5310848,
-    "ast_hash": "a2eab8e61d7ff90ae3ce6f3bdb088747",
-    "semantic_hash": "a2eab8e61d7ff90ae3ce6f3bdb088747"
+    "mtime": 1779850286.8500714,
+    "ast_hash": "a797f742dd542e117d71651e675ee87c",
+    "semantic_hash": "a797f742dd542e117d71651e675ee87c"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/components/ui/ToastProvider.tsx": {
-    "mtime": 1778306958.68133,
-    "ast_hash": "dd0a782eddb01d0aaf3d54d4717604b9",
-    "semantic_hash": "dd0a782eddb01d0aaf3d54d4717604b9"
+    "mtime": 1779849899.1074085,
+    "ast_hash": "84aaa7bc3f077b0bbc77e610ecc3720c",
+    "semantic_hash": "84aaa7bc3f077b0bbc77e610ecc3720c"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/styles/componentStyles.ts": {
-    "mtime": 1779774095.1896155,
-    "ast_hash": "a51c9847bbeb572660099d3137e87f4f",
-    "semantic_hash": ""
+    "mtime": 1779850683.8823476,
+    "ast_hash": "dc808b14e8c0f031e04ff281632ac7ef",
+    "semantic_hash": "dc808b14e8c0f031e04ff281632ac7ef"
+  },
+  "/home/juan/Escritorio/ROCA/roca-app/src/styles/colorUtils.ts": {
+    "mtime": 1779847467.8424115,
+    "ast_hash": "899a3cad2d056e624b32bc4cd130e2bf",
+    "semantic_hash": "899a3cad2d056e624b32bc4cd130e2bf"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/styles/statusColors.ts": {
-    "mtime": 1779774108.866629,
-    "ast_hash": "9fddfba4319b14970a3d3d2de7127d7a",
-    "semantic_hash": ""
+    "mtime": 1779847486.9322982,
+    "ast_hash": "930cfa056aac16bc875783d7cd9939c0",
+    "semantic_hash": "930cfa056aac16bc875783d7cd9939c0"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/styles/theme.ts": {
-    "mtime": 1778306958.6852067,
-    "ast_hash": "a7f481ad4b7759dfffed4de4143eeda1",
-    "semantic_hash": "a7f481ad4b7759dfffed4de4143eeda1"
+    "mtime": 1779851355.8077085,
+    "ast_hash": "9a15f26172edd2a517c33602c4f7c35f",
+    "semantic_hash": "9a15f26172edd2a517c33602c4f7c35f"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/core/actions/types.ts": {
     "mtime": 1779771999.374282,
@@ -145,9 +160,9 @@
     "semantic_hash": "c2ff6ef56c67feb894dcf2d080c746cb"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/core/actions/chat/parseIntent.ts": {
-    "mtime": 1779778134.7521024,
-    "ast_hash": "62cdf14e39d706c2d45ed69286b0a6b3",
-    "semantic_hash": ""
+    "mtime": 1779779207.0663795,
+    "ast_hash": "a547aaa46a9e48ad0799231f7af1d0fb",
+    "semantic_hash": "a547aaa46a9e48ad0799231f7af1d0fb"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/core/actions/properties/changePropertyStatus.ts": {
     "mtime": 1779771999.373282,
@@ -219,6 +234,36 @@
     "ast_hash": "ed39dc7b8a3b01792fc9e4a30d99d6b8",
     "semantic_hash": "ed39dc7b8a3b01792fc9e4a30d99d6b8"
   },
+  "/home/juan/Escritorio/ROCA/roca-app/src/core/crm/types.ts": {
+    "mtime": 1779844216.8773637,
+    "ast_hash": "5ea77294d6bb29e8ea83507c39ad9fb6",
+    "semantic_hash": "5ea77294d6bb29e8ea83507c39ad9fb6"
+  },
+  "/home/juan/Escritorio/ROCA/roca-app/src/core/crm/dates.ts": {
+    "mtime": 1779844227.9762359,
+    "ast_hash": "e3ed02dd8dffafdaddbd874982246b8c",
+    "semantic_hash": "e3ed02dd8dffafdaddbd874982246b8c"
+  },
+  "/home/juan/Escritorio/ROCA/roca-app/src/core/crm/constants.ts": {
+    "mtime": 1779850110.753541,
+    "ast_hash": "20822c149f5ec6b259ffd32e6f976124",
+    "semantic_hash": "20822c149f5ec6b259ffd32e6f976124"
+  },
+  "/home/juan/Escritorio/ROCA/roca-app/src/core/crm/scoring.ts": {
+    "mtime": 1779844224.9610012,
+    "ast_hash": "a295b7ca6a13d1365584164232fe3844",
+    "semantic_hash": "a295b7ca6a13d1365584164232fe3844"
+  },
+  "/home/juan/Escritorio/ROCA/roca-app/src/core/crm/stages.ts": {
+    "mtime": 1779848243.8872685,
+    "ast_hash": "bd55729a15f6113984a9160be8ff47ff",
+    "semantic_hash": "bd55729a15f6113984a9160be8ff47ff"
+  },
+  "/home/juan/Escritorio/ROCA/roca-app/src/core/crm/messages.ts": {
+    "mtime": 1779844231.3554971,
+    "ast_hash": "a796a4461aa7e4ca20ae3c1af19e1d68",
+    "semantic_hash": "a796a4461aa7e4ca20ae3c1af19e1d68"
+  },
   "/home/juan/Escritorio/ROCA/roca-app/src/core/chat/responseBuilder.ts": {
     "mtime": 1779515077.9375818,
     "ast_hash": "340a166ec648f2f33ec2ba5b57a3a753",
@@ -237,7 +282,7 @@
   "/home/juan/Escritorio/ROCA/roca-app/src/core/services/gemini/parseIntent.ts": {
     "mtime": 1779776561.034653,
     "ast_hash": "e4f742185e5da5fe00304143ab201697",
-    "semantic_hash": ""
+    "semantic_hash": "e4f742185e5da5fe00304143ab201697"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/core/services/supabase/client.ts": {
     "mtime": 1779771999.374282,
@@ -292,7 +337,7 @@
   "/home/juan/Escritorio/ROCA/roca-app/src/hooks/useAuth.ts": {
     "mtime": 1779774103.390625,
     "ast_hash": "9dc7810ca1155c811b6d75baab67175f",
-    "semantic_hash": ""
+    "semantic_hash": "9dc7810ca1155c811b6d75baab67175f"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/hooks/useProperties.ts": {
     "mtime": 1779435747.2830894,
@@ -309,25 +354,40 @@
     "ast_hash": "0fd749a1ff2ec2560bc781c8ace0cf9f",
     "semantic_hash": "0fd749a1ff2ec2560bc781c8ace0cf9f"
   },
+  "/home/juan/Escritorio/ROCA/roca-app/src/hooks/useTimeline.ts": {
+    "mtime": 1779844649.5188408,
+    "ast_hash": "fed8b01dafd4865b2428e98c72e8a3f8",
+    "semantic_hash": "fed8b01dafd4865b2428e98c72e8a3f8"
+  },
   "/home/juan/Escritorio/ROCA/roca-app/src/hooks/useChat.ts": {
     "mtime": 1779514171.5493622,
     "ast_hash": "be96e038679995f993224120d55d330d",
     "semantic_hash": "be96e038679995f993224120d55d330d"
   },
+  "/home/juan/Escritorio/ROCA/roca-app/src/hooks/useOpportunities.ts": {
+    "mtime": 1779844646.0867848,
+    "ast_hash": "506abcafeb7c180ac688b76da6149cc3",
+    "semantic_hash": "506abcafeb7c180ac688b76da6149cc3"
+  },
   "/home/juan/Escritorio/ROCA/roca-app/src/features/dashboard/components/DashboardNav.tsx": {
-    "mtime": 1779771999.373282,
-    "ast_hash": "20d61c536ed194edb4dee4a10662ca82",
-    "semantic_hash": "20d61c536ed194edb4dee4a10662ca82"
+    "mtime": 1779844789.4011161,
+    "ast_hash": "42f7935cc89669b60abe7d78f0126e1a",
+    "semantic_hash": "42f7935cc89669b60abe7d78f0126e1a"
+  },
+  "/home/juan/Escritorio/ROCA/roca-app/src/features/crm/views/CRMApp.tsx": {
+    "mtime": 1779858030.35073,
+    "ast_hash": "d21031c9ff14982bb66c9aa42f10e825",
+    "semantic_hash": "d21031c9ff14982bb66c9aa42f10e825"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/features/chat/components/ChatInput.tsx": {
-    "mtime": 1779513508.8403025,
-    "ast_hash": "537d6d7c96ad0eec778dd924bed4b81e",
-    "semantic_hash": "537d6d7c96ad0eec778dd924bed4b81e"
+    "mtime": 1779850313.087002,
+    "ast_hash": "fc36689d361d985b54019d064457d7f5",
+    "semantic_hash": "fc36689d361d985b54019d064457d7f5"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/features/chat/components/HelpCommands.tsx": {
-    "mtime": 1779513503.3672426,
-    "ast_hash": "3353ae90d991d668874a635d92fd7f8b",
-    "semantic_hash": "3353ae90d991d668874a635d92fd7f8b"
+    "mtime": 1779850095.099784,
+    "ast_hash": "e4f89d1f5b6ce1610f42911c11b47310",
+    "semantic_hash": "e4f89d1f5b6ce1610f42911c11b47310"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/features/chat/components/formatCardBrief.ts": {
     "mtime": 1779513494.0591407,
@@ -335,14 +395,14 @@
     "semantic_hash": "1252d230000bc93e18c583da79a900e7"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/features/chat/components/PropertyResultCard.tsx": {
-    "mtime": 1779515160.4443195,
-    "ast_hash": "ef84b40e282ce02b85b69da0f0013d06",
-    "semantic_hash": "ef84b40e282ce02b85b69da0f0013d06"
+    "mtime": 1779850031.2500365,
+    "ast_hash": "2af21dd12ef79f5f211b15d227240056",
+    "semantic_hash": "2af21dd12ef79f5f211b15d227240056"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/features/chat/components/ChatPanel.tsx": {
     "mtime": 1779776189.64114,
     "ast_hash": "c48796d1ce4fd9016c05bece1dfced99",
-    "semantic_hash": ""
+    "semantic_hash": "c48796d1ce4fd9016c05bece1dfced99"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/features/chat/components/FormattedText.tsx": {
     "mtime": 1779513490.4091008,
@@ -350,9 +410,9 @@
     "semantic_hash": "1a36fcd83f200f34e88fe75547a2dc7d"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/features/chat/components/MessageBubble.tsx": {
-    "mtime": 1779514176.6510618,
-    "ast_hash": "ea330109566241d44fb214a7cf5bb049",
-    "semantic_hash": "ea330109566241d44fb214a7cf5bb049"
+    "mtime": 1779850355.7589486,
+    "ast_hash": "7a1c55a909d851ca28f714f29cc350ee",
+    "semantic_hash": "7a1c55a909d851ca28f714f29cc350ee"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/features/auth/views/LoginView.tsx": {
     "mtime": 1779771999.3692818,
@@ -360,9 +420,9 @@
     "semantic_hash": "caaeaa48a7445322929194a5efc3a74c"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/features/properties/views/PropertiesView.tsx": {
-    "mtime": 1779771999.374282,
-    "ast_hash": "c512b79ba3856e5c66a8acb28ed26a7f",
-    "semantic_hash": "c512b79ba3856e5c66a8acb28ed26a7f"
+    "mtime": 1779850074.3061435,
+    "ast_hash": "3fe8c7d6ee77e1d6cdc510aace729578",
+    "semantic_hash": "3fe8c7d6ee77e1d6cdc510aace729578"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/app/page.tsx": {
     "mtime": 1779771999.374282,
@@ -384,6 +444,11 @@
     "ast_hash": "a12869df0c0ec6450a9e8ecea4ef2aef",
     "semantic_hash": "a12869df0c0ec6450a9e8ecea4ef2aef"
   },
+  "/home/juan/Escritorio/ROCA/roca-app/src/app/(dashboard)/crm/page.tsx": {
+    "mtime": 1779844668.5331755,
+    "ast_hash": "f6bad209ecb7f8d96a064718bfb690ec",
+    "semantic_hash": "f6bad209ecb7f8d96a064718bfb690ec"
+  },
   "/home/juan/Escritorio/ROCA/roca-app/src/app/(dashboard)/ajustes/page.tsx": {
     "mtime": 1779771999.330281,
     "ast_hash": "7cd6656f6eec8cc2da2914df09eb915f",
@@ -402,7 +467,7 @@
   "/home/juan/Escritorio/ROCA/roca-app/src/app/api/cloudinary/delete/route.ts": {
     "mtime": 1779774104.5036259,
     "ast_hash": "8d0e7559c1d9eb663f2e5e200b36d9af",
-    "semantic_hash": ""
+    "semantic_hash": "8d0e7559c1d9eb663f2e5e200b36d9af"
   },
   "/home/juan/Escritorio/ROCA/roca-app/src/app/propiedad/[id]/page.tsx": {
     "mtime": 1779436039.72086,
@@ -470,9 +535,9 @@
     "semantic_hash": "3a4225b3f4d5165bcb5ec943e78b7c8f"
   },
   "/home/juan/Escritorio/ROCA/roca-app/AGENTS.md": {
-    "mtime": 1779774717.7400331,
-    "ast_hash": "b80d70be2b887f8905d37e50da2ad934",
-    "semantic_hash": ""
+    "mtime": 1779778317.3541648,
+    "ast_hash": "6ca7b6e85266323c9b74bd3b45f6287e",
+    "semantic_hash": "6ca7b6e85266323c9b74bd3b45f6287e"
   },
   "/home/juan/Escritorio/ROCA/roca-app/.agents/skills/verification-before-completion/SKILL.md": {
     "mtime": 1779336891.4642322,

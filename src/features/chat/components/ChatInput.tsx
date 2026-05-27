@@ -1,6 +1,5 @@
-import { useRef } from "react";
 import { Sparkles, Mic, MicOff, Send, Loader2 } from "lucide-react";
-import { primaryGradient } from "@/styles/componentStyles";
+import { getChatStyles } from "@/styles/componentStyles";
 
 export function ChatInput({
   value,
@@ -27,31 +26,14 @@ export function ChatInput({
   t: any;
   mode: string;
 }) {
-  const isDark = mode === "dark";
+  const s = getChatStyles(t, mode);
+  const enabled = !!value.trim() && !loading;
 
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 8,
-        padding: "10px 12px",
-        borderTop: `1px solid ${t.colors.border}`,
-        background: isDark ? "#0a0a0a" : "#ececec",
-        flexShrink: 0,
-      }}
-    >
+    <div style={s.inputWrap}>
       <button
         onClick={onToggleHelp}
-        style={{
-          background: "none",
-          border: "none",
-          cursor: "pointer",
-          padding: 6,
-          display: "flex",
-          alignItems: "center",
-          flexShrink: 0,
-        }}
+        style={s.helpBtn}
         title="Ver comandos"
       >
         <Sparkles
@@ -63,17 +45,7 @@ export function ChatInput({
 
       <input
         ref={inputRef}
-        style={{
-          flex: 1,
-          padding: "10px 12px",
-          borderRadius: 12,
-          border: `1px solid ${t.colors.border}`,
-          background: isDark ? "#1a1a1a" : "#ffffff",
-          color: t.colors.text,
-          fontSize: 14,
-          outline: "none",
-          fontFamily: t.fonts.family,
-        }}
+        style={s.input}
         placeholder={listening ? "Escuchando..." : "Escribe un comando..."}
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -88,17 +60,7 @@ export function ChatInput({
 
       <button
         onClick={onToggleVoice}
-        style={{
-          background: listening ? "rgba(239,68,68,0.1)" : "none",
-          border: "none",
-          cursor: "pointer",
-          padding: 6,
-          borderRadius: 8,
-          display: "flex",
-          alignItems: "center",
-          flexShrink: 0,
-          transition: "all 0.15s ease",
-        }}
+        style={s.voiceBtn(listening)}
         title={listening ? "Detener dictado" : "Dictar por voz"}
       >
         {listening ? (
@@ -110,21 +72,8 @@ export function ChatInput({
 
       <button
         onClick={onSend}
-        disabled={!value.trim() || loading}
-        style={{
-          width: 36,
-          height: 36,
-          borderRadius: 10,
-          border: "none",
-          cursor: value.trim() && !loading ? "pointer" : "default",
-          background: value.trim() && !loading ? primaryGradient : t.colors.border,
-          color: value.trim() && !loading ? "#0a0a0a" : t.colors.textMuted,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexShrink: 0,
-          transition: "all 0.15s ease",
-        }}
+        disabled={!enabled}
+        style={s.sendBtn(enabled)}
       >
         {loading ? (
           <Loader2

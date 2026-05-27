@@ -3,7 +3,13 @@ import type { PropertyFilters as PropertyFiltersType } from "@/core/entities/pro
 import { Search } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
 import { RocaSelect } from "./ui/select";
+import { getPropertyFiltersStyles } from "@/styles/componentStyles";
 import { OPERATIONS, PROPERTY_TYPES, PIPELINE_PROPERTY } from "@/core/entities/property";
+
+const ALL = "__all__"
+
+const withAll = (arr: readonly string[]) =>
+  [{ value: ALL, label: "Todos" }, ...arr.map(o => ({ value: o, label: o }))]
 
 export function PropertyFilters({ filters, setFilters, loading, filteredCount }: {
   filters: PropertyFiltersType;
@@ -12,54 +18,7 @@ export function PropertyFilters({ filters, setFilters, loading, filteredCount }:
   filteredCount: number;
 }) {
   const { t } = useTheme();
-
-  const styles: any = {
-    searchWrap: {
-      padding: "16px 20px 0",
-      background: t.colors.bg,
-      position: "sticky",
-      top: 60,
-      zIndex: 5,
-    },
-    searchInputWrap: {
-      position: "relative",
-      display: "flex",
-      alignItems: "center",
-    },
-    searchIcon: {
-      position: "absolute",
-      left: 14,
-      color: t.colors.textMuted,
-      pointerEvents: "none",
-    },
-    searchInput: {
-      width: "100%",
-      padding: "12px 16px 12px 44px",
-      border: `1px solid ${t.colors.border}`,
-      borderRadius: 12,
-      fontSize: 14,
-      outline: "none",
-      boxSizing: "border-box",
-      background: t.colors.bgSecondary,
-      color: t.colors.text,
-      transition: "all 0.3s ease",
-    },
-    filterRow: {
-      display: "flex",
-      justifyContent: "space-between",
-      gap: 10,
-      padding: "12px 20px",
-      overflowX: "auto",
-      background: t.colors.bg,
-    },
-    count: {
-      padding: "4px 20px 8px",
-      fontSize: 12,
-      color: t.colors.textMuted,
-      fontWeight: 600,
-      background: t.colors.bg,
-    },
-  };
+  const styles = getPropertyFiltersStyles(t);
 
   return (
     <>
@@ -80,8 +39,8 @@ export function PropertyFilters({ filters, setFilters, loading, filteredCount }:
           <RocaSelect
             label=""
             value={filters.operacion}
-            onValueChange={(v: string) => setFilters((f: any) => ({ ...f, operacion: v }))}
-            options={OPERATIONS}
+            onValueChange={(v: string) => setFilters((f: any) => ({ ...f, operacion: v === ALL ? "" : v }))}
+            options={withAll(OPERATIONS)}
             placeholder="Operación"
           />
         </div>
@@ -89,8 +48,8 @@ export function PropertyFilters({ filters, setFilters, loading, filteredCount }:
           <RocaSelect
             label=""
             value={filters.tipo}
-            onValueChange={(v: string) => setFilters((f: any) => ({ ...f, tipo: v }))}
-            options={PROPERTY_TYPES}
+            onValueChange={(v: string) => setFilters((f: any) => ({ ...f, tipo: v === ALL ? "" : v }))}
+            options={withAll(PROPERTY_TYPES)}
             placeholder="Tipo"
           />
         </div>
@@ -98,8 +57,8 @@ export function PropertyFilters({ filters, setFilters, loading, filteredCount }:
           <RocaSelect
             label=""
             value={filters.estado}
-            onValueChange={(v: string) => setFilters((f: any) => ({ ...f, estado: v }))}
-            options={PIPELINE_PROPERTY.filter(s => s !== "Descartado" && s !== "Mantenimiento")}
+            onValueChange={(v: string) => setFilters((f: any) => ({ ...f, estado: v === ALL ? "" : v }))}
+            options={withAll(PIPELINE_PROPERTY.filter(s => s !== "Descartado" && s !== "Mantenimiento"))}
             placeholder="Estado"
           />
         </div>

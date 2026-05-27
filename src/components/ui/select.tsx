@@ -4,7 +4,13 @@ import { ChevronDown, Check } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
 import { getStatusColors } from "@/styles/statusColors";
 import { getEstadoDisplay } from "@/core/entities/property";
-import { getLabelStyle } from "@/styles/componentStyles";
+import {
+  getLabelStyle,
+  getSelectContentStyles,
+  getSelectItemStyles,
+  getRocaSelectTriggerStyles,
+  getRocaSelectItemStyles,
+} from "@/styles/componentStyles";
 
 export function StatusSelect({ value, onValueChange, pipeline, operacion }: any) {
   const { t, mode } = useTheme();
@@ -28,19 +34,8 @@ export function StatusSelect({ value, onValueChange, pipeline, operacion }: any)
     transition: "all 0.2s ease",
   };
 
-  const contentStyle: any = {
-    background: mode === "dark" ? "#1a1a1a" : "#ffffff",
-    border: `1px solid ${t.colors.border}`,
-    borderRadius: t.radius.md,
-    padding: 6,
-    boxShadow: mode === "dark"
-      ? "0 8px 32px rgba(0,0,0,0.5)"
-      : "0 8px 32px rgba(0,0,0,0.12)",
-    zIndex: 200,
-    animation: "scaleIn 0.15s ease",
-    fontFamily: t.fonts.family,
-    minWidth: 180,
-  };
+  const contentStyle: any = { ...getSelectContentStyles(t, mode), minWidth: 180 };
+  const itemStyle = getSelectItemStyles(t);
 
   return (
     <Select.Root value={value} onValueChange={onValueChange}>
@@ -61,22 +56,7 @@ export function StatusSelect({ value, onValueChange, pipeline, operacion }: any)
             {pipeline.map((estado: string) => {
               const itemEc = getStatusColors(estado, pipeline, t, mode, "solid");
               return (
-                <Select.Item
-                  key={estado}
-                  value={estado}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 8,
-                    padding: "9px 12px",
-                    borderRadius: t.radius.sm,
-                    cursor: "pointer",
-                    outline: "none",
-                    fontSize: 13,
-                    color: t.colors.text,
-                    transition: "background 0.15s ease",
-                  } as any}
-                >
+                <Select.Item key={estado} value={estado} style={itemStyle as any}>
                   <span style={{
                     width: 8, height: 8, borderRadius: "50%",
                     background: itemEc.dot, flexShrink: 0,
@@ -98,39 +78,14 @@ export function StatusSelect({ value, onValueChange, pipeline, operacion }: any)
 export function RocaSelect({ label, value, onValueChange, options, placeholder = "Seleccionar" }: any) {
   const { t, mode } = useTheme();
 
-  const triggerStyle: any = {
-    width: "100%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: "10px 12px",
-    borderRadius: t.radius.md,
-    border: `1.5px solid ${t.colors.border}`,
-    background: mode === "dark" ? "rgba(255,255,255,0.03)" : "#fafaf8",
-    color: value ? t.colors.text : t.colors.textMuted,
-    fontSize: 15,
-    cursor: "pointer",
-    outline: "none",
-    fontFamily: t.fonts.family,
-    transition: "border-color 0.2s ease",
-    textAlign: "left",
-  };
-
+  const triggerStyle = { ...getRocaSelectTriggerStyles(t, mode), color: value ? t.colors.text : t.colors.textMuted };
   const contentStyle: any = {
-    background: mode === "dark" ? "#1a1a1a" : "#ffffff",
-    border: `1px solid ${t.colors.border}`,
-    borderRadius: t.radius.md,
-    padding: 6,
-    boxShadow: mode === "dark"
-      ? "0 8px 32px rgba(0,0,0,0.5)"
-      : "0 8px 32px rgba(0,0,0,0.12)",
-    zIndex: 200,
-    animation: "scaleIn 0.15s ease",
-    fontFamily: t.fonts.family,
+    ...getSelectContentStyles(t, mode),
     width: "var(--radix-select-trigger-width)",
     maxHeight: 300,
     overflow: "auto",
   };
+  const itemStyle = getRocaSelectItemStyles(t);
 
   return (
     <div style={{ marginBottom: 12 }}>
@@ -154,22 +109,7 @@ export function RocaSelect({ label, value, onValueChange, options, placeholder =
                 const val = typeof opt === "string" ? opt : opt.value;
                 const lbl = typeof opt === "string" ? opt : opt.label;
                 return (
-                  <Select.Item
-                    key={val}
-                    value={val}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "9px 12px",
-                      borderRadius: t.radius.sm,
-                      cursor: "pointer",
-                      outline: "none",
-                      fontSize: 14,
-                      color: t.colors.text,
-                      transition: "background 0.15s ease",
-                    } as any}
-                  >
+                  <Select.Item key={val} value={val} style={itemStyle as any}>
                     <Select.ItemText>{lbl || placeholder}</Select.ItemText>
                     <Select.ItemIndicator>
                       <Check size={13} color={t.colors.primary} strokeWidth={2.5} />

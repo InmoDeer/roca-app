@@ -1,10 +1,12 @@
 "use client";
 import { useState } from "react";
 import { useTheme } from "@/hooks/useTheme";
+import { getCopyShareStyles } from "@/styles/componentStyles";
 
 export function CopyShareBtns({ text }: { text: string }) {
   const { t } = useTheme();
   const [copied, setCopied] = useState(false);
+  const s = getCopyShareStyles(t);
 
   const copy = () => {
     navigator.clipboard.writeText(text);
@@ -20,42 +22,12 @@ export function CopyShareBtns({ text }: { text: string }) {
     }
   };
 
-  const copyShareStyles: any = {
-    container: {
-      display: "flex",
-      gap: 10,
-    },
-    copyBtn: {
-      flex: 1,
-      padding: "12px",
-      background: t.colors.primary,
-      color: "#0a0a0a",
-      border: "none",
-      borderRadius: 12,
-      fontWeight: 700,
-      fontSize: 14,
-      cursor: "pointer",
-      boxShadow: "0 4px 15px rgba(212,175,55,0.3)",
-    },
-    shareBtn: {
-      flex: 1,
-      padding: "12px",
-      background: t.colors.bgSecondary,
-      color: t.colors.text,
-      border: `1px solid ${t.colors.border}`,
-      borderRadius: 12,
-      fontWeight: 600,
-      fontSize: 14,
-      cursor: "pointer",
-    },
-  };
-
   return (
-    <div style={copyShareStyles.container}>
-      <button onClick={copy} style={copyShareStyles.copyBtn}>
+    <div style={s.container}>
+      <button onClick={copy} style={s.copyBtn}>
         {copied ? "Listo" : "Copiar"}
       </button>
-      <button onClick={share} style={copyShareStyles.shareBtn}>
+      <button onClick={share} style={s.shareBtn}>
         Compartir
       </button>
     </div>
