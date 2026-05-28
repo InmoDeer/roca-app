@@ -1,0 +1,23 @@
+name: Generar estructura del proyecto
+
+on:
+  workflow_dispatch:   # Permite ejecutarlo manualmente desde la web
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Instalar tree
+        run: sudo apt-get install -y tree
+
+      - name: Generar árbol de archivos
+        run: tree -a -I '.git|node_modules|vendor' --dirsfirst > estructura_proyecto.txt
+
+      - name: Subir artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: estructura-proyecto
+          path: estructura_proyecto.txt
